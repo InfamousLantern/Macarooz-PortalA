@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Macarooz — Sales Queue</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Nunito:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --white: #FFFFFF;
+  --off-white: #F7FAF9;
+  --pink: #E8437A;
+  --pink-light: #FDE8EF;
+  --teal: #3D8C84;
+  --teal-dark: #2A6B65;
+  --teal-light: #E0F0EE;
+  --teal-mid: #7DBFB9;
+  --navy: #1E2235;
+  --navy-soft: #3A3F5C;
+  --grey: #6B7280;
+  --grey-light: #F3F4F6;
+  --border: #DDE8E6;
+  --amber: #F59E0B;
+  --amber-light: #FEF3C7;
+  --red: #EF4444;
+  --red-light: #FEE2E2;
+  --green: #10B981;
+  --green-light: #D1FAE5;
+  --shadow-sm: 0 2px 8px rgba(61,140,132,0.08);
+  --shadow-md: 0 8px 28px rgba(61,140,132,0.12);
+  --radius: 12px;
+  --radius-sm: 8px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--off-white); color: var(--navy); font-family: 'Nunito', sans-serif; min-height: 100vh; }
+
+/* ── HEADER ── */
+header {
+  background: var(--navy);
+  padding: 0 40px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+}
+.header-left { display: flex; align-items: center; gap: 16px; }
+.header-logo { height: 36px; width: auto; }
+.header-logo-fallback { font-family:'Playfair Display',serif; font-size:18px; font-weight:700; color:white; display:none; }
+.header-logo-fallback span { color:var(--pink); }
+.header-divider { width:1px; height:28px; background:rgba(255,255,255,0.15); }
+.header-title { font-size:13px; font-weight:700; color:rgba(255,255,255,0.7); letter-spacing:0.08em; text-transform:uppercase; }
+
+.header-right { display: flex; align-items: center; gap: 12px; }
+.queue-counts { display: flex; gap: 8px; }
+.count-pill { font-size:11px; font-weight:700; padding:4px 12px; border-radius:20px; }
+.count-pill.pending { background:var(--amber-light); color:#92400E; }
+.count-pill.approved { background:var(--green-light); color:#065F46; }
+.count-pill.rejected { background:var(--red-light); color:#991B1B; }
+
+/* ── TABS ── */
+.tabs {
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  padding: 0 40px;
+  display: flex;
+  gap: 0;
+}
+.tab {
+  padding: 14px 20px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--grey);
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.tab:hover { color: var(--navy); }
+.tab.active { color: var(--teal-dark); border-bottom-color: var(--teal); }
+.tab-badge { font-size:10px; font-weight:800; padding:2px 7px; border-radius:10px; }
+.tab.active .tab-badge { background:var(--teal-light); color:var(--teal-dark); }
+.tab:not(.active) .tab-badge { background:var(--grey-light); color:var(--grey); }
+
+/* ── MAIN ── */
+.main { max-width: 1100px; margin: 0 auto; padding: 32px 40px; }
+
+/* ── EMPTY STATE ── */
+.empty-state {
+  text-align: center; padding: 80px 40px; color: var(--grey);
+}
+.empty-state .empty-icon { font-size: 56px; margin-bottom: 20px; opacity: 0.4; }
+.empty-state h3 { font-family:'Playfair Display',serif; font-size:24px; color:var(--navy); margin-bottom:8px; }
+.empty-state p { font-size:14px; line-height:1.7; }
+
+/* ── ORDER CARD ── */
+.order-card {
+  background: var(--white);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.2s;
+  overflow: hidden;
+}
+.order-card:hover { box-shadow: var(--shadow-md); }
+.order-card.status-approved { border-color: var(--green); }
+.order-card.status-rejected { border-color: var(--red); opacity: 0.7; }
+
+/* Card header — always visible */
+.card-header {
+  padding: 18px 22px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  cursor: pointer;
+  user-select: none;
+}
+.card-header:hover { background: rgba(61,140,132,0.02); }
+
+.status-dot {
+  width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+}
+.status-dot.pending { background: var(--amber); box-shadow: 0 0 0 3px var(--amber-light); }
+.status-dot.approved { background: var(--green); box-shadow: 0 0 0 3px var(--green-light); }
+.status-dot.rejected { background: var(--red); box-shadow: 0 0 0 3px var(--red-light); }
+
+.card-company { font-size:16px; font-weight:800; color:var(--navy); }
+.card-contact { font-size:12px; color:var(--grey); margin-top:2px; }
+.card-meta { margin-left: auto; display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+.card-ref { font-size:11px; font-weight:700; color:var(--grey); letter-spacing:0.06em; }
+.card-date { font-size:11px; color:var(--grey); }
+.card-cases {
+  background: var(--teal-light); color: var(--teal-dark);
+  font-size:12px; font-weight:700; padding:4px 12px; border-radius:20px;
+}
+.card-arrival {
+  background: var(--amber-light); color: #92400E;
+  font-size:11px; font-weight:700; padding:4px 10px; border-radius:20px;
+}
+.card-chevron { font-size:16px; color:var(--grey); transition:transform 0.2s; flex-shrink:0; }
+.order-card.expanded .card-chevron { transform: rotate(180deg); }
+
+/* Card body — revealed on expand */
+.card-body {
+  display: none;
+  border-top: 1px solid var(--border);
+  padding: 24px 22px;
+}
+.order-card.expanded .card-body { display: block; }
+
+.card-body-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.info-block {}
+.info-label {
+  font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.1em;
+  color:var(--grey); margin-bottom:6px;
+}
+.info-value { font-size:13px; font-weight:600; color:var(--navy); line-height:1.6; }
+.info-value.mono { font-family: monospace; font-size:12px; }
+
+/* Product breakdown */
+.product-breakdown {
+  background: var(--off-white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 16px;
+  margin-bottom: 20px;
+}
+.pb-title {
+  font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:0.1em;
+  color:var(--grey); margin-bottom:12px;
+}
+.pb-item {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 7px 0; border-bottom: 1px solid var(--border);
+  font-size:13px;
+}
+.pb-item:last-child { border-bottom: none; }
+.pb-item-name { font-weight:600; color:var(--navy); }
+.pb-item-detail { font-size:11px; color:var(--grey); }
+.pb-item-qty { font-weight:700; }
+.pb-item-qty.pop { color:var(--teal-dark); }
+.pb-item-qty.mac { color:var(--pink); }
+
+/* Comments box */
+.comments-box {
+  background: #FFFBEB;
+  border: 1px solid #FDE68A;
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  margin-bottom: 20px;
+  font-size:13px; color:#92400E; line-height:1.6;
+}
+.comments-box-label { font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:4px; color:#B45309; }
+
+/* ── CONFIRMATION FORM ── */
+.confirm-form {
+  background: var(--white);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 16px;
+}
+.confirm-form-title {
+  font-size:13px; font-weight:800; text-transform:uppercase; letter-spacing:0.08em;
+  color:var(--navy); margin-bottom:16px; padding-bottom:12px; border-bottom:1px solid var(--border);
+}
+
+.cf-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+.cf-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+.cf-field {}
+.cf-label {
+  font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.06em;
+  color:var(--grey); display:block; margin-bottom:5px;
+}
+.cf-input, .cf-select {
+  width:100%; border:2px solid var(--border); border-radius:var(--radius-sm);
+  padding:9px 12px; font-family:'Nunito',sans-serif; font-size:13px; color:var(--navy);
+  background:var(--white); outline:none; transition:border-color 0.2s;
+}
+.cf-input:focus, .cf-select:focus { border-color:var(--teal); }
+.cf-input.error { border-color:var(--red); }
+.cf-input::placeholder { color:#C4CAD4; }
+
+/* Shipping toggle */
+.shipping-toggle {
+  display: flex; gap: 0; border: 2px solid var(--border); border-radius: var(--radius-sm);
+  overflow: hidden; width: 100%;
+}
+.shipping-opt {
+  flex: 1; padding: 9px 8px; text-align: center; font-size:12px; font-weight:700;
+  cursor: pointer; transition: all 0.18s; color: var(--grey); background: var(--white);
+  border: none; font-family: 'Nunito', sans-serif;
+}
+.shipping-opt.active { background: var(--teal); color: white; }
+
+/* Pricing inputs */
+.pricing-section { margin-bottom:12px; }
+.pricing-hint { font-size:11px; color:var(--grey); margin-top:6px; line-height:1.5; }
+.shipping-flag {
+  background: var(--amber-light); border: 1px solid #FCD34D;
+  border-radius: var(--radius-sm); padding: 10px 14px;
+  font-size:12px; color:#92400E; line-height:1.5; margin-bottom:12px;
+  display: none;
+}
+.shipping-flag.show { display: block; }
+
+/* Action buttons */
+.action-row {
+  display: flex; gap: 10px; margin-top: 4px;
+}
+.btn-approve {
+  flex: 1; padding:13px; background:var(--teal); color:white; border:none;
+  border-radius:var(--radius-sm); font-family:'Nunito',sans-serif; font-size:13px;
+  font-weight:700; cursor:pointer; transition:all 0.2s;
+  box-shadow: 0 3px 10px rgba(61,140,132,0.3);
+}
+.btn-approve:hover { background:var(--teal-dark); transform:translateY(-1px); }
+.btn-reject {
+  padding:13px 20px; background:var(--white); color:var(--red); border:2px solid var(--red);
+  border-radius:var(--radius-sm); font-family:'Nunito',sans-serif; font-size:13px;
+  font-weight:700; cursor:pointer; transition:all 0.2s;
+}
+.btn-reject:hover { background:var(--red-light); }
+
+/* Reject modal */
+.reject-section {
+  display: none; background: var(--red-light); border: 2px solid var(--red);
+  border-radius: var(--radius-sm); padding: 16px; margin-bottom: 12px;
+}
+.reject-section.show { display: block; }
+.reject-title { font-size:12px; font-weight:800; color:var(--red); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:10px; }
+.reject-reasons { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px; }
+.reject-reason-btn {
+  padding:5px 12px; border:1px solid rgba(239,68,68,0.3); background:white;
+  border-radius:20px; font-size:11px; font-weight:700; color:#991B1B; cursor:pointer;
+  transition:all 0.15s; font-family:'Nunito',sans-serif;
+}
+.reject-reason-btn.selected { background:var(--red); color:white; border-color:var(--red); }
+.reject-note { width:100%; border:1px solid rgba(239,68,68,0.3); border-radius:var(--radius-sm); padding:8px 10px; font-family:'Nunito',sans-serif; font-size:12px; color:var(--navy); outline:none; margin-bottom:10px; resize:none; height:60px; }
+.reject-note:focus { border-color:var(--red); }
+.btn-confirm-reject {
+  padding:10px 20px; background:var(--red); color:white; border:none;
+  border-radius:var(--radius-sm); font-family:'Nunito',sans-serif; font-size:12px;
+  font-weight:700; cursor:pointer; transition:all 0.2s;
+}
+.btn-confirm-reject:hover { background:#DC2626; }
+
+/* Status banners on confirmed/rejected cards */
+.status-banner {
+  padding: 12px 22px; font-size:12px; font-weight:700;
+  display: flex; align-items: center; gap: 8px;
+}
+.status-banner.approved { background:var(--green-light); color:#065F46; border-top:1px solid #A7F3D0; }
+.status-banner.rejected { background:var(--red-light); color:#991B1B; border-top:1px solid #FECACA; }
+
+/* ── LOADING ── */
+.loading { text-align:center; padding:60px; color:var(--grey); }
+.loading-spinner {
+  width:36px; height:36px; border:3px solid var(--border); border-top-color:var(--teal);
+  border-radius:50%; animation:spin 0.8s linear infinite; margin:0 auto 16px;
+}
+@keyframes spin { to { transform:rotate(360deg); } }
+
+/* ── TOAST ── */
+.toast {
+  position:fixed; bottom:28px; right:28px; z-index:999;
+  padding:14px 20px; border-radius:var(--radius-sm); font-size:13px; font-weight:700;
+  box-shadow:var(--shadow-md); transform:translateY(80px); opacity:0;
+  transition:all 0.3s; display:flex; align-items:center; gap:8px; max-width:340px;
+}
+.toast.show { transform:translateY(0); opacity:1; }
+.toast.success { background:var(--green); color:white; }
+.toast.error { background:var(--red); color:white; }
+.toast.info { background:var(--navy); color:white; }
+
+@media (max-width:900px) {
+  .main { padding:20px 16px; }
+  .card-body-grid { grid-template-columns:1fr 1fr; }
+  .cf-row-3 { grid-template-columns:1fr 1fr; }
+  header { padding:0 16px; }
+  .tabs { padding:0 16px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <img class="header-logo"
+         src="https://www.macarooz.com/cdn/shop/files/New_Macarooz_Logo_Adjusted_2000x.svg?v=1724945549"
+         alt="Macarooz"
+         onerror="this.style.display='none';document.querySelector('.header-logo-fallback').style.display='block'">
+    <span class="header-logo-fallback">Macaroo<span>z</span></span>
+    <div class="header-divider"></div>
+    <div class="header-title">Sales Queue</div>
+  </div>
+  <div class="header-right">
+    <div class="queue-counts">
+      <span class="count-pill pending" id="countPending">0 pending</span>
+      <span class="count-pill approved" id="countApproved">0 approved</span>
+      <span class="count-pill rejected" id="countRejected">0 rejected</span>
+    </div>
+  </div>
+</header>
+
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('pending')" id="tab-pending">
+    Pending <span class="tab-badge" id="badge-pending">0</span>
+  </div>
+  <div class="tab" onclick="switchTab('approved')" id="tab-approved">
+    Approved <span class="tab-badge" id="badge-approved">0</span>
+  </div>
+  <div class="tab" onclick="switchTab('rejected')" id="tab-rejected">
+    Rejected <span class="tab-badge" id="badge-rejected">0</span>
+  </div>
+</div>
+
+<div class="main">
+  <div id="orderList"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════════════════
+// CONFIG — replace with your Apps Script endpoint URL once deployed
+// ══════════════════════════════════════════════════════════
+const ENDPOINT = 'YOUR_APPS_SCRIPT_URL_HERE';
+
+let currentTab = 'pending';
+let allOrders = [];
+
+// ── SAMPLE DATA so the UI is usable before the backend is wired ──
+const SAMPLE_ORDERS = [
+  {
+    referenceNumber: 'MRZ-84729',
+    portalSource: 'portal-a',
+    submittedAt: new Date(Date.now() - 2*60*60*1000).toISOString(),
+    status: 'pending',
+    company: 'River Walk Coffee',
+    contactName: 'Maria Gonzalez',
+    contactEmail: 'maria@riverwalkcoffee.com',
+    phone: '(210) 555-0142',
+    shippingAddress: { street: '123 River Walk Blvd', city: 'San Antonio', state: 'TX', zip: '78205' },
+    requestedArrivalDate: '2026-04-18',
+    newCustomer: 'No',
+    items: [
+      { flavorName:'Birthday Cake', productType:'Mac Pop', coloring:'Natural', cases:4, units:40 },
+      { flavorName:'Strawberry', productType:'Mac Pop', coloring:'Natural', cases:2, units:20 },
+      { flavorName:'Red Velvet', productType:'Mac Pop', coloring:'Natural', cases:2, units:20 },
+    ],
+    totalCases: 8,
+    productDetail: '4 cases Natural Birthday Cake Pop / 2 cases Natural Strawberry Pop / 2 cases Natural Red Velvet Pop',
+    comments: 'Please include freeze upon arrival stickers.',
+  },
+  {
+    referenceNumber: 'MRZ-91034',
+    portalSource: 'portal-a',
+    submittedAt: new Date(Date.now() - 5*60*60*1000).toISOString(),
+    status: 'pending',
+    company: 'Piccolo Coffee',
+    contactName: 'James Park',
+    contactEmail: 'james@piccolocoffee.com',
+    phone: '(713) 555-0287',
+    shippingAddress: { street: '4501 Montrose Blvd', city: 'Houston', state: 'TX', zip: '77006' },
+    requestedArrivalDate: '2026-04-22',
+    newCustomer: 'Yes',
+    items: [
+      { flavorName:'Cookies & Cream', productType:'Mac Pop', coloring:'Natural', cases:4, units:40 },
+      { flavorName:'Red Velvet', productType:'Mac Pop', coloring:'Natural', cases:4, units:40 },
+      { flavorName:'Vanilla', productType:'Macaron', coloring:'Natural', cases:4, units:96 },
+      { flavorName:'Strawberry', productType:'Macaron', coloring:'Natural', cases:4, units:96 },
+    ],
+    totalCases: 16,
+    productDetail: '4 cases Cookies & Cream Pop / 4 cases Red Velvet Pop / 4 cases Vanilla Macaron / 4 cases Strawberry Macaron',
+    comments: '',
+  },
+];
+
+// ── INIT ──
+function init() {
+  allOrders = SAMPLE_ORDERS.map(o => ({...o}));
+  // Try to fetch real orders from backend
+  // fetchOrders();
+  render();
+}
+
+// ── TAB SWITCHING ──
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(`tab-${tab}`).classList.add('active');
+  render();
+}
+
+// ── RENDER ──
+function render() {
+  const filtered = allOrders.filter(o => o.status === currentTab);
+  const pending = allOrders.filter(o => o.status === 'pending').length;
+  const approved = allOrders.filter(o => o.status === 'approved').length;
+  const rejected = allOrders.filter(o => o.status === 'rejected').length;
+
+  document.getElementById('countPending').textContent = `${pending} pending`;
+  document.getElementById('countApproved').textContent = `${approved} approved`;
+  document.getElementById('countRejected').textContent = `${rejected} rejected`;
+  document.getElementById('badge-pending').textContent = pending;
+  document.getElementById('badge-approved').textContent = approved;
+  document.getElementById('badge-rejected').textContent = rejected;
+
+  const list = document.getElementById('orderList');
+
+  if (filtered.length === 0) {
+    const labels = { pending:'No pending orders', approved:'No approved orders yet', rejected:'No rejected orders' };
+    const subs = { pending:'New orders from the portal will appear here.', approved:'Approved orders have been written to Google Sheets.', rejected:'Rejected orders are stored here for reference.' };
+    list.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">${currentTab==='pending'?'📭':currentTab==='approved'?'✅':'🚫'}</div>
+        <h3>${labels[currentTab]}</h3>
+        <p>${subs[currentTab]}</p>
+      </div>`;
+    return;
+  }
+
+  list.innerHTML = filtered.map(order => buildOrderCard(order)).join('');
+}
+
+// ── BUILD ORDER CARD ──
+function buildOrderCard(order) {
+  const submittedDate = new Date(order.submittedAt);
+  const timeAgo = getTimeAgo(submittedDate);
+  const pops = order.items.filter(i => i.productType === 'Mac Pop');
+  const macs = order.items.filter(i => i.productType === 'Macaron');
+  const isNew = order.newCustomer === 'Yes';
+  const hasComments = order.comments && order.comments.trim();
+
+  const productRows = [
+    ...pops.map(i => `
+      <div class="pb-item">
+        <div>
+          <div class="pb-item-name">${i.flavorName} Pop</div>
+          <div class="pb-item-detail">${i.coloring} · 10-count case · ${i.units} pops</div>
+        </div>
+        <div class="pb-item-qty pop">${i.cases} case${i.cases!==1?'s':''}</div>
+      </div>`),
+    ...macs.map(i => `
+      <div class="pb-item">
+        <div>
+          <div class="pb-item-name">${i.flavorName} Macaron</div>
+          <div class="pb-item-detail">${i.coloring} · 24-count case · ${i.units} macarons</div>
+        </div>
+        <div class="pb-item-qty mac">${i.cases} case${i.cases!==1?'s':''}</div>
+      </div>`),
+  ].join('');
+
+  const statusBanner = order.status === 'approved'
+    ? `<div class="status-banner approved">✓ Approved by ${order.approvedBy || 'Sales'} · Written to Google Sheets · ${order.agreedPricing || ''}</div>`
+    : order.status === 'rejected'
+    ? `<div class="status-banner rejected">✗ Rejected by ${order.rejectedBy || 'Sales'} — ${order.rejectReason || ''}</div>`
+    : '';
+
+  const confirmForm = order.status === 'pending' ? `
+    <div class="confirm-form" id="form-${order.referenceNumber}">
+      <div class="confirm-form-title">Confirm Order Details</div>
+
+      <div class="cf-row">
+        <div class="cf-field">
+          <label class="cf-label">Your Name *</label>
+          <input class="cf-input" id="rep-${order.referenceNumber}" placeholder="Sales rep name" list="rep-list">
+          <datalist id="rep-list">
+            <option value="Kane"><option value="Ashley"><option value="Bryce"><option value="John">
+          </datalist>
+        </div>
+        <div class="cf-field">
+          <label class="cf-label">Shipping</label>
+          <div class="shipping-toggle">
+            <button class="shipping-opt active" id="ship-inc-${order.referenceNumber}"
+              onclick="setShipping('${order.referenceNumber}','included')">Included in price</button>
+            <button class="shipping-opt" id="ship-sep-${order.referenceNumber}"
+              onclick="setShipping('${order.referenceNumber}','separate')">Ship separately</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="shipping-flag" id="shipflag-${order.referenceNumber}">
+        🚚 Shipping cost is separate — Skylar will calculate and add to this order before invoicing.
+      </div>
+
+      <div class="pricing-section">
+        <div class="cf-row-3" id="pricing-${order.referenceNumber}">
+          ${pops.length ? `
+          <div class="cf-field">
+            <label class="cf-label">Price per Pop ($)</label>
+            <input class="cf-input" id="pricepop-${order.referenceNumber}" type="number" step="0.01" min="0" placeholder="e.g. 1.80">
+          </div>` : ''}
+          ${macs.length ? `
+          <div class="cf-field">
+            <label class="cf-label">Price per Macaron ($)</label>
+            <input class="cf-input" id="pricemac-${order.referenceNumber}" type="number" step="0.01" min="0" placeholder="e.g. 1.60">
+          </div>` : ''}
+          <div class="cf-field">
+            <label class="cf-label">Payment Terms</label>
+            <select class="cf-select" id="terms-${order.referenceNumber}">
+              <option value="">Select...</option>
+              <option value="Due on Receipt">Due on Receipt</option>
+              <option value="Net 15">Net 15</option>
+              <option value="Net 30">Net 30</option>
+              <option value="Net 75">Net 75</option>
+            </select>
+          </div>
+        </div>
+        <div class="pricing-hint" id="pricinghint-${order.referenceNumber}">
+          Total will be calculated automatically from price × units.
+        </div>
+      </div>
+
+      <div class="cf-field" style="margin-bottom:14px">
+        <label class="cf-label">Internal Notes (optional)</label>
+        <input class="cf-input" id="notes-${order.referenceNumber}" placeholder="Any notes for Skylar or production...">
+      </div>
+
+      <div class="reject-section" id="reject-${order.referenceNumber}">
+        <div class="reject-title">Reason for Rejection</div>
+        <div class="reject-reasons">
+          ${['Not a real customer','Unpaid invoices','Order too unusual','Out of our scope','Duplicate order','Other'].map(r =>
+            `<button class="reject-reason-btn" onclick="selectRejectReason('${order.referenceNumber}',this,'${r}')">${r}</button>`
+          ).join('')}
+        </div>
+        <textarea class="reject-note" id="rejectnote-${order.referenceNumber}" placeholder="Additional details (optional)..."></textarea>
+        <button class="btn-confirm-reject" onclick="confirmReject('${order.referenceNumber}')">Confirm Rejection</button>
+      </div>
+
+      <div class="action-row">
+        <button class="btn-approve" onclick="approveOrder('${order.referenceNumber}')">✓ Approve &amp; Send to Sheets</button>
+        <button class="btn-reject" onclick="toggleReject('${order.referenceNumber}')">✗ Reject</button>
+      </div>
+    </div>` : '';
+
+  return `
+    <div class="order-card status-${order.status}" id="card-${order.referenceNumber}">
+      <div class="card-header" onclick="toggleCard('${order.referenceNumber}')">
+        <div class="status-dot ${order.status}"></div>
+        <div>
+          <div class="card-company">${order.company} ${isNew ? '<span style="font-size:10px;background:#FEF3C7;color:#92400E;padding:2px 7px;border-radius:10px;font-weight:700;vertical-align:middle;">NEW</span>' : ''}</div>
+          <div class="card-contact">${order.contactName} · ${order.contactEmail} · ${order.phone}</div>
+        </div>
+        <div class="card-meta">
+          <span class="card-cases">${order.totalCases} cases</span>
+          <span class="card-arrival">Arrive by ${formatDate(order.requestedArrivalDate)}</span>
+          <span class="card-ref">${order.referenceNumber}</span>
+          <span class="card-date">${timeAgo}</span>
+          <span class="card-chevron">▾</span>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <div class="card-body-grid">
+          <div class="info-block">
+            <div class="info-label">Shipping To</div>
+            <div class="info-value">
+              ${order.shippingAddress.street}<br>
+              ${order.shippingAddress.city}, ${order.shippingAddress.state} ${order.shippingAddress.zip}
+            </div>
+          </div>
+          <div class="info-block">
+            <div class="info-label">Requested Arrival</div>
+            <div class="info-value">${formatDate(order.requestedArrivalDate)}</div>
+          </div>
+          <div class="info-block">
+            <div class="info-label">Customer Status</div>
+            <div class="info-value">${order.newCustomer === 'Yes' ? '🆕 New Customer' : 'Existing Account'}</div>
+          </div>
+        </div>
+
+        <div class="product-breakdown">
+          <div class="pb-title">Order Breakdown — ${order.totalCases} total cases</div>
+          ${productRows}
+        </div>
+
+        ${hasComments ? `
+        <div class="comments-box">
+          <div class="comments-box-label">💬 Customer Comments</div>
+          ${order.comments}
+        </div>` : ''}
+
+        ${confirmForm}
+        ${statusBanner}
+      </div>
+    </div>`;
+}
+
+// ── TOGGLE CARD EXPAND ──
+function toggleCard(ref) {
+  const card = document.getElementById(`card-${ref}`);
+  card.classList.toggle('expanded');
+}
+
+// ── SHIPPING MODE ──
+function setShipping(ref, mode) {
+  const incBtn = document.getElementById(`ship-inc-${ref}`);
+  const sepBtn = document.getElementById(`ship-sep-${ref}`);
+  const flag = document.getElementById(`shipflag-${ref}`);
+  if (mode === 'included') {
+    incBtn.classList.add('active'); sepBtn.classList.remove('active');
+    flag.classList.remove('show');
+  } else {
+    sepBtn.classList.add('active'); incBtn.classList.remove('active');
+    flag.classList.add('show');
+  }
+  // Store on order object
+  const order = allOrders.find(o => o.referenceNumber === ref);
+  if (order) order._shippingMode = mode;
+}
+
+// ── REJECT FLOW ──
+function toggleReject(ref) {
+  const section = document.getElementById(`reject-${ref}`);
+  section.classList.toggle('show');
+}
+function selectRejectReason(ref, btn, reason) {
+  document.querySelectorAll(`#reject-${ref} .reject-reason-btn`).forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  const order = allOrders.find(o => o.referenceNumber === ref);
+  if (order) order._rejectReason = reason;
+}
+function confirmReject(ref) {
+  const order = allOrders.find(o => o.referenceNumber === ref);
+  if (!order) return;
+  const reason = order._rejectReason || '';
+  const note = document.getElementById(`rejectnote-${ref}`).value.trim();
+  const rep = document.getElementById(`rep-${ref}`).value.trim();
+  if (!reason) { showToast('Please select a reason for rejection.', 'error'); return; }
+  order.status = 'rejected';
+  order.rejectReason = note ? `${reason} — ${note}` : reason;
+  order.rejectedBy = rep || 'Sales';
+  order.rejectedAt = new Date().toISOString();
+  // sendToSheets(order);  // Will be wired when endpoint is ready
+  showToast(`Order ${ref} rejected.`, 'info');
+  render();
+}
+
+// ── APPROVE ──
+function approveOrder(ref) {
+  const order = allOrders.find(o => o.referenceNumber === ref);
+  if (!order) return;
+
+  const rep = document.getElementById(`rep-${ref}`).value.trim();
+  const pricePop = document.getElementById(`pricepop-${ref}`) ? parseFloat(document.getElementById(`pricepop-${ref}`).value) : null;
+  const priceMac = document.getElementById(`pricemac-${ref}`) ? parseFloat(document.getElementById(`pricemac-${ref}`).value) : null;
+  const terms = document.getElementById(`terms-${ref}`).value;
+  const notes = document.getElementById(`notes-${ref}`).value.trim();
+  const hasPops = order.items.some(i => i.productType === 'Mac Pop');
+  const hasMacs = order.items.some(i => i.productType === 'Macaron');
+
+  // Validate
+  if (!rep) { document.getElementById(`rep-${ref}`).classList.add('error'); showToast('Please enter your name.', 'error'); return; }
+  if (hasPops && (!pricePop || isNaN(pricePop))) { showToast('Please enter price per pop.', 'error'); return; }
+  if (hasMacs && (!priceMac || isNaN(priceMac))) { showToast('Please enter price per macaron.', 'error'); return; }
+  if (!terms) { showToast('Please select payment terms.', 'error'); return; }
+
+  // Calculate totals
+  const shippingMode = order._shippingMode || 'included';
+  const popUnits = order.items.filter(i=>i.productType==='Mac Pop').reduce((s,i)=>s+i.units,0);
+  const macUnits = order.items.filter(i=>i.productType==='Macaron').reduce((s,i)=>s+i.units,0);
+  const productTotal = ((pricePop||0)*popUnits) + ((priceMac||0)*macUnits);
+
+  const pricingStr = [
+    hasPops && pricePop ? `$${pricePop.toFixed(2)}/pop` : null,
+    hasMacs && priceMac ? `$${priceMac.toFixed(2)}/macaron` : null,
+    shippingMode === 'separate' ? 'shipping separate' : 'shipping included',
+  ].filter(Boolean).join(' · ');
+
+  // Write to order
+  order.status = 'approved';
+  order.approvedBy = rep;
+  order.approvedAt = new Date().toISOString();
+  order.rep = rep;
+  order.pricePop = pricePop;
+  order.priceMac = priceMac;
+  order.productTotal = productTotal;
+  order.shippingIncluded = shippingMode === 'included';
+  order.paymentTerms = terms;
+  order.internalNotes = notes;
+  order.agreedPricing = pricingStr;
+
+  // Send to Sheets
+  sendToSheets(order);
+}
+
+// ── SEND TO SHEETS ──
+async function sendToSheets(order) {
+  showToast('Sending to Google Sheets...', 'info');
+
+  if (ENDPOINT === 'YOUR_APPS_SCRIPT_URL_HERE') {
+    // Demo mode — just update locally
+    setTimeout(() => {
+      showToast(`✓ Order ${order.referenceNumber} ${order.status === 'approved' ? 'approved and written to Sheets!' : 'rejected.'}`, 'success');
+      render();
+    }, 900);
+    return;
+  }
+
+  try {
+    const res = await fetch(ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: order.status === 'approved' ? 'approve' : 'reject', order }),
+    });
+    const data = await res.json();
+    if (data.success) {
+      showToast(`✓ Order ${order.referenceNumber} written to Google Sheets!`, 'success');
+      render();
+    } else {
+      showToast('Error writing to Sheets. Check the console.', 'error');
+      console.error(data);
+    }
+  } catch (err) {
+    showToast('Network error. Check the console.', 'error');
+    console.error(err);
+  }
+}
+
+// ── UTILS ──
+function formatDate(dateStr) {
+  if (!dateStr) return '—';
+  const d = new Date(dateStr + 'T12:00:00');
+  return d.toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+}
+function getTimeAgo(date) {
+  const mins = Math.floor((Date.now() - date) / 60000);
+  if (mins < 60) return `${mins}m ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs}h ago`;
+  return `${Math.floor(hrs/24)}d ago`;
+}
+function showToast(msg, type='info') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `toast ${type} show`;
+  setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+init();
+</script>
+</body>
+</html>
