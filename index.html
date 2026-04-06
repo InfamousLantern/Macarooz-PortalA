@@ -728,12 +728,12 @@ function renderFlavors() {
         <div class="flavor-desc">10-count case</div>
         ${!flavor.available ? '<div class="unavailable-note">Unavailable</div>' : ''}
         <div class="qty-controls" onclick="event.stopPropagation()">
-          <button class="qty-btn" onclick="changeQty('${flavor.id}', -8)">−</button>
+          <button class="qty-btn" onclick="changeQty('${flavor.id}', -1)">−</button>
           <div class="qty-info">
             <span class="qty-number">${cases}</span>
             <span class="qty-label">cases</span>
           </div>
-          <button class="qty-btn" onclick="changeQty('${flavor.id}', 8)">+</button>
+          <button class="qty-btn" onclick="changeQty('${flavor.id}', 1)">+</button>
         </div>
       </div>`;
   }).join('');
