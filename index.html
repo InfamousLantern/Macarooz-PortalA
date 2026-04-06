@@ -25,449 +25,214 @@
   --radius: 12px;
   --radius-sm: 8px;
 }
- 
 * { box-sizing: border-box; margin: 0; padding: 0; }
- 
-body {
-  background: var(--off-white);
-  color: var(--navy);
-  font-family: 'Nunito', sans-serif;
-  min-height: 100vh;
-}
+body { background: var(--off-white); color: var(--navy); font-family: 'Nunito', sans-serif; min-height: 100vh; }
  
 /* ── HEADER ── */
 header {
-  background: var(--white);
-  border-bottom: 1px solid var(--border);
-  padding: 0 48px;
-  height: 72px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  box-shadow: var(--shadow-sm);
+  background: var(--white); border-bottom: 1px solid var(--border);
+  padding: 0 48px; height: 72px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 100; box-shadow: var(--shadow-sm);
 }
+.logo img { height: 44px; width: auto; display: block; }
+.logo-fallback { font-family:'Playfair Display',serif; font-size:22px; font-weight:700; color:var(--teal-dark); display:none; }
+.logo-fallback span { color:var(--pink); }
+.header-badge { background:var(--teal-light); color:var(--teal-dark); font-size:12px; font-weight:700; padding:6px 16px; border-radius:20px; opacity:0; transition:opacity 0.3s; }
+.header-badge.visible { opacity:1; }
  
-.logo img {
-  height: 44px;
-  width: auto;
-  display: block;
-}
- 
-.header-badge {
-  background: var(--teal-light);
-  color: var(--teal-dark);
-  font-size: 12px;
-  font-weight: 700;
-  padding: 6px 16px;
-  border-radius: 20px;
-  letter-spacing: 0.02em;
-  opacity: 0;
-  transition: opacity 0.3s;
-}
-.header-badge.visible { opacity: 1; }
- 
-/* ── HERO BANNER ── */
+/* ── HERO ── */
 .hero {
   background: linear-gradient(135deg, var(--teal-dark) 0%, var(--teal) 60%, #4AABA3 100%);
-  padding: 60px 48px;
-  position: relative;
-  overflow: hidden;
+  padding: 60px 48px; position: relative; overflow: hidden;
 }
-.hero::before {
-  content: '';
-  position: absolute;
-  top: -80px; right: -80px;
-  width: 320px; height: 320px;
-  background: var(--pink);
-  border-radius: 50%;
-  opacity: 0.15;
-}
-.hero::after {
-  content: '';
-  position: absolute;
-  bottom: -60px; left: 15%;
-  width: 220px; height: 220px;
-  background: var(--teal-mid);
-  border-radius: 50%;
-  opacity: 0.2;
-}
-.hero-inner { position: relative; z-index: 1; max-width: 640px; }
-.hero-pill {
-  display: inline-block;
-  background: rgba(255,255,255,0.15);
-  color: rgba(255,255,255,0.9);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  padding: 5px 16px;
-  border-radius: 20px;
-  margin-bottom: 20px;
-  border: 1px solid rgba(255,255,255,0.2);
-}
-.hero h1 {
-  font-family: 'Playfair Display', serif;
-  font-size: clamp(36px, 5vw, 58px);
-  font-weight: 700;
-  color: var(--white);
-  line-height: 1.1;
-  margin-bottom: 16px;
-}
-.hero h1 em {
-  font-style: italic;
-  color: #FFD4E5;
-}
-.hero-sub {
-  font-size: 14px;
-  color: rgba(255,255,255,0.72);
-  line-height: 1.75;
-  max-width: 500px;
-}
+.hero::before { content:''; position:absolute; top:-80px; right:-80px; width:320px; height:320px; background:var(--pink); border-radius:50%; opacity:0.15; }
+.hero::after { content:''; position:absolute; bottom:-60px; left:15%; width:220px; height:220px; background:var(--teal-mid); border-radius:50%; opacity:0.2; }
+.hero-inner { position:relative; z-index:1; max-width:640px; }
+.hero-pill { display:inline-block; background:rgba(255,255,255,0.15); color:rgba(255,255,255,0.9); font-size:11px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; padding:5px 16px; border-radius:20px; margin-bottom:20px; border:1px solid rgba(255,255,255,0.2); }
+.hero h1 { font-family:'Playfair Display',serif; font-size:clamp(36px,5vw,58px); font-weight:700; color:var(--white); line-height:1.1; margin-bottom:16px; }
+.hero h1 em { font-style:italic; color:#FFD4E5; }
+.hero-sub { font-size:14px; color:rgba(255,255,255,0.72); line-height:1.75; max-width:500px; }
  
-/* ── MAIN LAYOUT ── */
-.page-body {
-  display: grid;
-  grid-template-columns: 1fr 420px;
-  gap: 0;
-  max-width: 1280px;
-  margin: 0 auto;
-}
+/* ── LAYOUT ── */
+.page-body { display:grid; grid-template-columns:1fr 420px; max-width:1280px; margin:0 auto; }
+.builder { padding:40px 48px; }
  
-/* ── BUILDER PANEL ── */
-.builder {
-  padding: 40px 48px;
+/* ── PRODUCT SECTION DIVIDER ── */
+.product-section {
+  margin-bottom: 48px;
 }
- 
-.section-title {
-  font-family: 'Playfair Display', serif;
+.product-section-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+.product-section-icon {
+  width: 44px; height: 44px;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
   font-size: 22px;
-  font-weight: 600;
-  color: var(--navy);
-  margin-bottom: 6px;
+  flex-shrink: 0;
 }
-.section-sub {
-  font-size: 13px;
-  color: var(--grey);
-  margin-bottom: 24px;
-  line-height: 1.6;
+.pops-icon { background: var(--teal-light); }
+.macs-icon { background: var(--pink-light); }
+ 
+.product-section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 24px; font-weight: 700; color: var(--navy);
 }
-.section-divider {
-  height: 1px;
-  background: var(--border);
-  margin: 36px 0;
+.product-section-tag {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; padding: 3px 10px; border-radius: 20px;
+}
+.pops-tag { background: var(--teal-light); color: var(--teal-dark); }
+.macs-tag { background: var(--pink-light); color: #B03060; }
+ 
+.product-section-sub { font-size: 13px; color: var(--grey); margin-bottom: 20px; line-height: 1.6; padding-left: 60px; }
+ 
+.section-rule {
+  height: 2px;
+  background: linear-gradient(to right, var(--border), transparent);
+  margin: 40px 0;
 }
  
 /* ── FLAVOR GRID ── */
-.flavor-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-  gap: 12px;
-  margin-bottom: 8px;
-}
+.flavor-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(155px,1fr)); gap:12px; }
  
 .flavor-card {
-  background: var(--white);
-  border: 2px solid var(--border);
-  border-radius: var(--radius);
-  padding: 18px 16px 14px;
-  cursor: pointer;
-  transition: all 0.2s;
-  position: relative;
-  user-select: none;
-  box-shadow: var(--shadow-sm);
+  background: var(--white); border:2px solid var(--border); border-radius:var(--radius);
+  padding:16px 14px 12px; cursor:pointer; transition:all 0.2s; position:relative;
+  user-select:none; box-shadow:var(--shadow-sm);
 }
-.flavor-card:hover:not(.unavailable) {
-  border-color: var(--teal-mid);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
-}
-.flavor-card.selected {
-  border-color: var(--teal);
-  background: var(--teal-light);
-  box-shadow: 0 0 0 1px var(--teal), var(--shadow-md);
-}
-.flavor-card.unavailable {
-  opacity: 0.38;
-  cursor: not-allowed;
-  background: var(--grey-light);
-}
-.seasonal-badge {
-  position: absolute;
-  top: 8px; right: 8px;
-  background: #FFF3E0;
-  color: #E67E22;
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  padding: 2px 7px;
-  border-radius: 10px;
-}
-.check-mark {
-  position: absolute;
-  top: 10px; right: 10px;
-  width: 22px; height: 22px;
-  background: var(--teal);
-  border-radius: 50%;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-size: 12px;
-  font-weight: 700;
-}
-.flavor-card.selected .check-mark { display: flex; }
-.flavor-card.selected .seasonal-badge { display: none; }
+.flavor-card:hover:not(.unavailable) { transform:translateY(-2px); box-shadow:var(--shadow-md); }
+.flavor-card.unavailable { opacity:0.38; cursor:not-allowed; background:var(--grey-light); }
  
-.flavor-emoji { font-size: 28px; margin-bottom: 8px; display: block; }
-.flavor-name {
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--navy);
-  margin-bottom: 3px;
-  line-height: 1.3;
-}
-.flavor-desc { font-size: 11px; color: var(--grey); }
-.unavailable-note { font-size: 10px; color: var(--pink); margin-top: 4px; font-weight: 600; }
+/* Pop cards — teal selection */
+.pops-grid .flavor-card:hover:not(.unavailable) { border-color:var(--teal-mid); }
+.pops-grid .flavor-card.selected { border-color:var(--teal); background:var(--teal-light); box-shadow:0 0 0 1px var(--teal), var(--shadow-md); }
+.pops-grid .check-mark { background:var(--teal); }
+.pops-grid .qty-btn { border-color:var(--teal); color:var(--teal); }
+.pops-grid .qty-btn:hover { background:var(--teal); color:white; }
+.pops-grid .qty-controls { border-top-color:rgba(61,140,132,0.2); }
  
-.qty-controls {
-  display: none;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 12px;
-  padding-top: 10px;
-  border-top: 1px solid rgba(61,140,132,0.2);
-}
-.flavor-card.selected .qty-controls { display: flex; }
+/* Mac cards — pink selection */
+.macs-grid .flavor-card:hover:not(.unavailable) { border-color:var(--pink-mid); }
+.macs-grid .flavor-card.selected { border-color:var(--pink); background:var(--pink-light); box-shadow:0 0 0 1px var(--pink), var(--shadow-md); }
+.macs-grid .check-mark { background:var(--pink); }
+.macs-grid .qty-btn { border-color:var(--pink); color:var(--pink); }
+.macs-grid .qty-btn:hover { background:var(--pink); color:white; }
+.macs-grid .qty-controls { border-top-color:rgba(232,67,122,0.2); }
  
-.qty-btn {
-  width: 28px; height: 28px;
-  border: 2px solid var(--teal);
-  background: white;
-  border-radius: 8px;
-  font-size: 16px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--teal);
-  font-weight: 700;
-  transition: all 0.15s;
-  font-family: 'Nunito', sans-serif;
+.seasonal-badge { position:absolute; top:8px; right:8px; background:#FFF3E0; color:#E67E22; font-size:9px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; padding:2px 7px; border-radius:10px; }
+.check-mark { position:absolute; top:10px; right:10px; width:22px; height:22px; border-radius:50%; display:none; align-items:center; justify-content:center; color:white; font-size:12px; font-weight:700; }
+.flavor-card.selected .check-mark { display:flex; }
+.flavor-card.selected .seasonal-badge { display:none; }
+ 
+/* Image area */
+.flavor-img {
+  width: 100%; height: 90px;
+  border-radius: 8px; margin-bottom: 10px;
+  object-fit: cover; background: var(--grey-light);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 32px;
+  overflow: hidden;
 }
-.qty-btn:hover { background: var(--teal); color: white; }
-.qty-info { text-align: center; }
-.qty-number { font-size: 16px; font-weight: 700; color: var(--navy); display: block; line-height: 1; }
-.qty-label { font-size: 9px; color: var(--grey); letter-spacing: 0.06em; text-transform: uppercase; }
+.flavor-img img { width:100%; height:100%; object-fit:cover; border-radius:8px; display:block; }
+ 
+.flavor-name { font-size:13px; font-weight:700; color:var(--navy); margin-bottom:2px; line-height:1.3; }
+.flavor-desc { font-size:11px; color:var(--grey); }
+.unavailable-note { font-size:10px; color:var(--pink); margin-top:4px; font-weight:600; }
+ 
+.qty-controls { display:none; align-items:center; justify-content:space-between; margin-top:10px; padding-top:10px; border-top:1px solid; }
+.flavor-card.selected .qty-controls { display:flex; }
+.qty-btn { width:28px; height:28px; border:2px solid; background:white; border-radius:8px; font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-weight:700; transition:all 0.15s; font-family:'Nunito',sans-serif; }
+.qty-info { text-align:center; }
+.qty-number { font-size:16px; font-weight:700; color:var(--navy); display:block; line-height:1; }
+.qty-label { font-size:9px; color:var(--grey); letter-spacing:0.06em; text-transform:uppercase; }
  
 /* ── COMMENTS ── */
-.comments-field {
-  width: 100%;
-  border: 2px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 14px 16px;
-  font-family: 'Nunito', sans-serif;
-  font-size: 13px;
-  color: var(--navy);
-  background: var(--white);
-  resize: vertical;
-  min-height: 100px;
-  outline: none;
-  transition: border-color 0.2s;
-  line-height: 1.6;
-}
-.comments-field:focus { border-color: var(--teal); }
-.comments-field::placeholder { color: #B0BEC4; }
+.section-divider { height:1px; background:var(--border); margin:36px 0; }
+.section-title { font-family:'Playfair Display',serif; font-size:20px; font-weight:600; color:var(--navy); margin-bottom:6px; }
+.section-sub { font-size:13px; color:var(--grey); margin-bottom:16px; line-height:1.6; }
+.comments-field { width:100%; border:2px solid var(--border); border-radius:var(--radius-sm); padding:14px 16px; font-family:'Nunito',sans-serif; font-size:13px; color:var(--navy); background:var(--white); resize:vertical; min-height:90px; outline:none; transition:border-color 0.2s; line-height:1.6; }
+.comments-field:focus { border-color:var(--teal); }
+.comments-field::placeholder { color:#B0BEC4; }
  
-/* ── SUMMARY SIDEBAR ── */
-.summary {
-  background: var(--white);
-  border-left: 1px solid var(--border);
-  padding: 40px 32px;
-  position: sticky;
-  top: 72px;
-  height: calc(100vh - 72px);
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-}
+/* ── SUMMARY ── */
+.summary { background:var(--white); border-left:1px solid var(--border); padding:40px 32px; position:sticky; top:72px; height:calc(100vh - 72px); overflow-y:auto; display:flex; flex-direction:column; }
+.summary-title { font-family:'Playfair Display',serif; font-size:22px; font-weight:700; color:var(--navy); margin-bottom:24px; padding-bottom:18px; border-bottom:2px solid var(--border); }
  
-.summary-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 22px;
-  font-weight: 700;
-  color: var(--navy);
-  margin-bottom: 24px;
-  padding-bottom: 18px;
-  border-bottom: 2px solid var(--border);
-}
+.summary-empty { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:32px 16px; color:var(--grey); }
+.summary-empty .empty-icon { font-size:48px; margin-bottom:16px; opacity:0.45; }
+.summary-empty strong { color:var(--navy); display:block; margin-bottom:6px; font-size:15px; }
+.summary-empty p { font-size:13px; line-height:1.7; }
+.min-badge { margin-top:14px; font-size:12px; background:var(--teal-light); color:var(--teal-dark); padding:8px 16px; border-radius:20px; font-weight:700; }
  
-.summary-empty {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 32px 16px;
-  color: var(--grey);
+/* Summary category headers */
+.summary-category {
+  font-size:10px; font-weight:800; letter-spacing:0.12em; text-transform:uppercase;
+  padding:6px 10px; border-radius:6px; margin-bottom:4px; margin-top:12px;
 }
-.summary-empty .empty-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.45; }
-.summary-empty strong { color: var(--navy); display: block; margin-bottom: 6px; font-size: 15px; }
-.summary-empty p { font-size: 13px; line-height: 1.7; }
-.min-badge {
-  margin-top: 14px;
-  font-size: 12px;
-  background: var(--teal-light);
-  color: var(--teal-dark);
-  padding: 8px 16px;
-  border-radius: 20px;
-  font-weight: 700;
-}
+.summary-category:first-child { margin-top:0; }
+.summary-category.pops { background:var(--teal-light); color:var(--teal-dark); }
+.summary-category.macs { background:var(--pink-light); color:#B03060; }
  
-.summary-items { margin-bottom: 20px; }
-.summary-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 11px 0;
-  border-bottom: 1px solid var(--border);
-  animation: slideIn 0.2s ease;
-}
-@keyframes slideIn { from { opacity:0; transform:translateX(8px); } to { opacity:1; transform:none; } }
-.si-name { font-size: 13px; font-weight: 600; color: var(--navy); }
-.si-detail { font-size: 11px; color: var(--grey); margin-top: 1px; }
-.si-cases {
-  background: var(--teal-light);
-  color: var(--teal-dark);
-  font-size: 12px;
-  font-weight: 700;
-  padding: 4px 10px;
-  border-radius: 20px;
-  white-space: nowrap;
-}
+.summary-items { margin-bottom:16px; }
+.summary-item { display:flex; justify-content:space-between; align-items:center; padding:9px 0; border-bottom:1px solid var(--border); animation:slideIn 0.2s ease; }
+@keyframes slideIn { from{opacity:0;transform:translateX(8px)} to{opacity:1;transform:none} }
+.si-name { font-size:13px; font-weight:600; color:var(--navy); }
+.si-detail { font-size:11px; color:var(--grey); margin-top:1px; }
+.si-cases { font-size:12px; font-weight:700; padding:4px 10px; border-radius:20px; white-space:nowrap; }
+.si-cases.pop { background:var(--teal-light); color:var(--teal-dark); }
+.si-cases.mac { background:var(--pink-light); color:#B03060; }
  
-.summary-total-card {
-  background: linear-gradient(135deg, var(--teal-dark), var(--teal));
-  border-radius: var(--radius);
-  padding: 20px;
-  margin-bottom: 18px;
-  display: none;
-}
-.stc-label { font-size: 11px; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; }
-.stc-number { font-family: 'Playfair Display', serif; font-size: 42px; font-weight: 700; color: white; line-height: 1; margin-bottom: 2px; }
-.stc-sub { font-size: 12px; color: rgba(255,255,255,0.55); }
+.summary-total-card { background:linear-gradient(135deg,var(--teal-dark),var(--teal)); border-radius:var(--radius); padding:20px; margin-bottom:18px; display:none; }
+.stc-label { font-size:11px; color:rgba(255,255,255,0.6); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:4px; }
+.stc-number { font-family:'Playfair Display',serif; font-size:42px; font-weight:700; color:white; line-height:1; margin-bottom:2px; }
+.stc-sub { font-size:12px; color:rgba(255,255,255,0.55); }
  
-.validation-pill {
-  padding: 10px 14px;
-  border-radius: var(--radius-sm);
-  font-size: 12px;
-  font-weight: 600;
-  margin-bottom: 18px;
-  display: none;
-  line-height: 1.5;
-}
-.validation-pill.error { background: #FFF0F4; color: #D63A6A; border: 1px solid #F5B8CA; display: block; }
-.validation-pill.ok { background: var(--teal-light); color: var(--teal-dark); border: 1px solid var(--teal-mid); display: block; }
+.validation-pill { padding:10px 14px; border-radius:var(--radius-sm); font-size:12px; font-weight:600; margin-bottom:18px; display:none; line-height:1.5; }
+.validation-pill.error { background:#FFF0F4; color:#D63A6A; border:1px solid #F5B8CA; display:block; }
+.validation-pill.ok { background:var(--teal-light); color:var(--teal-dark); border:1px solid var(--teal-mid); display:block; }
  
-/* ── CONTACT FORM ── */
-.contact-title {
-  font-size: 13px; font-weight: 700; color: var(--navy);
-  text-transform: uppercase; letter-spacing: 0.08em;
-  margin-bottom: 14px; padding-top: 4px;
-}
-.form-field { margin-bottom: 12px; }
-.form-label {
-  font-size: 11px; font-weight: 700; color: var(--grey);
-  text-transform: uppercase; letter-spacing: 0.06em;
-  display: block; margin-bottom: 5px;
-}
-.form-input, .form-select {
-  width: 100%;
-  border: 2px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 9px 12px;
-  font-family: 'Nunito', sans-serif;
-  font-size: 13px;
-  color: var(--navy);
-  background: var(--white);
-  outline: none;
-  transition: border-color 0.2s;
-}
-.form-input:focus, .form-select:focus { border-color: var(--teal); }
-.form-input.error { border-color: var(--pink); background: #FFF8FA; }
-.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.form-input::placeholder { color: #C4CAD4; }
+/* ── FORM ── */
+.contact-title { font-size:13px; font-weight:700; color:var(--navy); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:14px; padding-top:4px; }
+.form-field { margin-bottom:12px; }
+.form-label { font-size:11px; font-weight:700; color:var(--grey); text-transform:uppercase; letter-spacing:0.06em; display:block; margin-bottom:5px; }
+.form-input, .form-select { width:100%; border:2px solid var(--border); border-radius:var(--radius-sm); padding:9px 12px; font-family:'Nunito',sans-serif; font-size:13px; color:var(--navy); background:var(--white); outline:none; transition:border-color 0.2s; }
+.form-input:focus, .form-select:focus { border-color:var(--teal); }
+.form-input.error { border-color:var(--pink); background:#FFF8FA; }
+.form-row { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.form-input::placeholder { color:#C4CAD4; }
+.address-group { border:2px solid var(--border); border-radius:var(--radius-sm); overflow:hidden; transition:border-color 0.2s; }
+.address-group:focus-within { border-color:var(--teal); }
+.address-group .form-input { border:none; border-bottom:1px solid var(--border); border-radius:0; }
+.address-row { display:grid; grid-template-columns:1fr 56px 90px; }
+.address-row .form-input { border-left:1px solid var(--border); border-bottom:none; }
+.address-row .form-input:first-child { border-left:none; }
  
-.address-group {
-  border: 2px solid var(--border);
-  border-radius: var(--radius-sm);
-  overflow: hidden;
-  transition: border-color 0.2s;
-}
-.address-group:focus-within { border-color: var(--teal); }
-.address-group .form-input { border: none; border-bottom: 1px solid var(--border); border-radius: 0; }
-.address-group .form-input:last-child, .address-row { border-bottom: none; }
-.address-row { display: grid; grid-template-columns: 1fr 56px 90px; }
-.address-row .form-input { border-left: 1px solid var(--border); border-bottom: none; }
-.address-row .form-input:first-child { border-left: none; }
- 
-/* ── SUBMIT ── */
-.submit-btn {
-  width: 100%;
-  padding: 16px;
-  background: var(--pink);
-  color: white;
-  border: none;
-  border-radius: var(--radius);
-  font-family: 'Nunito', sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  cursor: pointer;
-  transition: all 0.2s;
-  margin-top: 8px;
-  box-shadow: 0 4px 14px rgba(232,67,122,0.3);
-}
-.submit-btn:hover:not(:disabled) {
-  background: #D63470;
-  transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(232,67,122,0.4);
-}
-.submit-btn:disabled { background: #D1D5DB; color: #9CA3AF; cursor: not-allowed; box-shadow: none; transform: none; }
-.submit-note { font-size: 11px; color: var(--grey); text-align: center; margin-top: 10px; line-height: 1.5; }
+.submit-btn { width:100%; padding:16px; background:var(--pink); color:white; border:none; border-radius:var(--radius); font-family:'Nunito',sans-serif; font-size:14px; font-weight:700; letter-spacing:0.04em; cursor:pointer; transition:all 0.2s; margin-top:8px; box-shadow:0 4px 14px rgba(232,67,122,0.3); }
+.submit-btn:hover:not(:disabled) { background:#D63470; transform:translateY(-1px); box-shadow:0 6px 20px rgba(232,67,122,0.4); }
+.submit-btn:disabled { background:#D1D5DB; color:#9CA3AF; cursor:not-allowed; box-shadow:none; transform:none; }
+.submit-note { font-size:11px; color:var(--grey); text-align:center; margin-top:10px; line-height:1.5; }
  
 /* ── SUCCESS ── */
-.success-overlay {
-  display: none; position: fixed; inset: 0;
-  background: var(--off-white); z-index: 300;
-  align-items: center; justify-content: center;
-  flex-direction: column; text-align: center; padding: 48px;
-}
-.success-overlay.show { display: flex; }
-.success-blob {
-  width: 100px; height: 100px;
-  background: var(--teal-light);
-  border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 46px; margin-bottom: 28px;
-  animation: blobPop 0.5s cubic-bezier(0.175,0.885,0.32,1.275);
-}
-@keyframes blobPop { from { transform:scale(0); } to { transform:scale(1); } }
-.success-title { font-family: 'Playfair Display', serif; font-size: 44px; font-weight: 700; color: var(--navy); margin-bottom: 14px; }
-.success-body { font-size: 14px; color: var(--grey); line-height: 1.8; max-width: 420px; margin-bottom: 32px; }
-.ref-card { background: var(--white); border: 2px solid var(--border); border-radius: var(--radius); padding: 20px 36px; box-shadow: var(--shadow-md); }
-.ref-label { font-size: 11px; font-weight: 700; color: var(--grey); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 6px; }
-.ref-number { font-family: 'Playfair Display', serif; font-size: 34px; font-weight: 700; color: var(--teal); letter-spacing: 0.06em; }
+.success-overlay { display:none; position:fixed; inset:0; background:var(--off-white); z-index:300; align-items:center; justify-content:center; flex-direction:column; text-align:center; padding:48px; }
+.success-overlay.show { display:flex; }
+.success-blob { width:100px; height:100px; background:var(--teal-light); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:46px; margin-bottom:28px; animation:blobPop 0.5s cubic-bezier(0.175,0.885,0.32,1.275); }
+@keyframes blobPop { from{transform:scale(0)} to{transform:scale(1)} }
+.success-title { font-family:'Playfair Display',serif; font-size:44px; font-weight:700; color:var(--navy); margin-bottom:14px; }
+.success-body { font-size:14px; color:var(--grey); line-height:1.8; max-width:420px; margin-bottom:32px; }
+.ref-card { background:var(--white); border:2px solid var(--border); border-radius:var(--radius); padding:20px 36px; box-shadow:var(--shadow-md); }
+.ref-label { font-size:11px; font-weight:700; color:var(--grey); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:6px; }
+.ref-number { font-family:'Playfair Display',serif; font-size:34px; font-weight:700; color:var(--teal); letter-spacing:0.06em; }
  
-@media (max-width: 960px) {
-  .page-body { grid-template-columns: 1fr; }
-  .summary { position: static; height: auto; border-left: none; border-top: 1px solid var(--border); }
-  header, .hero, .builder, .summary { padding-left: 24px; padding-right: 24px; }
-  .hero { padding-top: 40px; padding-bottom: 40px; }
+@media (max-width:960px) {
+  .page-body { grid-template-columns:1fr; }
+  .summary { position:static; height:auto; border-left:none; border-top:1px solid var(--border); }
+  header, .hero, .builder, .summary { padding-left:24px; padding-right:24px; }
+  .hero { padding-top:40px; padding-bottom:40px; }
 }
 </style>
 </head>
@@ -477,9 +242,8 @@ header {
   <div class="logo">
     <img src="https://www.macarooz.com/cdn/shop/files/New_Macarooz_Logo_Adjusted_2000x.svg?v=1724945549"
          alt="Macarooz"
-         onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
-    <!-- Fallback if logo doesn't load -->
-    <span style="display:none; font-family:'Playfair Display',serif; font-size:22px; font-weight:700; color:var(--teal-dark);">Macaroo<span style="color:var(--pink)">z</span></span>
+         onerror="this.style.display='none'; document.querySelector('.logo-fallback').style.display='block'">
+    <span class="logo-fallback">Macaroo<span>z</span></span>
   </div>
   <div class="header-badge" id="headerBadge">0 cases selected</div>
 </header>
@@ -488,22 +252,54 @@ header {
   <div class="hero-inner">
     <div class="hero-pill">✦ Wholesale Order Portal</div>
     <h1>Build your <em>perfect</em> order</h1>
-    <p class="hero-sub">Select your flavors and case quantities below. Our team will follow up within 1 business day to confirm pricing and shipping details.</p>
+    <p class="hero-sub">Select your flavors and case quantities below. Mix and match pops and macarons — your total just needs to be at least 8 cases in multiples of 8.</p>
   </div>
 </div>
  
 <div class="page-body">
- 
   <div class="builder">
-    <div class="section-title">Select Your Flavors</div>
-    <p class="section-sub">Click a flavor to add it to your order, then use + and − to adjust quantities. Your total must be at least 8 cases and in multiples of 8.</p>
-    <div class="flavor-grid" id="flavorGrid"></div>
+ 
+    <!-- ── MAC POPS SECTION ── -->
+    <div class="product-section">
+      <div class="product-section-header">
+        <div class="product-section-icon pops-icon">🍭</div>
+        <div>
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;">
+            <div class="product-section-title">Mac Pops</div>
+            <span class="product-section-tag pops-tag">10 pops per case</span>
+          </div>
+        </div>
+      </div>
+      <p class="product-section-sub">Gluten-free macaron pops on a stick — naturally colored, available in a range of flavors.</p>
+      <div class="flavor-grid pops-grid" id="popsGrid"></div>
+    </div>
+ 
+    <div class="section-rule"></div>
+ 
+    <!-- ── MACARONS SECTION ── -->
+    <div class="product-section">
+      <div class="product-section-header">
+        <div class="product-section-icon macs-icon">🫶</div>
+        <div>
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;">
+            <div class="product-section-title">Macarons</div>
+            <span class="product-section-tag macs-tag">24 macarons per case</span>
+          </div>
+        </div>
+      </div>
+      <p class="product-section-sub">Classic French-style macarons — naturally colored, soft and chewy with bold flavor combinations.</p>
+      <div class="flavor-grid macs-grid" id="macsGrid"></div>
+    </div>
+ 
     <div class="section-divider"></div>
+ 
     <div class="section-title">Comments</div>
-    <p class="section-sub">Anything we should know about this order — event dates, special requests, etc.</p>
+    <p class="section-sub">Anything we should know — event dates, special requests, etc.</p>
     <textarea class="comments-field" id="comments" placeholder="Optional notes for our team..."></textarea>
+ 
   </div>
  
+  <!-- ── SUMMARY ── -->
   <div class="summary">
     <div class="summary-title">Your Order</div>
  
@@ -519,13 +315,12 @@ header {
       <div class="summary-total-card" id="totalCard">
         <div class="stc-label">Total Cases</div>
         <div class="stc-number" id="totalCases">0</div>
-        <div class="stc-sub" id="totalPops"></div>
+        <div class="stc-sub" id="totalSub"></div>
       </div>
  
       <div class="validation-pill" id="validationPill"></div>
  
       <div class="contact-title">Your Information</div>
- 
       <div class="form-field">
         <label class="form-label">Company Name *</label>
         <input class="form-input" id="company" type="text" placeholder="Your business name">
@@ -567,9 +362,7 @@ header {
         </select>
       </div>
  
-      <button class="submit-btn" id="submitBtn" onclick="submitOrder()" disabled>
-        Submit Order Request →
-      </button>
+      <button class="submit-btn" id="submitBtn" onclick="submitOrder()" disabled>Submit Order Request →</button>
       <p class="submit-note">No payment collected here. Our team will reach out to confirm pricing.</p>
     </div>
   </div>
@@ -588,60 +381,78 @@ header {
 <script src="products.js"></script>
 <script>
 const PORTAL = 'portal-a';
-let selectedFlavors = {};
+let selectedItems = {}; // { id: { item, type('pop'|'mac'), cases } }
  
-const FLAVOR_EMOJIS = {
+const POP_EMOJIS = {
   'birthday-cake-n':'🎂','strawberry-n':'🍓','cookies-cream-n':'🍪',
   'red-velvet-n':'❤️','cinnamon-roll-n':'🌀','chocolate-chip-n':'🍫',
   'cotton-candy-n':'🩷','fruity-cereal-n':'🌈','seasonal-n':'✨',
 };
+const MAC_EMOJIS = {
+  'vanilla-mac-n':'🤍','chocolate-mac-n':'🍫','strawberry-mac-n':'🍓',
+  'pistachio-mac-n':'💚','cinnamon-roll-mac-n':'🌀',
+  'strawberry-cheesecake-mac-n':'🍰','birthday-cake-mac-n':'🎂',
+};
  
-function renderFlavors() {
-  const grid = document.getElementById('flavorGrid');
-  grid.innerHTML = PRODUCTS.pops.flavors.natural.map(flavor => {
-    const sel = selectedFlavors[flavor.id];
-    const cases = sel ? sel.cases : 1;
-    const emoji = FLAVOR_EMOJIS[flavor.id] || '🍬';
-    return `
-      <div class="flavor-card${!flavor.available?' unavailable':''}${sel?' selected':''}${flavor.seasonal?' seasonal':''}"
-           id="card-${flavor.id}"
-           onclick="${flavor.available?`toggleFlavor('${flavor.id}')` :''}">
-        ${flavor.seasonal?'<span class="seasonal-badge">Seasonal</span>':''}
-        <div class="check-mark">✓</div>
-        <span class="flavor-emoji">${emoji}</span>
-        <div class="flavor-name">${flavor.name} Pop</div>
-        <div class="flavor-desc">10-count case</div>
-        ${!flavor.available?'<div class="unavailable-note">Unavailable</div>':''}
-        <div class="qty-controls" onclick="event.stopPropagation()">
-          <button class="qty-btn" onclick="event.stopPropagation(); changeQty('${flavor.id}',-1)">−</button>
-          <div class="qty-info">
-            <span class="qty-number">${cases}</span>
-            <span class="qty-label">cases</span>
-          </div>
-          <button class="qty-btn" onclick="event.stopPropagation(); changeQty('${flavor.id}',1)">+</button>
+function makeCard(flavor, type, gridClass) {
+  const sel = selectedItems[flavor.id];
+  const cases = sel ? sel.cases : 1;
+  const emoji = type === 'pop'
+    ? (POP_EMOJIS[flavor.id] || '🍭')
+    : (MAC_EMOJIS[flavor.id] || '🫶');
+  const imgPath = `images/${flavor.id}.jpg`;
+ 
+  return `
+    <div class="flavor-card${!flavor.available?' unavailable':''}${sel?' selected':''}"
+         id="card-${flavor.id}"
+         onclick="${flavor.available?`toggleItem('${flavor.id}','${type}')` :''}">
+      ${flavor.seasonal?'<span class="seasonal-badge">Seasonal</span>':''}
+      <div class="check-mark">✓</div>
+      <div class="flavor-img">
+        <img src="${imgPath}" alt="${flavor.name}"
+             onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=font-size:32px>${emoji}</span>'">
+      </div>
+      <div class="flavor-name">${flavor.name} ${type === 'pop' ? 'Pop' : 'Macaron'}</div>
+      <div class="flavor-desc">${type === 'pop' ? '10-count' : '24-count'} case</div>
+      ${!flavor.available?'<div class="unavailable-note">Currently unavailable</div>':''}
+      <div class="qty-controls" onclick="event.stopPropagation()">
+        <button class="qty-btn" onclick="event.stopPropagation(); changeQty('${flavor.id}',-1)">−</button>
+        <div class="qty-info">
+          <span class="qty-number">${cases}</span>
+          <span class="qty-label">cases</span>
         </div>
-      </div>`;
-  }).join('');
+        <button class="qty-btn" onclick="event.stopPropagation(); changeQty('${flavor.id}',1)">+</button>
+      </div>
+    </div>`;
 }
  
-function toggleFlavor(id) {
-  const flavor = PRODUCTS.pops.flavors.natural.find(f => f.id === id);
+function renderGrids() {
+  document.getElementById('popsGrid').innerHTML =
+    PRODUCTS.pops.flavors.natural.map(f => makeCard(f,'pop','pops-grid')).join('');
+  document.getElementById('macsGrid').innerHTML =
+    PRODUCTS.macarons.flavors.natural.map(f => makeCard(f,'mac','macs-grid')).join('');
+}
+ 
+function toggleItem(id, type) {
+  let flavor;
+  if (type === 'pop') flavor = PRODUCTS.pops.flavors.natural.find(f => f.id === id);
+  else flavor = PRODUCTS.macarons.flavors.natural.find(f => f.id === id);
   if (!flavor || !flavor.available) return;
-  if (selectedFlavors[id]) { delete selectedFlavors[id]; }
-  else { selectedFlavors[id] = { flavor, cases: 1 }; }
-  renderFlavors(); updateSummary();
+  if (selectedItems[id]) { delete selectedItems[id]; }
+  else { selectedItems[id] = { flavor, type, cases: 1 }; }
+  renderGrids(); updateSummary();
 }
  
 function changeQty(id, delta) {
-  if (!selectedFlavors[id]) return;
-  const newVal = selectedFlavors[id].cases + delta;
-  if (newVal < 1) { delete selectedFlavors[id]; }
-  else { selectedFlavors[id].cases = newVal; }
-  renderFlavors(); updateSummary();
+  if (!selectedItems[id]) return;
+  const newVal = selectedItems[id].cases + delta;
+  if (newVal < 1) { delete selectedItems[id]; }
+  else { selectedItems[id].cases = newVal; }
+  renderGrids(); updateSummary();
 }
  
 function updateSummary() {
-  const items = Object.values(selectedFlavors);
+  const items = Object.values(selectedItems);
   const totalCases = items.reduce((s,i) => s+i.cases, 0);
   const hasItems = items.length > 0;
  
@@ -655,18 +466,43 @@ function updateSummary() {
  
   if (!hasItems) { checkSubmit(); return; }
  
-  document.getElementById('summaryItems').innerHTML = items.map(({flavor,cases}) => `
-    <div class="summary-item">
-      <div>
-        <div class="si-name">${flavor.name} Pop</div>
-        <div class="si-detail">${(cases*PRODUCTS.pops.popsPerCase).toLocaleString()} pops</div>
-      </div>
-      <div class="si-cases">${cases} case${cases!==1?'s':''}</div>
-    </div>`).join('');
+  // Build summary items — pops first then macs
+  const pops = items.filter(i => i.type === 'pop');
+  const macs = items.filter(i => i.type === 'mac');
+  let html = '';
+  if (pops.length) {
+    html += '<div class="summary-category pops">🍭 Mac Pops</div>';
+    html += pops.map(({flavor,cases}) => `
+      <div class="summary-item">
+        <div>
+          <div class="si-name">${flavor.name} Pop</div>
+          <div class="si-detail">${cases * PRODUCTS.pops.popsPerCase} pops</div>
+        </div>
+        <div class="si-cases pop">${cases} case${cases!==1?'s':''}</div>
+      </div>`).join('');
+  }
+  if (macs.length) {
+    html += '<div class="summary-category macs">🫶 Macarons</div>';
+    html += macs.map(({flavor,cases}) => `
+      <div class="summary-item">
+        <div>
+          <div class="si-name">${flavor.name} Macaron</div>
+          <div class="si-detail">${cases * 24} macarons</div>
+        </div>
+        <div class="si-cases mac">${cases} case${cases!==1?'s':''}</div>
+      </div>`).join('');
+  }
+  document.getElementById('summaryItems').innerHTML = html;
+ 
+  const popCases = pops.reduce((s,i)=>s+i.cases,0);
+  const macCases = macs.reduce((s,i)=>s+i.cases,0);
+  const subParts = [];
+  if (popCases) subParts.push(`${popCases} pop case${popCases!==1?'s':''}`);
+  if (macCases) subParts.push(`${macCases} mac case${macCases!==1?'s':''}`);
  
   document.getElementById('totalCard').style.display = 'block';
   document.getElementById('totalCases').textContent = totalCases;
-  document.getElementById('totalPops').textContent = `${(totalCases*PRODUCTS.pops.popsPerCase).toLocaleString()} pops total`;
+  document.getElementById('totalSub').textContent = subParts.join(' · ');
  
   const pill = document.getElementById('validationPill');
   const valid = totalCases >= 8 && totalCases % 8 === 0;
@@ -681,8 +517,8 @@ function updateSummary() {
 }
  
 function checkSubmit() {
-  const items = Object.values(selectedFlavors);
-  const total = items.reduce((s,i) => s+i.cases, 0);
+  const items = Object.values(selectedItems);
+  const total = items.reduce((s,i)=>s+i.cases,0);
   document.getElementById('submitBtn').disabled = !(items.length>0 && total>=8 && total%8===0);
 }
  
@@ -696,8 +532,13 @@ async function submitOrder() {
   });
   if (firstError) { firstError.scrollIntoView({behavior:'smooth',block:'center'}); firstError.focus(); return; }
  
-  const items = Object.values(selectedFlavors);
+  const items = Object.values(selectedItems);
   const totalCases = items.reduce((s,i)=>s+i.cases,0);
+  const productDetail = items.map(({flavor,type,cases}) => {
+    const count = type==='pop' ? cases*PRODUCTS.pops.popsPerCase : cases*24;
+    return `${cases} cases Natural ${flavor.name} ${type==='pop'?'Pop':'Macaron'} (${count} units)`;
+  }).join(' / ');
+ 
   const orderData = {
     referenceNumber: 'MRZ-'+Date.now().toString().slice(-5),
     portalSource: PORTAL, submittedAt: new Date().toISOString(), status: 'pending',
@@ -713,16 +554,18 @@ async function submitOrder() {
     },
     requestedArrivalDate: document.getElementById('requestedArrival').value,
     newCustomer: document.getElementById('newCustomer').value,
-    items: items.map(({flavor,cases}) => ({
-      flavorId:flavor.id, flavorName:flavor.name, sku:flavor.sku,
-      coloring:'Natural', cases, pops:cases*PRODUCTS.pops.popsPerCase,
+    items: items.map(({flavor,type,cases}) => ({
+      flavorId:flavor.id, flavorName:flavor.name,
+      productType: type==='pop'?'Mac Pop':'Macaron',
+      sku: flavor.sku||flavor.name, coloring:'Natural',
+      cases, units: type==='pop'?cases*PRODUCTS.pops.popsPerCase:cases*24,
     })),
-    totalCases, totalPops: totalCases*PRODUCTS.pops.popsPerCase,
-    productDetail: items.map(({flavor,cases})=>`${cases} cases Natural ${flavor.name} Pop (${cases*PRODUCTS.pops.popsPerCase} pops)`).join(' / '),
+    totalCases, productDetail,
     comments: document.getElementById('comments').value.trim(),
-    rep:'', agreedPricing:'', deliveryMethod:'', deliverySpeed:'', shippingBurden:'',
-    iceRequired:'', popStand:'', boxLabels:'', poNumber:'', paymentTerms:'',
-    w4OrderNumber:'', invoiceId:'', invoiceTotal:'', invoiceSent:false, invoicePaid:false,
+    rep:'', agreedPricing:'', deliveryMethod:'', deliverySpeed:'',
+    shippingBurden:'', iceRequired:'', popStand:'', boxLabels:'',
+    poNumber:'', paymentTerms:'', w4OrderNumber:'', invoiceId:'',
+    invoiceTotal:'', invoiceSent:false, invoicePaid:false,
     trackingNumber:'', actualShipDate:'', bolRequired:'',
     addedToQB:false, addedToWF:false, addedToCFM:false, packingSlipPrinted:false,
   };
@@ -735,8 +578,9 @@ async function submitOrder() {
   console.log('ORDER SUBMITTED:', JSON.stringify(orderData, null, 2));
 }
  
-renderFlavors();
+renderGrids();
 updateSummary();
 </script>
 </body>
 </html>
+ 
