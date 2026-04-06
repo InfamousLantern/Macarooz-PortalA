@@ -715,7 +715,7 @@ function renderFlavors() {
   const flavors = PRODUCTS.pops.flavors.natural;
   grid.innerHTML = flavors.map(flavor => {
     const sel = selectedFlavors[flavor.id];
-    const cases = sel ? sel.cases : 8;
+    const cases = sel ? sel.cases : 1;
     const emoji = FLAVOR_EMOJIS[flavor.id] || '🍬';
     return `
       <div class="flavor-card${!flavor.available ? ' unavailable' : ''}${sel ? ' selected' : ''}${flavor.seasonal ? '' : ''}"
@@ -745,7 +745,7 @@ function toggleFlavor(id) {
   if (selectedFlavors[id]) {
     delete selectedFlavors[id];
   } else {
-    selectedFlavors[id] = { flavor, cases: 8 };
+    selectedFlavors[id] = { flavor, cases: 1 };
   }
   renderFlavors();
   updateSummary();
@@ -753,7 +753,7 @@ function toggleFlavor(id) {
 
 function changeQty(id, delta) {
   if (!selectedFlavors[id]) return;
-  selectedFlavors[id].cases = Math.max(8, selectedFlavors[id].cases + delta);
+  selectedFlavors[id].cases = Math.max(1, selectedFlavors[id].cases + delta);
   renderFlavors();
   updateSummary();
 }
