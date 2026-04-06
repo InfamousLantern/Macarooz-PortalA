@@ -753,7 +753,12 @@ function toggleFlavor(id) {
 
 function changeQty(id, delta) {
   if (!selectedFlavors[id]) return;
-  selectedFlavors[id].cases = Math.max(1, selectedFlavors[id].cases + delta);
+  const newVal = selectedFlavors[id].cases + delta;
+  if (newVal < 1) {
+    delete selectedFlavors[id];
+  } else {
+    selectedFlavors[id].cases = newVal;
+  }
   renderFlavors();
   updateSummary();
 }
