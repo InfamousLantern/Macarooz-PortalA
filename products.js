@@ -15,7 +15,7 @@ const PRODUCTS = {
     coloringOptions: ["Natural", "Artificial"],
     flavors: {
       natural: [
-        { id: "birthday-cake-n", name: "Birthday Cake", sku: "BA Birthday", available: true },
+        { id: "birthday-cake-n", name: "Birthday Cake", sku: "BA Birthday", available: false },
         { id: "strawberry-n", name: "Strawberry", sku: "Strawberry", available: true },
         { id: "cookies-cream-n", name: "Cookies & Cream", sku: "Cookies and Cream", available: true },
         { id: "red-velvet-n", name: "Red Velvet", sku: "Red Velvet", available: true },
