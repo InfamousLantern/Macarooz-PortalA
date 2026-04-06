@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Macarooz — Wholesale Order Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --white: #FFFFFF;
+  --off-white: #FDF9F7;
+  --pink: #E8437A;
+  --pink-light: #FDE8EF;
+  --pink-mid: #F5A8C2;
+  --navy: #1E2235;
+  --navy-soft: #3A3F5C;
+  --grey: #6B7280;
+  --grey-light: #F3F4F6;
+  --border: #EDE8E4;
+  --shadow-sm: 0 2px 8px rgba(30,34,53,0.06);
+  --shadow-md: 0 8px 28px rgba(30,34,53,0.1);
+  --radius: 12px;
+  --radius-sm: 8px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--off-white);
+  color: var(--navy);
+  font-family: 'Nunito', sans-serif;
+  min-height: 100vh;
+}
+
+/* ── HEADER ── */
+header {
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  padding: 0 48px;
+  height: 68px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: var(--shadow-sm);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.logo-mark {
+  width: 36px;
+  height: 36px;
+  background: var(--pink);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+.logo-text {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--navy);
+  letter-spacing: -0.01em;
+}
+.logo-text span { color: var(--pink); }
+
+.header-badge {
+  background: var(--pink-light);
+  color: var(--pink);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 20px;
+  letter-spacing: 0.02em;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.header-badge.visible { opacity: 1; }
+
+/* ── HERO BANNER ── */
+.hero {
+  background: linear-gradient(135deg, var(--navy) 0%, #2D3154 100%);
+  padding: 56px 48px;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -60px; right: -60px;
+  width: 280px; height: 280px;
+  background: var(--pink);
+  border-radius: 50%;
+  opacity: 0.12;
+}
+.hero::after {
+  content: '';
+  position: absolute;
+  bottom: -80px; left: 20%;
+  width: 200px; height: 200px;
+  background: var(--pink-mid);
+  border-radius: 50%;
+  opacity: 0.08;
+}
+.hero-inner { position: relative; z-index: 1; max-width: 640px; }
+.hero-pill {
+  display: inline-block;
+  background: rgba(232,67,122,0.2);
+  color: var(--pink-mid);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 5px 14px;
+  border-radius: 20px;
+  margin-bottom: 18px;
+}
+.hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(36px, 5vw, 58px);
+  font-weight: 700;
+  color: var(--white);
+  line-height: 1.1;
+  margin-bottom: 16px;
+}
+.hero h1 em {
+  font-style: italic;
+  color: var(--pink-mid);
+}
+.hero-sub {
+  font-size: 14px;
+  color: rgba(255,255,255,0.65);
+  line-height: 1.7;
+  max-width: 480px;
+}
+
+/* ── MAIN LAYOUT ── */
+.page-body {
+  display: grid;
+  grid-template-columns: 1fr 420px;
+  gap: 0;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+/* ── BUILDER PANEL ── */
+.builder {
+  padding: 40px 48px;
+}
+
+.section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--navy);
+  margin-bottom: 6px;
+}
+.section-sub {
+  font-size: 13px;
+  color: var(--grey);
+  margin-bottom: 24px;
+  line-height: 1.5;
+}
+.section-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 36px 0;
+}
+
+/* ── FLAVOR GRID ── */
+.flavor-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.flavor-card {
+  background: var(--white);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 16px 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  user-select: none;
+  box-shadow: var(--shadow-sm);
+}
+.flavor-card:hover:not(.unavailable) {
+  border-color: var(--pink-mid);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+.flavor-card.selected {
+  border-color: var(--pink);
+  background: var(--pink-light);
+  box-shadow: 0 0 0 1px var(--pink), var(--shadow-md);
+}
+.flavor-card.unavailable {
+  opacity: 0.4;
+  cursor: not-allowed;
+  background: var(--grey-light);
+}
+.seasonal-badge {
+  position: absolute;
+  top: 8px; right: 8px;
+  background: #F0F7F1;
+  color: #3D8B4E;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: 10px;
+}
+.check-mark {
+  position: absolute;
+  top: 10px; right: 10px;
+  width: 20px; height: 20px;
+  background: var(--pink);
+  border-radius: 50%;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+}
+.flavor-card.selected .check-mark { display: flex; }
+.flavor-card.selected .seasonal-badge { display: none; }
+
+.flavor-emoji { font-size: 26px; margin-bottom: 8px; display: block; }
+.flavor-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 3px;
+  line-height: 1.3;
+}
+.flavor-desc {
+  font-size: 11px;
+  color: var(--grey);
+}
+.unavailable-note {
+  font-size: 10px;
+  color: var(--pink);
+  margin-top: 4px;
+  font-weight: 600;
+}
+
+/* Quantity controls */
+.qty-controls {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(232,67,122,0.2);
+}
+.flavor-card.selected .qty-controls { display: flex; }
+
+.qty-btn {
+  width: 28px; height: 28px;
+  border: 2px solid var(--pink);
+  background: white;
+  border-radius: 8px;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--pink);
+  font-weight: 700;
+  transition: all 0.15s;
+  font-family: 'Nunito', sans-serif;
+}
+.qty-btn:hover { background: var(--pink); color: white; }
+.qty-info { text-align: center; }
+.qty-number { font-size: 16px; font-weight: 700; color: var(--navy); display: block; line-height: 1; }
+.qty-label { font-size: 9px; color: var(--grey); letter-spacing: 0.06em; text-transform: uppercase; }
+
+/* ── COMMENTS ── */
+.comments-field {
+  width: 100%;
+  border: 2px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 13px;
+  color: var(--navy);
+  background: var(--white);
+  resize: vertical;
+  min-height: 100px;
+  outline: none;
+  transition: border-color 0.2s;
+  line-height: 1.6;
+}
+.comments-field:focus { border-color: var(--pink); }
+.comments-field::placeholder { color: #B0B8C4; }
+
+/* ── SUMMARY SIDEBAR ── */
+.summary {
+  background: var(--white);
+  border-left: 1px solid var(--border);
+  padding: 40px 32px;
+  position: sticky;
+  top: 68px;
+  height: calc(100vh - 68px);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.summary-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 24px;
+  padding-bottom: 18px;
+  border-bottom: 2px solid var(--border);
+}
+
+.summary-empty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 32px 16px;
+  color: var(--grey);
+}
+.summary-empty .empty-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.5; }
+.summary-empty p { font-size: 13px; line-height: 1.7; }
+.summary-empty strong { color: var(--navy); display: block; margin-bottom: 6px; font-size: 15px; }
+
+.summary-items { margin-bottom: 20px; }
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--border);
+  animation: slideIn 0.2s ease;
+}
+@keyframes slideIn { from { opacity:0; transform:translateX(8px); } to { opacity:1; transform:none; } }
+.si-name { font-size: 13px; font-weight: 600; color: var(--navy); }
+.si-detail { font-size: 11px; color: var(--grey); margin-top: 1px; }
+.si-cases {
+  background: var(--pink-light);
+  color: var(--pink);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.summary-total-card {
+  background: var(--navy);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 18px;
+  display: none;
+}
+.stc-label { font-size: 11px; color: rgba(255,255,255,0.55); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; }
+.stc-number {
+  font-family: 'Playfair Display', serif;
+  font-size: 42px;
+  font-weight: 700;
+  color: var(--white);
+  line-height: 1;
+  margin-bottom: 2px;
+}
+.stc-sub { font-size: 12px; color: rgba(255,255,255,0.5); }
+
+.validation-pill {
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 18px;
+  display: none;
+  line-height: 1.4;
+}
+.validation-pill.error { background: #FFF0F4; color: #D63A6A; border: 1px solid #F5B8CA; display: block; }
+.validation-pill.ok { background: #F0F7F1; color: #3D8B4E; border: 1px solid #B5DFC0; display: block; }
+
+/* ── CONTACT FORM ── */
+.contact-section { margin-top: 4px; }
+.contact-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--navy);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 14px;
+  padding-top: 4px;
+}
+
+.form-field { margin-bottom: 12px; }
+.form-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--grey);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  display: block;
+  margin-bottom: 5px;
+}
+.form-input, .form-select {
+  width: 100%;
+  border: 2px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 9px 12px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 13px;
+  color: var(--navy);
+  background: var(--white);
+  outline: none;
+  transition: border-color 0.2s;
+}
+.form-input:focus, .form-select:focus { border-color: var(--pink); }
+.form-input.error { border-color: #E8437A; background: #FFF8FA; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.form-input::placeholder { color: #C4CAD4; }
+
+.address-group {
+  border: 2px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+.address-group:focus-within { border-color: var(--pink); }
+.address-group .form-input {
+  border: none;
+  border-bottom: 1px solid var(--border);
+  border-radius: 0;
+}
+.address-group .form-input:last-child { border-bottom: none; }
+.address-row {
+  display: grid;
+  grid-template-columns: 1fr 64px 100px;
+  gap: 0;
+}
+.address-row .form-input { border-left: 1px solid var(--border); border-bottom: none; }
+.address-row .form-input:first-child { border-left: none; }
+
+/* ── SUBMIT ── */
+.submit-btn {
+  width: 100%;
+  padding: 16px;
+  background: var(--pink);
+  color: white;
+  border: none;
+  border-radius: var(--radius);
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 8px;
+  box-shadow: 0 4px 14px rgba(232,67,122,0.35);
+}
+.submit-btn:hover:not(:disabled) {
+  background: #D63470;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(232,67,122,0.4);
+}
+.submit-btn:disabled {
+  background: #D1D5DB;
+  color: #9CA3AF;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+.submit-note {
+  font-size: 11px;
+  color: var(--grey);
+  text-align: center;
+  margin-top: 10px;
+  line-height: 1.5;
+}
+
+/* ── SUCCESS ── */
+.success-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: var(--off-white);
+  z-index: 300;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+  padding: 48px;
+}
+.success-overlay.show { display: flex; }
+.success-blob {
+  width: 100px; height: 100px;
+  background: var(--pink-light);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 46px;
+  margin-bottom: 28px;
+  animation: blobPop 0.5s cubic-bezier(0.175,0.885,0.32,1.275);
+}
+@keyframes blobPop { from { transform:scale(0); } to { transform:scale(1); } }
+.success-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 44px;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 14px;
+}
+.success-body {
+  font-size: 14px;
+  color: var(--grey);
+  line-height: 1.8;
+  max-width: 420px;
+  margin-bottom: 32px;
+}
+.ref-card {
+  background: var(--white);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 36px;
+  box-shadow: var(--shadow-md);
+}
+.ref-label { font-size: 11px; font-weight: 700; color: var(--grey); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 6px; }
+.ref-number {
+  font-family: 'Playfair Display', serif;
+  font-size: 34px;
+  font-weight: 700;
+  color: var(--pink);
+  letter-spacing: 0.06em;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 960px) {
+  .page-body { grid-template-columns: 1fr; }
+  .summary {
+    position: static;
+    height: auto;
+    border-left: none;
+    border-top: 1px solid var(--border);
+  }
+  header, .hero, .builder, .summary { padding-left: 24px; padding-right: 24px; }
+  .hero { padding-top: 40px; padding-bottom: 40px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-mark">🍬</div>
+    <div class="logo-text">Macaroo<span>z</span></div>
+  </div>
+  <div class="header-badge" id="headerBadge">0 cases in order</div>
+</header>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-pill">✦ Wholesale Order Portal</div>
+    <h1>Build your <em>perfect</em> order</h1>
+    <p class="hero-sub">Select your flavors and case quantities below. Our team will follow up within 1 business day to confirm pricing and shipping details.</p>
+  </div>
+</div>
+
+<div class="page-body">
+
+  <!-- ── BUILDER ── -->
+  <div class="builder">
+
+    <div class="section-title">Select Your Flavors</div>
+    <p class="section-sub">Click a flavor to add it to your order. Use + and − to adjust case quantities. Minimum 8 cases total, in multiples of 8.</p>
+
+    <div class="flavor-grid" id="flavorGrid"></div>
+
+    <div class="section-divider"></div>
+
+    <div class="section-title">Comments</div>
+    <p class="section-sub">Anything we should know about this order — event dates, special requests, etc.</p>
+    <textarea class="comments-field" id="comments" placeholder="Optional notes for our team..."></textarea>
+
+  </div>
+
+  <!-- ── SUMMARY ── -->
+  <div class="summary">
+    <div class="summary-title">Your Order</div>
+
+    <div id="summaryEmpty" class="summary-empty">
+      <div class="empty-icon">🛒</div>
+      <p><strong>Your order is empty</strong>Select flavors on the left to get started.</p>
+      <p style="margin-top:12px;font-size:12px;background:var(--pink-light);color:var(--pink);padding:8px 14px;border-radius:20px;font-weight:600;">Min. 8 cases · multiples of 8</p>
+    </div>
+
+    <div id="summaryContent" style="display:none; flex:1; flex-direction:column;">
+
+      <div class="summary-items" id="summaryItems"></div>
+
+      <div class="summary-total-card" id="totalCard">
+        <div class="stc-label">Total Cases</div>
+        <div class="stc-number" id="totalCases">0</div>
+        <div class="stc-sub" id="totalPops"></div>
+      </div>
+
+      <div class="validation-pill" id="validationPill"></div>
+
+      <!-- Contact form -->
+      <div class="contact-section">
+        <div class="contact-title">Your Information</div>
+
+        <div class="form-field">
+          <label class="form-label">Company Name *</label>
+          <input class="form-input" id="company" type="text" placeholder="Your business name">
+        </div>
+
+        <div class="form-row">
+          <div class="form-field">
+            <label class="form-label">Contact Name *</label>
+            <input class="form-input" id="contactName" type="text" placeholder="First Last">
+          </div>
+          <div class="form-field">
+            <label class="form-label">Phone *</label>
+            <input class="form-input" id="phone" type="tel" placeholder="(000) 000-0000">
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label class="form-label">Email *</label>
+          <input class="form-input" id="contactEmail" type="email" placeholder="you@company.com">
+        </div>
+
+        <div class="form-field">
+          <label class="form-label">Shipping Address *</label>
+          <div class="address-group">
+            <input class="form-input" id="address1" type="text" placeholder="Street address">
+            <div class="address-row">
+              <input class="form-input" id="city" type="text" placeholder="City">
+              <input class="form-input" id="state" type="text" placeholder="ST" maxlength="2">
+              <input class="form-input" id="zip" type="text" placeholder="ZIP">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label class="form-label">Requested Arrival Date *</label>
+          <input class="form-input" id="requestedArrival" type="date">
+        </div>
+
+        <div class="form-field">
+          <label class="form-label">First order with us?</label>
+          <select class="form-select" id="newCustomer">
+            <option value="No">No — existing account</option>
+            <option value="Yes">Yes — new customer</option>
+          </select>
+        </div>
+
+      </div>
+
+      <button class="submit-btn" id="submitBtn" onclick="submitOrder()" disabled>
+        Submit Order Request →
+      </button>
+      <p class="submit-note">No payment collected here. Our team will reach out to confirm pricing.</p>
+
+    </div>
+  </div>
+</div>
+
+<!-- ── SUCCESS ── -->
+<div class="success-overlay" id="successOverlay">
+  <div class="success-blob">🍬</div>
+  <div class="success-title">Order Received!</div>
+  <p class="success-body">Your request has been submitted successfully. Our sales team will review it and reach out within 1 business day to confirm pricing and shipping details.</p>
+  <div class="ref-card">
+    <div class="ref-label">Your Reference Number</div>
+    <div class="ref-number" id="refNumber">MRZ-00000</div>
+  </div>
+</div>
+
+<script src="products.js"></script>
+<script>
+const PORTAL = 'portal-a';
+let selectedFlavors = {};
+
+// Flavor emojis for visual flair
+const FLAVOR_EMOJIS = {
+  'birthday-cake-n': '🎂',
+  'strawberry-n': '🍓',
+  'cookies-cream-n': '🍪',
+  'red-velvet-n': '❤️',
+  'cinnamon-roll-n': '🌀',
+  'chocolate-chip-n': '🍫',
+  'cotton-candy-n': '🩷',
+  'fruity-cereal-n': '🌈',
+  'seasonal-n': '✨',
+};
+
+function renderFlavors() {
+  const grid = document.getElementById('flavorGrid');
+  const flavors = PRODUCTS.pops.flavors.natural;
+  grid.innerHTML = flavors.map(flavor => {
+    const sel = selectedFlavors[flavor.id];
+    const cases = sel ? sel.cases : 8;
+    const emoji = FLAVOR_EMOJIS[flavor.id] || '🍬';
+    return `
+      <div class="flavor-card${!flavor.available ? ' unavailable' : ''}${sel ? ' selected' : ''}${flavor.seasonal ? '' : ''}"
+           id="card-${flavor.id}"
+           onclick="${flavor.available ? `toggleFlavor('${flavor.id}')` : ''}">
+        ${flavor.seasonal ? '<span class="seasonal-badge">Seasonal</span>' : ''}
+        <div class="check-mark">✓</div>
+        <span class="flavor-emoji">${emoji}</span>
+        <div class="flavor-name">${flavor.name} Pop</div>
+        <div class="flavor-desc">10-count case</div>
+        ${!flavor.available ? '<div class="unavailable-note">Unavailable</div>' : ''}
+        <div class="qty-controls" onclick="event.stopPropagation()">
+          <button class="qty-btn" onclick="changeQty('${flavor.id}', -8)">−</button>
+          <div class="qty-info">
+            <span class="qty-number">${cases}</span>
+            <span class="qty-label">cases</span>
+          </div>
+          <button class="qty-btn" onclick="changeQty('${flavor.id}', 8)">+</button>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function toggleFlavor(id) {
+  const flavor = PRODUCTS.pops.flavors.natural.find(f => f.id === id);
+  if (!flavor || !flavor.available) return;
+  if (selectedFlavors[id]) {
+    delete selectedFlavors[id];
+  } else {
+    selectedFlavors[id] = { flavor, cases: 8 };
+  }
+  renderFlavors();
+  updateSummary();
+}
+
+function changeQty(id, delta) {
+  if (!selectedFlavors[id]) return;
+  selectedFlavors[id].cases = Math.max(8, selectedFlavors[id].cases + delta);
+  renderFlavors();
+  updateSummary();
+}
+
+function updateSummary() {
+  const items = Object.values(selectedFlavors);
+  const totalCases = items.reduce((s, i) => s + i.cases, 0);
+  const totalPops = totalCases * PRODUCTS.pops.popsPerCase;
+  const hasItems = items.length > 0;
+
+  document.getElementById('summaryEmpty').style.display = hasItems ? 'none' : 'flex';
+  const sc = document.getElementById('summaryContent');
+  sc.style.display = hasItems ? 'flex' : 'none';
+
+  const badge = document.getElementById('headerBadge');
+  if (hasItems) {
+    badge.classList.add('visible');
+    badge.textContent = `${totalCases} case${totalCases !== 1 ? 's' : ''} selected`;
+  } else {
+    badge.classList.remove('visible');
+  }
+
+  if (!hasItems) { checkSubmit(); return; }
+
+  document.getElementById('summaryItems').innerHTML = items.map(({ flavor, cases }) => `
+    <div class="summary-item">
+      <div>
+        <div class="si-name">${flavor.name} Pop</div>
+        <div class="si-detail">${(cases * PRODUCTS.pops.popsPerCase).toLocaleString()} pops</div>
+      </div>
+      <div class="si-cases">${cases} cases</div>
+    </div>`).join('');
+
+  const totalCard = document.getElementById('totalCard');
+  totalCard.style.display = 'block';
+  document.getElementById('totalCases').textContent = totalCases;
+  document.getElementById('totalPops').textContent = `${totalPops.toLocaleString()} pops total`;
+
+  const pill = document.getElementById('validationPill');
+  const valid = totalCases >= 8 && totalCases % 8 === 0;
+  if (!valid) {
+    pill.className = 'validation-pill error';
+    pill.textContent = `Total must be a multiple of 8. Add ${8 - (totalCases % 8)} more case(s).`;
+  } else {
+    pill.className = 'validation-pill ok';
+    pill.textContent = `✓ ${totalCases} cases — ready to submit`;
+  }
+
+  checkSubmit();
+}
+
+function checkSubmit() {
+  const items = Object.values(selectedFlavors);
+  const total = items.reduce((s, i) => s + i.cases, 0);
+  const valid = items.length > 0 && total >= 8 && total % 8 === 0;
+  document.getElementById('submitBtn').disabled = !valid;
+}
+
+async function submitOrder() {
+  const fields = [
+    { id: 'company' }, { id: 'contactName' }, { id: 'contactEmail' },
+    { id: 'phone' }, { id: 'address1' }, { id: 'city' },
+    { id: 'state' }, { id: 'zip' }, { id: 'requestedArrival' },
+  ];
+  let firstError = null;
+  fields.forEach(({ id }) => {
+    const el = document.getElementById(id);
+    if (!el.value.trim()) {
+      el.classList.add('error');
+      if (!firstError) firstError = el;
+    } else el.classList.remove('error');
+  });
+  if (firstError) {
+    firstError.focus();
+    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+
+  const items = Object.values(selectedFlavors);
+  const totalCases = items.reduce((s, i) => s + i.cases, 0);
+  const productDetail = items.map(({ flavor, cases }) =>
+    `${cases} cases Natural ${flavor.name} Pop (${cases * PRODUCTS.pops.popsPerCase} pops)`
+  ).join(' / ');
+
+  const orderData = {
+    referenceNumber: 'MRZ-' + Date.now().toString().slice(-5),
+    portalSource: PORTAL,
+    submittedAt: new Date().toISOString(),
+    status: 'pending',
+    company: document.getElementById('company').value.trim(),
+    contactName: document.getElementById('contactName').value.trim(),
+    contactEmail: document.getElementById('contactEmail').value.trim(),
+    phone: document.getElementById('phone').value.trim(),
+    shippingAddress: {
+      street: document.getElementById('address1').value.trim(),
+      city: document.getElementById('city').value.trim(),
+      state: document.getElementById('state').value.trim(),
+      zip: document.getElementById('zip').value.trim(),
+    },
+    requestedArrivalDate: document.getElementById('requestedArrival').value,
+    newCustomer: document.getElementById('newCustomer').value,
+    items: items.map(({ flavor, cases }) => ({
+      flavorId: flavor.id,
+      flavorName: flavor.name,
+      sku: flavor.sku,
+      coloring: 'Natural',
+      cases,
+      pops: cases * PRODUCTS.pops.popsPerCase,
+    })),
+    totalCases,
+    totalPops: totalCases * PRODUCTS.pops.popsPerCase,
+    productDetail,
+    comments: document.getElementById('comments').value.trim(),
+    // Sales fields — blank until confirmed
+    rep: '', agreedPricing: '', deliveryMethod: '', deliverySpeed: '',
+    shippingBurden: '', iceRequired: '', popStand: '', boxLabels: '',
+    poNumber: '', paymentTerms: '', w4OrderNumber: '', invoiceId: '',
+    invoiceTotal: '', invoiceSent: false, invoicePaid: false,
+    trackingNumber: '', actualShipDate: '', bolRequired: '',
+    addedToQB: false, addedToWF: false, addedToCFM: false, packingSlipPrinted: false,
+  };
+
+  const btn = document.getElementById('submitBtn');
+  btn.textContent = 'Submitting...';
+  btn.disabled = true;
+
+  // Replace with real endpoint: await fetch(SALES_ENDPOINT, {...})
+  await new Promise(r => setTimeout(r, 800));
+
+  document.getElementById('refNumber').textContent = orderData.referenceNumber;
+  document.getElementById('successOverlay').classList.add('show');
+  console.log('ORDER SUBMITTED:', JSON.stringify(orderData, null, 2));
+}
+
+renderFlavors();
+updateSummary();
+</script>
+</body>
+</html>
