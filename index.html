@@ -252,7 +252,7 @@ header {
   <div class="hero-inner">
     <div class="hero-pill">✦ Wholesale Order Portal</div>
     <h1>Build your <em>perfect</em> order</h1>
-    <p class="hero-sub">Select your flavors and case quantities below. Mix and match pops and macarons, your total just needs to be at least 8 cases in multiples of 8.</p>
+    <p class="hero-sub">Select your flavors and case quantities below. Mix and match pops and macarons — your total just needs to be at least 8 cases in multiples of 8.</p>
   </div>
 </div>
  
@@ -270,7 +270,7 @@ header {
           </div>
         </div>
       </div>
-      <p class="product-section-sub">Gluten-free macaron pops. All pops are naturally colored and available in a range of flavors.</p>
+      <p class="product-section-sub">Gluten-free macaron pops on a stick — naturally colored, available in a range of flavors.</p>
       <div class="flavor-grid pops-grid" id="popsGrid"></div>
     </div>
  
@@ -287,7 +287,7 @@ header {
           </div>
         </div>
       </div>
-      <p class="product-section-sub">Classic French-style macarons, naturally colored, soft, and chewy with bold flavor combinations.</p>
+      <p class="product-section-sub">Classic French-style macarons — naturally colored, soft and chewy with bold flavor combinations.</p>
       <div class="flavor-grid macs-grid" id="macsGrid"></div>
     </div>
  
@@ -352,7 +352,9 @@ header {
       </div>
       <div class="form-field">
         <label class="form-label">Requested Arrival Date *</label>
-        <input class="form-input" id="requestedArrival" type="date">
+        <select class="form-select" id="requestedArrival">
+          <option value="">Select a date...</option>
+        </select>
       </div>
       <div class="form-field">
         <label class="form-label">First order with us?</label>
@@ -578,6 +580,44 @@ async function submitOrder() {
   console.log('ORDER SUBMITTED:', JSON.stringify(orderData, null, 2));
 }
  
+// ── POPULATE ARRIVAL DATE DROPDOWN ──
+function populateArrivalDates() {
+  const sel = document.getElementById('requestedArrival');
+  const today = new Date();
+ 
+  // ASAP first
+  const asap = document.createElement('option');
+  asap.value = 'ASAP';
+  asap.textContent = 'ASAP — as soon as possible';
+  sel.appendChild(asap);
+ 
+  // Divider
+  const div = document.createElement('option');
+  div.disabled = true;
+  div.textContent = '── Specific date ──';
+  sel.appendChild(div);
+ 
+  // Dates from 7 days out to 10 weeks out
+  const start = new Date(today);
+  start.setDate(start.getDate() + 7);
+  const end = new Date(today);
+  end.setDate(end.getDate() + 70);
+ 
+  const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+ 
+  for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+    const opt = document.createElement('option');
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth()+1).padStart(2,'0');
+    const dd = String(d.getDate()).padStart(2,'0');
+    opt.value = `${yyyy}-${mm}-${dd}`;
+    opt.textContent = `${days[d.getDay()]}, ${months[d.getMonth()]} ${d.getDate()}`;
+    sel.appendChild(opt);
+  }
+}
+ 
+populateArrivalDates();
 renderGrids();
 updateSummary();
 </script>
