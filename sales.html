@@ -378,7 +378,7 @@ header {
 // ══════════════════════════════════════════════════════════
 // CONFIG
 // ══════════════════════════════════════════════════════════
-const ENDPOINT = 'https://script.google.com/macros/s/AKfycbynBcVZSgcFt-E6gMo7r7TD57zHYzJ3JHHXHWIqiwcSleIm3yQ8VrkYo_P2yyioj1y-/exec'; // Replace after deploying Apps Script
+const ENDPOINT = 'https://script.google.com/macros/s/AKfycbynBcVZSgcFt-E6gMo7r7TD57zHYzJ3JHHXHWIqiwcSleIm3yQ8VrkYo_P2yyioj1y-/exec';
  
 let currentTab = 'pending';
 let allOrders = [];
@@ -392,14 +392,6 @@ function init() {
 async function fetchOrders() {
   const list = document.getElementById('orderList');
   list.innerHTML = `<div class="loading"><div class="loading-spinner"></div><p>Loading orders...</p></div>`;
- 
-  if (ENDPOINT === 'https://script.google.com/macros/s/AKfycbynBcVZSgcFt-E6gMo7r7TD57zHYzJ3JHHXHWIqiwcSleIm3yQ8VrkYo_P2yyioj1y-/exec') {
-    // Demo mode — show empty state until endpoint is configured
-    allOrders = [];
-    render();
-    showToast('Backend not connected yet — orders will appear here once Apps Script is deployed.', 'info');
-    return;
-  }
  
   try {
     const res = await fetch(`${ENDPOINT}?action=getOrders`);
@@ -718,11 +710,6 @@ function approveOrder(ref) {
 async function sendToSheets(order) {
   showToast('Sending to Google Sheets...', 'info');
  
-  if (ENDPOINT === 'https://script.google.com/macros/s/AKfycbynBcVZSgcFt-E6gMo7r7TD57zHYzJ3JHHXHWIqiwcSleIm3yQ8VrkYo_P2yyioj1y-/exec') {
-    showToast('Backend not connected yet — connect Apps Script to go live.', 'error');
-    return;
-  }
- 
   try {
     const action = order.status === 'approved' ? 'approve' : 'reject';
     const res = await fetch(ENDPOINT, {
@@ -768,4 +755,3 @@ init();
 </script>
 </body>
 </html>
- 
