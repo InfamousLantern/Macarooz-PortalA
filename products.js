@@ -20,10 +20,11 @@ const PRODUCTS = {
         { id: "cookies-cream-n", name: "Cookies & Cream", sku: "Cookies and Cream", available: true },
         { id: "red-velvet-n", name: "Red Velvet", sku: "Red Velvet", available: true },
         { id: "cinnamon-roll-n", name: "Cinnamon Roll", sku: "Cinnamon Roll", available: true },
-        { id: "chocolate-chip-n", name: "Chocolate Chip", sku: "Chocolate Chip", available: true },
-        { id: "cotton-candy-n", name: "Cotton Candy", sku: "Cotton Candy", available: false },
-        { id: "fruity-cereal-n", name: "Fruity Cereal", sku: "Fruity Cereal", available: false },
-        { id: "seasonal-n", name: "Seasonal", sku: "Seasonal Pop", available: false, seasonal: true },
+        { id: "cookie-dough-n", name: "Cookie Dough", sku: "Cookie Dough", available: true },
+        { id: "cotton-candy-n", name: "Cotton Candy", sku: "Cotton Candy", available: true },
+        { id: "fruity-cereal-n", name: "Fruity Cereal", sku: "Fruity Cereal", available: true },
+        { id: "SB-rose-n", name: "Strawberry Rose", sku: "Strawberry Rose", available: true, seasonal: true },
+        { id: "SB-rose-n", name: "Strawberry Rose", sku: "Strawberry Rose", available: true, seasonal: true }
       ],
       artificial: [
         { id: "birthday-cake-a", name: "Birthday Cake", sku: "BA Birthday", available: true },
@@ -47,10 +48,8 @@ const PRODUCTS = {
         { id: "vanilla-mac-n", name: "Vanilla", available: true },
         { id: "chocolate-mac-n", name: "Chocolate", available: true },
         { id: "strawberry-mac-n", name: "Strawberry", available: true },
-        { id: "pistachio-mac-n", name: "Pistachio", available: true },
-        { id: "cinnamon-roll-mac-n", name: "Cinnamon Roll", available: true },
-        { id: "strawberry-cheesecake-mac-n", name: "Strawberry Cheesecake", available: true },
-        { id: "birthday-cake-mac-n", name: "Birthday Cake", available: true },
+        { id: "pistachio-mac-n", name: "Pistachio", available: false },
+ 
       ],
       artificial: [
         { id: "vanilla-mac-a", name: "Vanilla", available: true },
