@@ -33,7 +33,7 @@
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { background: var(--off-white); color: var(--navy); font-family: 'Nunito', sans-serif; min-height: 100vh; }
-
+ 
 /* ── HEADER ── */
 header {
   background: var(--navy);
@@ -53,14 +53,14 @@ header {
 .header-logo-fallback span { color:var(--pink); }
 .header-divider { width:1px; height:28px; background:rgba(255,255,255,0.15); }
 .header-title { font-size:13px; font-weight:700; color:rgba(255,255,255,0.7); letter-spacing:0.08em; text-transform:uppercase; }
-
+ 
 .header-right { display: flex; align-items: center; gap: 12px; }
 .queue-counts { display: flex; gap: 8px; }
 .count-pill { font-size:11px; font-weight:700; padding:4px 12px; border-radius:20px; }
 .count-pill.pending { background:var(--amber-light); color:#92400E; }
 .count-pill.approved { background:var(--green-light); color:#065F46; }
 .count-pill.rejected { background:var(--red-light); color:#991B1B; }
-
+ 
 /* ── TABS ── */
 .tabs {
   background: var(--white);
@@ -87,10 +87,10 @@ header {
 .tab-badge { font-size:10px; font-weight:800; padding:2px 7px; border-radius:10px; }
 .tab.active .tab-badge { background:var(--teal-light); color:var(--teal-dark); }
 .tab:not(.active) .tab-badge { background:var(--grey-light); color:var(--grey); }
-
+ 
 /* ── MAIN ── */
 .main { max-width: 1100px; margin: 0 auto; padding: 32px 40px; }
-
+ 
 /* ── EMPTY STATE ── */
 .empty-state {
   text-align: center; padding: 80px 40px; color: var(--grey);
@@ -98,7 +98,7 @@ header {
 .empty-state .empty-icon { font-size: 56px; margin-bottom: 20px; opacity: 0.4; }
 .empty-state h3 { font-family:'Playfair Display',serif; font-size:24px; color:var(--navy); margin-bottom:8px; }
 .empty-state p { font-size:14px; line-height:1.7; }
-
+ 
 /* ── ORDER CARD ── */
 .order-card {
   background: var(--white);
@@ -112,7 +112,7 @@ header {
 .order-card:hover { box-shadow: var(--shadow-md); }
 .order-card.status-approved { border-color: var(--green); }
 .order-card.status-rejected { border-color: var(--red); opacity: 0.7; }
-
+ 
 /* Card header — always visible */
 .card-header {
   padding: 18px 22px;
@@ -123,14 +123,14 @@ header {
   user-select: none;
 }
 .card-header:hover { background: rgba(61,140,132,0.02); }
-
+ 
 .status-dot {
   width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
 }
 .status-dot.pending { background: var(--amber); box-shadow: 0 0 0 3px var(--amber-light); }
 .status-dot.approved { background: var(--green); box-shadow: 0 0 0 3px var(--green-light); }
 .status-dot.rejected { background: var(--red); box-shadow: 0 0 0 3px var(--red-light); }
-
+ 
 .card-company { font-size:16px; font-weight:800; color:var(--navy); }
 .card-contact { font-size:12px; color:var(--grey); margin-top:2px; }
 .card-meta { margin-left: auto; display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
@@ -146,7 +146,7 @@ header {
 }
 .card-chevron { font-size:16px; color:var(--grey); transition:transform 0.2s; flex-shrink:0; }
 .order-card.expanded .card-chevron { transform: rotate(180deg); }
-
+ 
 /* Card body — revealed on expand */
 .card-body {
   display: none;
@@ -154,14 +154,14 @@ header {
   padding: 24px 22px;
 }
 .order-card.expanded .card-body { display: block; }
-
+ 
 .card-body-grid {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   gap: 20px;
   margin-bottom: 24px;
 }
-
+ 
 .info-block {}
 .info-label {
   font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.1em;
@@ -169,7 +169,7 @@ header {
 }
 .info-value { font-size:13px; font-weight:600; color:var(--navy); line-height:1.6; }
 .info-value.mono { font-family: monospace; font-size:12px; }
-
+ 
 /* Product breakdown */
 .product-breakdown {
   background: var(--off-white);
@@ -193,7 +193,7 @@ header {
 .pb-item-qty { font-weight:700; }
 .pb-item-qty.pop { color:var(--teal-dark); }
 .pb-item-qty.mac { color:var(--pink); }
-
+ 
 /* Comments box */
 .comments-box {
   background: #FFFBEB;
@@ -204,7 +204,7 @@ header {
   font-size:13px; color:#92400E; line-height:1.6;
 }
 .comments-box-label { font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:4px; color:#B45309; }
-
+ 
 /* ── CONFIRMATION FORM ── */
 .confirm-form {
   background: var(--white);
@@ -217,7 +217,7 @@ header {
   font-size:13px; font-weight:800; text-transform:uppercase; letter-spacing:0.08em;
   color:var(--navy); margin-bottom:16px; padding-bottom:12px; border-bottom:1px solid var(--border);
 }
-
+ 
 .cf-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
 .cf-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 12px; }
 .cf-field {}
@@ -233,7 +233,7 @@ header {
 .cf-input:focus, .cf-select:focus { border-color:var(--teal); }
 .cf-input.error { border-color:var(--red); }
 .cf-input::placeholder { color:#C4CAD4; }
-
+ 
 /* Shipping toggle */
 .shipping-toggle {
   display: flex; gap: 0; border: 2px solid var(--border); border-radius: var(--radius-sm);
@@ -245,7 +245,7 @@ header {
   border: none; font-family: 'Nunito', sans-serif;
 }
 .shipping-opt.active { background: var(--teal); color: white; }
-
+ 
 /* Pricing inputs */
 .pricing-section { margin-bottom:12px; }
 .pricing-hint { font-size:11px; color:var(--grey); margin-top:6px; line-height:1.5; }
@@ -256,7 +256,7 @@ header {
   display: none;
 }
 .shipping-flag.show { display: block; }
-
+ 
 /* Action buttons */
 .action-row {
   display: flex; gap: 10px; margin-top: 4px;
@@ -274,7 +274,7 @@ header {
   font-weight:700; cursor:pointer; transition:all 0.2s;
 }
 .btn-reject:hover { background:var(--red-light); }
-
+ 
 /* Reject modal */
 .reject-section {
   display: none; background: var(--red-light); border: 2px solid var(--red);
@@ -297,7 +297,7 @@ header {
   font-weight:700; cursor:pointer; transition:all 0.2s;
 }
 .btn-confirm-reject:hover { background:#DC2626; }
-
+ 
 /* Status banners on confirmed/rejected cards */
 .status-banner {
   padding: 12px 22px; font-size:12px; font-weight:700;
@@ -305,7 +305,7 @@ header {
 }
 .status-banner.approved { background:var(--green-light); color:#065F46; border-top:1px solid #A7F3D0; }
 .status-banner.rejected { background:var(--red-light); color:#991B1B; border-top:1px solid #FECACA; }
-
+ 
 /* ── LOADING ── */
 .loading { text-align:center; padding:60px; color:var(--grey); }
 .loading-spinner {
@@ -313,7 +313,7 @@ header {
   border-radius:50%; animation:spin 0.8s linear infinite; margin:0 auto 16px;
 }
 @keyframes spin { to { transform:rotate(360deg); } }
-
+ 
 /* ── TOAST ── */
 .toast {
   position:fixed; bottom:28px; right:28px; z-index:999;
@@ -325,7 +325,7 @@ header {
 .toast.success { background:var(--green); color:white; }
 .toast.error { background:var(--red); color:white; }
 .toast.info { background:var(--navy); color:white; }
-
+ 
 @media (max-width:900px) {
   .main { padding:20px 16px; }
   .card-body-grid { grid-template-columns:1fr 1fr; }
@@ -336,7 +336,7 @@ header {
 </style>
 </head>
 <body>
-
+ 
 <header>
   <div class="header-left">
     <img class="header-logo"
@@ -355,7 +355,7 @@ header {
     </div>
   </div>
 </header>
-
+ 
 <div class="tabs">
   <div class="tab active" onclick="switchTab('pending')" id="tab-pending">
     Pending <span class="tab-badge" id="badge-pending">0</span>
@@ -367,77 +367,52 @@ header {
     Rejected <span class="tab-badge" id="badge-rejected">0</span>
   </div>
 </div>
-
+ 
 <div class="main">
   <div id="orderList"></div>
 </div>
-
+ 
 <div class="toast" id="toast"></div>
-
+ 
 <script>
 // ══════════════════════════════════════════════════════════
-// CONFIG — replace with your Apps Script endpoint URL once deployed
+// CONFIG
 // ══════════════════════════════════════════════════════════
-const ENDPOINT = 'YOUR_APPS_SCRIPT_URL_HERE';
-
+const ENDPOINT = 'https://script.google.com/macros/s/AKfycbynBcVZSgcFt-E6gMo7r7TD57zHYzJ3JHHXHWIqiwcSleIm3yQ8VrkYo_P2yyioj1y-/exec'; // Replace after deploying Apps Script
+ 
 let currentTab = 'pending';
 let allOrders = [];
-
-// ── SAMPLE DATA so the UI is usable before the backend is wired ──
-const SAMPLE_ORDERS = [
-  {
-    referenceNumber: 'MRZ-84729',
-    portalSource: 'portal-a',
-    submittedAt: new Date(Date.now() - 2*60*60*1000).toISOString(),
-    status: 'pending',
-    company: 'River Walk Coffee',
-    contactName: 'Maria Gonzalez',
-    contactEmail: 'maria@riverwalkcoffee.com',
-    phone: '(210) 555-0142',
-    shippingAddress: { street: '123 River Walk Blvd', city: 'San Antonio', state: 'TX', zip: '78205' },
-    requestedArrivalDate: '2026-04-18',
-    newCustomer: 'No',
-    items: [
-      { flavorName:'Birthday Cake', productType:'Mac Pop', coloring:'Natural', cases:4, units:40 },
-      { flavorName:'Strawberry', productType:'Mac Pop', coloring:'Natural', cases:2, units:20 },
-      { flavorName:'Red Velvet', productType:'Mac Pop', coloring:'Natural', cases:2, units:20 },
-    ],
-    totalCases: 8,
-    productDetail: '4 cases Natural Birthday Cake Pop / 2 cases Natural Strawberry Pop / 2 cases Natural Red Velvet Pop',
-    comments: 'Please include freeze upon arrival stickers.',
-  },
-  {
-    referenceNumber: 'MRZ-91034',
-    portalSource: 'portal-a',
-    submittedAt: new Date(Date.now() - 5*60*60*1000).toISOString(),
-    status: 'pending',
-    company: 'Piccolo Coffee',
-    contactName: 'James Park',
-    contactEmail: 'james@piccolocoffee.com',
-    phone: '(713) 555-0287',
-    shippingAddress: { street: '4501 Montrose Blvd', city: 'Houston', state: 'TX', zip: '77006' },
-    requestedArrivalDate: '2026-04-22',
-    newCustomer: 'Yes',
-    items: [
-      { flavorName:'Cookies & Cream', productType:'Mac Pop', coloring:'Natural', cases:4, units:40 },
-      { flavorName:'Red Velvet', productType:'Mac Pop', coloring:'Natural', cases:4, units:40 },
-      { flavorName:'Vanilla', productType:'Macaron', coloring:'Natural', cases:4, units:96 },
-      { flavorName:'Strawberry', productType:'Macaron', coloring:'Natural', cases:4, units:96 },
-    ],
-    totalCases: 16,
-    productDetail: '4 cases Cookies & Cream Pop / 4 cases Red Velvet Pop / 4 cases Vanilla Macaron / 4 cases Strawberry Macaron',
-    comments: '',
-  },
-];
-
+ 
 // ── INIT ──
 function init() {
-  allOrders = SAMPLE_ORDERS.map(o => ({...o}));
-  // Try to fetch real orders from backend
-  // fetchOrders();
-  render();
+  fetchOrders();
 }
-
+ 
+// ── FETCH ORDERS FROM BACKEND ──
+async function fetchOrders() {
+  const list = document.getElementById('orderList');
+  list.innerHTML = `<div class="loading"><div class="loading-spinner"></div><p>Loading orders...</p></div>`;
+ 
+  if (ENDPOINT === 'https://script.google.com/macros/s/AKfycbynBcVZSgcFt-E6gMo7r7TD57zHYzJ3JHHXHWIqiwcSleIm3yQ8VrkYo_P2yyioj1y-/exec') {
+    // Demo mode — show empty state until endpoint is configured
+    allOrders = [];
+    render();
+    showToast('Backend not connected yet — orders will appear here once Apps Script is deployed.', 'info');
+    return;
+  }
+ 
+  try {
+    const res = await fetch(`${ENDPOINT}?action=getOrders`);
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    allOrders = data.orders || [];
+    render();
+  } catch(err) {
+    list.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><h3>Could not load orders</h3><p>${err.message}</p></div>`;
+    console.error(err);
+  }
+}
+ 
 // ── TAB SWITCHING ──
 function switchTab(tab) {
   currentTab = tab;
@@ -445,23 +420,23 @@ function switchTab(tab) {
   document.getElementById(`tab-${tab}`).classList.add('active');
   render();
 }
-
+ 
 // ── RENDER ──
 function render() {
   const filtered = allOrders.filter(o => o.status === currentTab);
   const pending = allOrders.filter(o => o.status === 'pending').length;
   const approved = allOrders.filter(o => o.status === 'approved').length;
   const rejected = allOrders.filter(o => o.status === 'rejected').length;
-
+ 
   document.getElementById('countPending').textContent = `${pending} pending`;
   document.getElementById('countApproved').textContent = `${approved} approved`;
   document.getElementById('countRejected').textContent = `${rejected} rejected`;
   document.getElementById('badge-pending').textContent = pending;
   document.getElementById('badge-approved').textContent = approved;
   document.getElementById('badge-rejected').textContent = rejected;
-
+ 
   const list = document.getElementById('orderList');
-
+ 
   if (filtered.length === 0) {
     const labels = { pending:'No pending orders', approved:'No approved orders yet', rejected:'No rejected orders' };
     const subs = { pending:'New orders from the portal will appear here.', approved:'Approved orders have been written to Google Sheets.', rejected:'Rejected orders are stored here for reference.' };
@@ -473,10 +448,10 @@ function render() {
       </div>`;
     return;
   }
-
+ 
   list.innerHTML = filtered.map(order => buildOrderCard(order)).join('');
 }
-
+ 
 // ── BUILD ORDER CARD ──
 function buildOrderCard(order) {
   const submittedDate = new Date(order.submittedAt);
@@ -485,7 +460,7 @@ function buildOrderCard(order) {
   const macs = order.items.filter(i => i.productType === 'Macaron');
   const isNew = order.newCustomer === 'Yes';
   const hasComments = order.comments && order.comments.trim();
-
+ 
   const productRows = [
     ...pops.map(i => `
       <div class="pb-item">
@@ -504,17 +479,17 @@ function buildOrderCard(order) {
         <div class="pb-item-qty mac">${i.cases} case${i.cases!==1?'s':''}</div>
       </div>`),
   ].join('');
-
+ 
   const statusBanner = order.status === 'approved'
     ? `<div class="status-banner approved">✓ Approved by ${order.approvedBy || 'Sales'} · Written to Google Sheets · ${order.agreedPricing || ''}</div>`
     : order.status === 'rejected'
     ? `<div class="status-banner rejected">✗ Rejected by ${order.rejectedBy || 'Sales'} — ${order.rejectReason || ''}</div>`
     : '';
-
+ 
   const confirmForm = order.status === 'pending' ? `
     <div class="confirm-form" id="form-${order.referenceNumber}">
       <div class="confirm-form-title">Confirm Order Details</div>
-
+ 
       <div class="cf-row">
         <div class="cf-field">
           <label class="cf-label">Your Name *</label>
@@ -533,11 +508,11 @@ function buildOrderCard(order) {
           </div>
         </div>
       </div>
-
+ 
       <div class="shipping-flag" id="shipflag-${order.referenceNumber}">
         🚚 Shipping cost is separate — Skylar will calculate and add to this order before invoicing.
       </div>
-
+ 
       <div class="pricing-section">
         <div class="cf-row-3" id="pricing-${order.referenceNumber}">
           ${pops.length ? `
@@ -565,12 +540,12 @@ function buildOrderCard(order) {
           Total will be calculated automatically from price × units.
         </div>
       </div>
-
+ 
       <div class="cf-field" style="margin-bottom:14px">
         <label class="cf-label">Internal Notes (optional)</label>
         <input class="cf-input" id="notes-${order.referenceNumber}" placeholder="Any notes for Skylar or production...">
       </div>
-
+ 
       <div class="reject-section" id="reject-${order.referenceNumber}">
         <div class="reject-title">Reason for Rejection</div>
         <div class="reject-reasons">
@@ -581,13 +556,13 @@ function buildOrderCard(order) {
         <textarea class="reject-note" id="rejectnote-${order.referenceNumber}" placeholder="Additional details (optional)..."></textarea>
         <button class="btn-confirm-reject" onclick="confirmReject('${order.referenceNumber}')">Confirm Rejection</button>
       </div>
-
+ 
       <div class="action-row">
         <button class="btn-approve" onclick="approveOrder('${order.referenceNumber}')">✓ Approve &amp; Send to Sheets</button>
         <button class="btn-reject" onclick="toggleReject('${order.referenceNumber}')">✗ Reject</button>
       </div>
     </div>` : '';
-
+ 
   return `
     <div class="order-card status-${order.status}" id="card-${order.referenceNumber}">
       <div class="card-header" onclick="toggleCard('${order.referenceNumber}')">
@@ -604,7 +579,7 @@ function buildOrderCard(order) {
           <span class="card-chevron">▾</span>
         </div>
       </div>
-
+ 
       <div class="card-body">
         <div class="card-body-grid">
           <div class="info-block">
@@ -623,30 +598,30 @@ function buildOrderCard(order) {
             <div class="info-value">${order.newCustomer === 'Yes' ? '🆕 New Customer' : 'Existing Account'}</div>
           </div>
         </div>
-
+ 
         <div class="product-breakdown">
           <div class="pb-title">Order Breakdown — ${order.totalCases} total cases</div>
           ${productRows}
         </div>
-
+ 
         ${hasComments ? `
         <div class="comments-box">
           <div class="comments-box-label">💬 Customer Comments</div>
           ${order.comments}
         </div>` : ''}
-
+ 
         ${confirmForm}
         ${statusBanner}
       </div>
     </div>`;
 }
-
+ 
 // ── TOGGLE CARD EXPAND ──
 function toggleCard(ref) {
   const card = document.getElementById(`card-${ref}`);
   card.classList.toggle('expanded');
 }
-
+ 
 // ── SHIPPING MODE ──
 function setShipping(ref, mode) {
   const incBtn = document.getElementById(`ship-inc-${ref}`);
@@ -663,7 +638,7 @@ function setShipping(ref, mode) {
   const order = allOrders.find(o => o.referenceNumber === ref);
   if (order) order._shippingMode = mode;
 }
-
+ 
 // ── REJECT FLOW ──
 function toggleReject(ref) {
   const section = document.getElementById(`reject-${ref}`);
@@ -690,12 +665,12 @@ function confirmReject(ref) {
   showToast(`Order ${ref} rejected.`, 'info');
   render();
 }
-
+ 
 // ── APPROVE ──
 function approveOrder(ref) {
   const order = allOrders.find(o => o.referenceNumber === ref);
   if (!order) return;
-
+ 
   const rep = document.getElementById(`rep-${ref}`).value.trim();
   const pricePop = document.getElementById(`pricepop-${ref}`) ? parseFloat(document.getElementById(`pricepop-${ref}`).value) : null;
   const priceMac = document.getElementById(`pricemac-${ref}`) ? parseFloat(document.getElementById(`pricemac-${ref}`).value) : null;
@@ -703,25 +678,25 @@ function approveOrder(ref) {
   const notes = document.getElementById(`notes-${ref}`).value.trim();
   const hasPops = order.items.some(i => i.productType === 'Mac Pop');
   const hasMacs = order.items.some(i => i.productType === 'Macaron');
-
+ 
   // Validate
   if (!rep) { document.getElementById(`rep-${ref}`).classList.add('error'); showToast('Please enter your name.', 'error'); return; }
   if (hasPops && (!pricePop || isNaN(pricePop))) { showToast('Please enter price per pop.', 'error'); return; }
   if (hasMacs && (!priceMac || isNaN(priceMac))) { showToast('Please enter price per macaron.', 'error'); return; }
   if (!terms) { showToast('Please select payment terms.', 'error'); return; }
-
+ 
   // Calculate totals
   const shippingMode = order._shippingMode || 'included';
   const popUnits = order.items.filter(i=>i.productType==='Mac Pop').reduce((s,i)=>s+i.units,0);
   const macUnits = order.items.filter(i=>i.productType==='Macaron').reduce((s,i)=>s+i.units,0);
   const productTotal = ((pricePop||0)*popUnits) + ((priceMac||0)*macUnits);
-
+ 
   const pricingStr = [
     hasPops && pricePop ? `$${pricePop.toFixed(2)}/pop` : null,
     hasMacs && priceMac ? `$${priceMac.toFixed(2)}/macaron` : null,
     shippingMode === 'separate' ? 'shipping separate' : 'shipping included',
   ].filter(Boolean).join(' · ');
-
+ 
   // Write to order
   order.status = 'approved';
   order.approvedBy = rep;
@@ -734,44 +709,41 @@ function approveOrder(ref) {
   order.paymentTerms = terms;
   order.internalNotes = notes;
   order.agreedPricing = pricingStr;
-
+ 
   // Send to Sheets
   sendToSheets(order);
 }
-
+ 
 // ── SEND TO SHEETS ──
 async function sendToSheets(order) {
   showToast('Sending to Google Sheets...', 'info');
-
-  if (ENDPOINT === 'YOUR_APPS_SCRIPT_URL_HERE') {
-    // Demo mode — just update locally
-    setTimeout(() => {
-      showToast(`✓ Order ${order.referenceNumber} ${order.status === 'approved' ? 'approved and written to Sheets!' : 'rejected.'}`, 'success');
-      render();
-    }, 900);
+ 
+  if (ENDPOINT === 'https://script.google.com/macros/s/AKfycbynBcVZSgcFt-E6gMo7r7TD57zHYzJ3JHHXHWIqiwcSleIm3yQ8VrkYo_P2yyioj1y-/exec') {
+    showToast('Backend not connected yet — connect Apps Script to go live.', 'error');
     return;
   }
-
+ 
   try {
+    const action = order.status === 'approved' ? 'approve' : 'reject';
     const res = await fetch(ENDPOINT, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: order.status === 'approved' ? 'approve' : 'reject', order }),
+      body: JSON.stringify({ action, order }),
     });
     const data = await res.json();
     if (data.success) {
-      showToast(`✓ Order ${order.referenceNumber} written to Google Sheets!`, 'success');
-      render();
+      showToast(`✓ Order ${order.referenceNumber} ${order.status === 'approved' ? 'approved and written to Sheets!' : 'rejected.'}`, 'success');
+      await fetchOrders(); // Refresh from sheet
     } else {
       showToast('Error writing to Sheets. Check the console.', 'error');
       console.error(data);
     }
-  } catch (err) {
+  } catch(err) {
     showToast('Network error. Check the console.', 'error');
     console.error(err);
   }
 }
-
+ 
 // ── UTILS ──
 function formatDate(dateStr) {
   if (!dateStr) return '—';
@@ -791,8 +763,9 @@ function showToast(msg, type='info') {
   t.className = `toast ${type} show`;
   setTimeout(() => t.classList.remove('show'), 3500);
 }
-
+ 
 init();
 </script>
 </body>
 </html>
+ 
