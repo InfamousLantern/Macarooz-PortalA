@@ -430,8 +430,35 @@ async function fetchOrders() {
   });
 }
  
-// Auto-refresh every 30 seconds so multiple users stay in sync
-setInterval(fetchOrders, 30000);
+// Auto-refresh every 60 seconds — pauses when someone is mid-approval
+let refreshTimer = null;
+let formActive = false;
+ 
+function startRefreshTimer() {
+  if (refreshTimer) clearInterval(refreshTimer);
+  refreshTimer = setInterval(() => {
+    if (!formActive) fetchOrders();
+  }, 60000);
+}
+ 
+// Detect when a user is interacting with an approval form
+document.addEventListener('focusin', (e) => {
+  if (e.target.closest && e.target.closest('.confirm-form')) {
+    formActive = true;
+  }
+});
+document.addEventListener('focusout', (e) => {
+  if (e.target.closest && e.target.closest('.confirm-form')) {
+    // Small delay so tabbing between fields doesn't reset
+    setTimeout(() => {
+      if (!document.querySelector('.confirm-form:focus-within')) {
+        formActive = false;
+      }
+    }, 200);
+  }
+});
+ 
+startRefreshTimer();
  
 // ── TAB SWITCHING ──
 function switchTab(tab) {
@@ -760,7 +787,9 @@ async function sendToSheets(order) {
 // ── UTILS ──
 function formatDate(dateStr) {
   if (!dateStr) return '—';
+  if (dateStr === 'ASAP') return 'ASAP';
   const d = new Date(dateStr + 'T12:00:00');
+  if (isNaN(d)) return dateStr;
   return d.toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
 }
 function getTimeAgo(date) {
