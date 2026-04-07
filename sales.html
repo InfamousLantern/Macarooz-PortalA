@@ -393,17 +393,45 @@ async function fetchOrders() {
   const list = document.getElementById('orderList');
   list.innerHTML = `<div class="loading"><div class="loading-spinner"></div><p>Loading orders...</p></div>`;
  
-  try {
-    const res = await fetch(`${ENDPOINT}?action=getOrders`);
-    const data = await res.json();
-    if (data.error) throw new Error(data.error);
-    allOrders = data.orders || [];
-    render();
-  } catch(err) {
-    list.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><h3>Could not load orders</h3><p>${err.message}</p></div>`;
-    console.error(err);
-  }
+  // Apps Script doesn't support CORS headers on GET requests from browsers.
+  // We use a JSONP-style approach via a dynamic script tag instead.
+  return new Promise((resolve) => {
+    const callbackName = 'handleOrders_' + Date.now();
+    const script = document.createElement('script');
+ 
+    window[callbackName] = function(data) {
+      delete window[callbackName];
+      document.head.removeChild(script);
+      if (data.error) {
+        list.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><h3>Could not load orders</h3><p>${data.error}</p></div>`;
+      } else {
+        allOrders = data.orders || [];
+        render();
+      }
+      resolve();
+    };
+ 
+    script.onerror = function() {
+      delete window[callbackName];
+      document.head.removeChild(script);
+      list.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><h3>Could not connect to server</h3><p>Check that the Apps Script is deployed correctly.</p></div>`;
+      resolve();
+    };
+ 
+    script.src = `${ENDPOINT}?action=getOrders&callback=${callbackName}`;
+    document.head.appendChild(script);
+ 
+    // Timeout after 10 seconds
+    setTimeout(() => {
+      if (window[callbackName]) {
+        window[callbackName]({ error: 'Request timed out' });
+      }
+    }, 10000);
+  });
 }
+ 
+// Auto-refresh every 30 seconds so multiple users stay in sync
+setInterval(fetchOrders, 30000);
  
 // ── TAB SWITCHING ──
 function switchTab(tab) {
@@ -755,3 +783,4 @@ init();
 </script>
 </body>
 </html>
+ 
