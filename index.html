@@ -578,7 +578,7 @@ async function submitOrder() {
   btn.textContent = 'Submitting...'; btn.disabled = true;
  
   try {
-    if (ENDPOINT !== 'YOUR_APPS_SCRIPT_URL_HERE') {
+    if (ENDPOINT !== 'https://script.google.com/macros/s/AKfycbynBcVZSgcFt-E6gMo7r7TD57zHYzJ3JHHXHWIqiwcSleIm3yQ8VrkYo_P2yyioj1y-/exec') {
       const res = await fetch(ENDPOINT, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
