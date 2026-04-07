@@ -249,10 +249,14 @@ header {
 </header>
  
 <div class="hero">
+  <img src="images/moq-diagram.png"
+       alt="Minimum Order Quantities"
+       style="position:absolute;top:20px;right:24px;max-height:140px;max-width:280px;object-fit:contain;border-radius:8px;opacity:0.95;z-index:2;"
+       onerror="this.style.display='none'">
   <div class="hero-inner">
     <div class="hero-pill">✦ Wholesale Order Portal</div>
     <h1>Build your <em>perfect</em> order</h1>
-    <p class="hero-sub">Select your flavors and case quantities below. Mix and match pops and macarons — your total just needs to be at least 8 cases in multiples of 8.</p>
+    <p class="hero-sub">Select your flavors and case quantities below. Mix and match pops and macarons — your total just needs to be at least 8 cases in multiples of 8. Our team will send an invoice within 2 business days of confirmation.</p>
   </div>
 </div>
  
@@ -364,8 +368,18 @@ header {
         </select>
       </div>
  
+      <div class="form-field">
+        <label class="form-label">PO Number <span style="font-weight:400;text-transform:none;letter-spacing:0;color:#9CA3AF">(if applicable)</span></label>
+        <input class="form-input" id="poNumber" type="text" placeholder="Your purchase order number">
+      </div>
+ 
+      <div style="background:var(--teal-light);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:14px;font-size:12px;color:var(--teal-dark);line-height:1.6;">
+        <strong style="display:block;margin-bottom:2px;">Questions about your order?</strong>
+        Reach out to your sales representative or contact us at <a href="mailto:orders@macarooz.com" style="color:var(--teal-dark);font-weight:700;">orders@macarooz.com</a>
+      </div>
+ 
       <button class="submit-btn" id="submitBtn" onclick="submitOrder()" disabled>Submit Order Request →</button>
-      <p class="submit-note">No payment collected here. Our team will reach out to confirm pricing.</p>
+      <p class="submit-note">Our team will send an invoice within 2 business days of order confirmation.</p>
     </div>
   </div>
 </div>
@@ -564,6 +578,7 @@ async function submitOrder() {
     })),
     totalCases, productDetail,
     comments: document.getElementById('comments').value.trim(),
+    poNumber: document.getElementById('poNumber').value.trim(),
     rep:'', agreedPricing:'', deliveryMethod:'', deliverySpeed:'',
     shippingBurden:'', iceRequired:'', popStand:'', boxLabels:'',
     poNumber:'', paymentTerms:'', w4OrderNumber:'', invoiceId:'',
