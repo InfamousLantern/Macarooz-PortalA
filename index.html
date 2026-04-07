@@ -263,7 +263,7 @@ header {
 <div class="hero">
   <img src="images/moq-diagram.png"
      alt="Minimum Order Quantities"
-     style="position:absolute;top:20px;right:24px;max-height:140px;max-width:280px;object-fit:contain;border-radius:8px;opacity:0.95;z-index:2;cursor:zoom-in;"
+     style="position:absolute;top:16px;right:24px;max-height:180px;max-width:320px;width:auto;object-fit:contain;border-radius:8px;opacity:0.95;z-index:2;cursor:zoom-in;"
      onclick="document.getElementById('moqOverlay').classList.add('show')"
      onerror="this.style.display='none'">
   <div class="hero-inner">
@@ -668,8 +668,11 @@ populateArrivalDates();
 renderGrids();
 updateSummary();
 </script>
-</body> <div class="moq-overlay" id="moqOverlay" onclick="this.classList.remove('show')">
-  <img src="images/moq-diagram.png" alt="Minimum Order Quantities">
+<div class="moq-overlay" id="moqOverlay" onclick="this.classList.remove('show')">
+  <img src="images/moq-diagram.png" alt="Minimum Order Quantities"
+       style="max-width:600px;max-height:80vh;width:auto;height:auto;">
 </div>
+</body>
+</html>
 </html>
  
