@@ -5,7 +5,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Macarooz — Wholesale Order Portal</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<style>
+<style> /* MOQ image lightbox */
+.moq-overlay {
+  display: none; position: fixed; inset: 0; z-index: 999;
+  background: rgba(0,0,0,0.75); align-items: center; justify-content: center;
+  cursor: zoom-out;
+}
+.moq-overlay.show { display: flex; }
+.moq-overlay img {
+  max-width: 90vw; max-height: 90vh;
+  border-radius: 12px; box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+  animation: zoomIn 0.2s ease;
+}
+@keyframes zoomIn { from { transform: scale(0.85); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 :root {
   --white: #FFFFFF;
   --off-white: #F7FAF9;
@@ -250,9 +262,10 @@ header {
  
 <div class="hero">
   <img src="images/moq-diagram.png"
-       alt="Minimum Order Quantities"
-       style="position:absolute;top:10px;right:14px;max-height:280px;max-width:560px;object-fit:contain;border-radius:8px;opacity:0.95;z-index:2;"
-       onerror="this.style.display='none'">
+     alt="Minimum Order Quantities"
+     style="position:absolute;top:20px;right:24px;max-height:140px;max-width:280px;object-fit:contain;border-radius:8px;opacity:0.95;z-index:2;cursor:zoom-in;"
+     onclick="document.getElementById('moqOverlay').classList.add('show')"
+     onerror="this.style.display='none'">
   <div class="hero-inner">
     <div class="hero-pill">✦ Wholesale Order Portal</div>
     <h1>Build your <em>perfect</em> order</h1>
@@ -655,6 +668,8 @@ populateArrivalDates();
 renderGrids();
 updateSummary();
 </script>
-</body>
+</body> <div class="moq-overlay" id="moqOverlay" onclick="this.classList.remove('show')">
+  <img src="images/moq-diagram.png" alt="Minimum Order Quantities">
+</div>
 </html>
  
