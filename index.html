@@ -429,7 +429,7 @@ function makeCard(flavor, type, gridClass) {
   const emoji = type === 'pop'
     ? (POP_EMOJIS[flavor.id] || '🍭')
     : (MAC_EMOJIS[flavor.id] || '🫶');
-  const imgPath = `images/${flavor.id}.jpg`;
+  const imgPath = `images/${flavor.id}.png`;
  
   return `
     <div class="flavor-card${!flavor.available?' unavailable':''}${sel?' selected':''}"
