@@ -572,9 +572,31 @@ async function submitOrder() {
     addedToQB:false, addedToWF:false, addedToCFM:false, packingSlipPrinted:false,
   };
  
+  const ENDPOINT = 'https://script.google.com/macros/s/AKfycbynBcVZSgcFt-E6gMo7r7TD57zHYzJ3JHHXHWIqiwcSleIm3yQ8VrkYo_P2yyioj1y-/exec'; // Replace after deploying Apps Script
+ 
   const btn = document.getElementById('submitBtn');
   btn.textContent = 'Submitting...'; btn.disabled = true;
-  await new Promise(r => setTimeout(r, 800));
+ 
+  try {
+    if (ENDPOINT !== 'YOUR_APPS_SCRIPT_URL_HERE') {
+      const res = await fetch(ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'submit', order: orderData }),
+      });
+      const data = await res.json();
+      if (!data.success) throw new Error(data.error || 'Submission failed');
+    } else {
+      await new Promise(r => setTimeout(r, 800)); // Demo mode until endpoint is set
+    }
+  } catch(err) {
+    btn.textContent = 'Submit Order Request →';
+    btn.disabled = false;
+    alert('Something went wrong submitting your order. Please try again or contact us directly.');
+    console.error(err);
+    return;
+  }
+ 
   document.getElementById('refNumber').textContent = orderData.referenceNumber;
   document.getElementById('successOverlay').classList.add('show');
   console.log('ORDER SUBMITTED:', JSON.stringify(orderData, null, 2));
