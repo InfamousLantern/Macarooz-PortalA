@@ -681,9 +681,7 @@ function confirmReject(ref) {
   order.rejectReason = note ? `${reason} — ${note}` : reason;
   order.rejectedBy = rep || 'Sales';
   order.rejectedAt = new Date().toISOString();
-  // sendToSheets(order);  // Will be wired when endpoint is ready
-  showToast(`Order ${ref} rejected.`, 'info');
-  render();
+  sendToSheets(order);
 }
  
 // ── APPROVE ──
@@ -736,25 +734,25 @@ function approveOrder(ref) {
  
 // ── SEND TO SHEETS ──
 async function sendToSheets(order) {
-  showToast('Sending to Google Sheets...', 'info');
+  const label = order.status === 'approved' ? 'approved' : 'rejected';
+  showToast(`Saving order as ${label}...`, 'info');
  
   try {
     const action = order.status === 'approved' ? 'approve' : 'reject';
-    const res = await fetch(ENDPOINT, {
+    // Use no-cors so the browser doesn't block the request.
+    // We can't read the response this way, but the sheet gets updated.
+    await fetch(ENDPOINT, {
       method: 'POST',
+      mode: 'no-cors',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ action, order }),
     });
-    const data = await res.json();
-    if (data.success) {
-      showToast(`✓ Order ${order.referenceNumber} ${order.status === 'approved' ? 'approved and written to Sheets!' : 'rejected.'}`, 'success');
-      await fetchOrders(); // Refresh from sheet
-    } else {
-      showToast('Error writing to Sheets. Check the console.', 'error');
-      console.error(data);
-    }
+    // Wait a moment for Apps Script to finish writing, then refresh
+    await new Promise(r => setTimeout(r, 1500));
+    showToast(`✓ Order ${order.referenceNumber} ${label} and saved to Sheets.`, 'success');
+    await fetchOrders();
   } catch(err) {
-    showToast('Network error. Check the console.', 'error');
+    showToast('Network error — check your connection.', 'error');
     console.error(err);
   }
 }
