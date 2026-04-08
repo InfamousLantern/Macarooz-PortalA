@@ -22,6 +22,10 @@ const PRODUCTS = {
         { id: "fruity-cereal-n",  name: "Fruity Cereal",   sku: "Fruity Cereal",    available: true },
         { id: "SB-rose-n",        name: "Strawberry Rose", sku: "Strawberry Rose",  available: true, seasonal: true },
         { id: "RV-rose-n",        name: "Red Velvet Rose", sku: "Red Velvet Rose",  available: true, seasonal: true },
+        { id: "lemon-cake-n", name: "Lemon Cake", sku: "Lemon Cake", available: true, seasonal: true },
+        { id: "lemon-lavendar-rose-n", name: "Lemon Lavendar Rose", sku: "Lemon Lavendar Rose", available: true, seasonal: true },
+
+
       ]
     }
   },
