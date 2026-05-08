@@ -21,10 +21,12 @@ const PRODUCTS = {
         { id: "cotton-candy-n",   name: "Cotton Candy",    sku: "Cotton Candy",     available: true },
         { id: "fruity-cereal-n",  name: "Fruity Cereal",   sku: "Fruity Cereal",    available: true },
         { id: "SB-rose-n",        name: "Strawberry Rose", sku: "Strawberry Rose",  available: true, seasonal: true },
-        { id: "RV-rose-n",        name: "Red Velvet Rose", sku: "Red Velvet Rose",  available: true, seasonal: true },
+        { id: "RV-rose-n",        name: "Red Velvet Rose", sku: "Red Velvet Rose",  available: false, seasonal: true },
         { id: "lemon-cake-n", name: "Lemon Cake", sku: "Lemon Cake", available: true, seasonal: true },
-        { id: "lemon-lavendar-rose-n", name: "Lemon Lavendar Rose", sku: "Lemon Lavendar Rose", available: true, seasonal: true },
-        { id: "yellow-cake-rose-n", name: "Yellow Cake Rose", sku: "Yellow Cake Rose", available: true, seasonal: true },
+        { id: "lemon-lavendar-rose-n", name: "Lemon Lavendar Rose", sku: "Lemon Lavendar Rose", available: false, seasonal: true },
+        { id: "yellow-cake-rose-n", name: "Yellow Cake Rose", sku: "Yellow Cake Rose", available: false, seasonal: true },
+        { id: "rainbow-sherbet-n", name: "Rainbow Sherbet", sku: "Rainbow Sherbet", available: true, seasonal: true },
+        { id: "orange-creamsicle-n", name: "Orange creamsicle", sku: "Orange creamsicle", available: true, seasonal: true },
 
 
       ]
