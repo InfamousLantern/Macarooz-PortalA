@@ -26,7 +26,7 @@ const PRODUCTS = {
         //{ id: "lemon-lavendar-rose-n", name: "Lemon Lavendar Rose", sku: "Lemon Lavendar Rose", available: false, seasonal: true },
         //{ id: "yellow-cake-rose-n", name: "Yellow Cake Rose", sku: "Yellow Cake Rose", available: false, seasonal: true },
         { id: "rainbow-sherbet-n", name: "Rainbow Sherbet", sku: "Rainbow Sherbet", available: true, seasonal: true },
-        { id: "orange-creamsicle-n", name: "Orange creamsicle", sku: "Orange creamsicle", available: true, seasonal: true },
+        { id: "orange-creamsicle-n", name: "Orange Creamsicle", sku: "Orange Creamsicle", available: true, seasonal: true },
 
 
       ]
