@@ -334,6 +334,7 @@
   .source-dot { width: 5px; height: 5px; border-radius: 50%; }
   .dot-retail { background: var(--accent); }
   .dot-pallet { background: var(--purple); }
+  .dot-hist   { background: var(--blue); }
 
   /* ── DETAIL PANEL ── */
   .detail-panel { overflow-y: auto; background: var(--bg); }
@@ -468,6 +469,7 @@
   }
   .badge-retail { background: var(--accent-glow); color: var(--accent); }
   .badge-pallet { background: var(--purple-bg); color: var(--purple); }
+  .badge-hist { background: var(--blue-bg); color: var(--blue); }
 
   .rev-cell {
     font-family: 'DM Mono', monospace;
@@ -655,6 +657,7 @@
     <option value="all">All Sources</option>
     <option value="Retail">Retail Orders</option>
     <option value="Palletized">Palletized Orders</option>
+    <option value="Historical">Historical</option>
   </select>
   <div class="results-count" id="results-count">— customers</div>
 </div>
@@ -680,7 +683,7 @@
 // ─────────────────────────────────────────────
 // CONFIG — paste your Apps Script web app URL here after deploying
 // ─────────────────────────────────────────────
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz-0FguCQlfU5vwc9sk8o0CSzfb4I-eOkAJjLdOfXgBy01iK8Oe2NMpNPfJi2oS3G_c/exec';
+const APPS_SCRIPT_URL = 'YOUR_APPS_SCRIPT_WEB_APP_URL_HERE';
 
 // ─────────────────────────────────────────────
 // State
@@ -950,9 +953,10 @@ function renderList() {
 
   el.innerHTML = filteredData.map((c, i) => {
     const rev  = c.totalRevenue ? fmtMoneyShort(c.totalRevenue) : '<span style="color:var(--text-muted)">—</span>';
-    const dots = (c.sources || []).map(s =>
-      `<span class="source-dot ${s === 'Retail' ? 'dot-retail' : 'dot-pallet'}" title="${s}"></span>`
-    ).join('');
+    const dots = (c.sources || []).map(s => {
+      const cls = s === 'Retail' ? 'dot-retail' : s === 'Palletized' ? 'dot-pallet' : 'dot-hist';
+      return `<span class="source-dot ${cls}" title="${s}"></span>`;
+    }).join('');
     const isActive = activeIndex === i;
     return `<div class="customer-item${isActive ? ' active' : ''}" onclick="selectCustomer(${i})" style="animation-delay:${Math.min(i*0.018,0.28)}s">
       <div class="ci-rank">#${i+1}</div>
@@ -990,10 +994,12 @@ function renderDetail(c) {
   const sources = (c.sources || []);
   const hasRetail  = sources.includes('Retail');
   const hasPallet  = sources.includes('Palletized');
+  const hasHist    = sources.includes('Historical');
 
   const legend = [
     hasRetail  ? `<span style="display:inline-flex;align-items:center;gap:6px;font-family:'DM Mono',monospace;font-size:10px;color:var(--text-dim)"><span style="width:8px;height:8px;background:var(--accent);border-radius:50%;display:inline-block"></span>Retail Orders</span>` : '',
     hasPallet  ? `<span style="display:inline-flex;align-items:center;gap:6px;font-family:'DM Mono',monospace;font-size:10px;color:var(--text-dim)"><span style="width:8px;height:8px;background:var(--purple);border-radius:50%;display:inline-block"></span>Palletized Orders</span>` : '',
+    hasHist    ? `<span style="display:inline-flex;align-items:center;gap:6px;font-family:'DM Mono',monospace;font-size:10px;color:var(--text-dim)"><span style="width:8px;height:8px;background:var(--blue);border-radius:50%;display:inline-block"></span>Historical</span>` : '',
   ].filter(Boolean).join('&nbsp;&nbsp;&nbsp;');
 
   // In detail view, show all orders but highlight those outside range
@@ -1005,9 +1011,11 @@ function renderDetail(c) {
     const inRange = (!fromDate && !toDate) || filterOrdersByRange([o], fromDate, toDate).length > 0;
     const dimStyle = inRange ? '' : 'opacity:0.35;';
     const isRetail = o.source === 'Retail';
-    const badge = isRetail
+    const badge = o.source === 'Retail'
       ? `<span class="source-badge badge-retail">Retail</span>`
-      : `<span class="source-badge badge-pallet">Pallet</span>`;
+      : o.source === 'Palletized'
+      ? `<span class="source-badge badge-pallet">Pallet</span>`
+      : `<span class="source-badge badge-hist">Historical</span>`;
     const rev = o.revenue != null
       ? `<span class="rev-cell">${fmtMoneyFull(o.revenue)}</span>`
       : `<span class="rev-empty">—</span>`;
