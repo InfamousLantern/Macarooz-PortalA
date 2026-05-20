@@ -26,7 +26,7 @@
     --purple-bg: rgba(192,122,214,0.1);
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
- 
+
   body {
     font-family: 'DM Sans', sans-serif;
     background: var(--bg);
@@ -34,7 +34,7 @@
     min-height: 100vh;
     overflow-x: hidden;
   }
- 
+
   body::before {
     content: '';
     position: fixed;
@@ -44,7 +44,7 @@
     z-index: 9999;
     opacity: 0.6;
   }
- 
+
   /* ── LOADING STATE ── */
   #loading-screen {
     position: fixed;
@@ -59,14 +59,14 @@
     transition: opacity 0.4s ease;
   }
   #loading-screen.hidden { opacity: 0; pointer-events: none; }
- 
+
   .loading-logo {
     font-family: 'Playfair Display', serif;
     font-size: 28px;
     color: var(--accent);
     letter-spacing: 0.08em;
   }
- 
+
   .loading-sub {
     font-family: 'DM Mono', monospace;
     font-size: 11px;
@@ -74,7 +74,7 @@
     letter-spacing: 0.15em;
     text-transform: uppercase;
   }
- 
+
   .spinner {
     width: 32px;
     height: 32px;
@@ -83,16 +83,16 @@
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
   }
- 
+
   @keyframes spin { to { transform: rotate(360deg); } }
- 
+
   .loading-status {
     font-family: 'DM Mono', monospace;
     font-size: 11px;
     color: var(--text-muted);
     min-height: 16px;
   }
- 
+
   /* ── ERROR STATE ── */
   #error-banner {
     display: none;
@@ -104,7 +104,7 @@
     font-size: 12px;
     text-align: center;
   }
- 
+
   /* ── HEADER ── */
   header {
     border-bottom: 1px solid var(--border);
@@ -117,7 +117,7 @@
     top: 0;
     z-index: 100;
   }
- 
+
   .logo {
     font-family: 'Playfair Display', serif;
     font-size: 22px;
@@ -133,13 +133,13 @@
     margin-top: 1px;
     letter-spacing: 0.1em;
   }
- 
+
   .header-right {
     display: flex;
     align-items: center;
     gap: 16px;
   }
- 
+
   .refresh-btn {
     display: flex;
     align-items: center;
@@ -157,7 +157,7 @@
   }
   .refresh-btn:hover { border-color: var(--accent-dim); color: var(--accent); }
   .refresh-btn.spinning svg { animation: spin 0.8s linear infinite; }
- 
+
   .header-meta {
     font-family: 'DM Mono', monospace;
     font-size: 11px;
@@ -165,20 +165,20 @@
     text-align: right;
   }
   .header-meta strong { color: var(--text-dim); }
- 
+
   /* ── STATS BAR ── */
   .stats-bar {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     border-bottom: 1px solid var(--border);
   }
- 
+
   .stat-cell {
     padding: 20px 32px;
     border-right: 1px solid var(--border);
   }
   .stat-cell:last-child { border-right: none; }
- 
+
   .stat-label {
     font-family: 'DM Mono', monospace;
     font-size: 10px;
@@ -187,16 +187,16 @@
     text-transform: uppercase;
     margin-bottom: 6px;
   }
- 
+
   .stat-value {
     font-family: 'Playfair Display', serif;
     font-size: 28px;
     color: var(--accent);
     line-height: 1;
   }
- 
+
   .stat-sub { font-size: 11px; color: var(--text-dim); margin-top: 4px; }
- 
+
   /* ── CONTROLS ── */
   .controls {
     padding: 16px 40px;
@@ -207,7 +207,7 @@
     flex-wrap: wrap;
     background: var(--surface);
   }
- 
+
   .search-wrap { position: relative; flex: 1; min-width: 180px; }
   .search-wrap svg {
     position: absolute;
@@ -217,7 +217,7 @@
     color: var(--text-muted);
     pointer-events: none;
   }
- 
+
   input[type="text"] {
     width: 100%;
     background: var(--surface2);
@@ -232,7 +232,7 @@
   }
   input[type="text"]:focus { border-color: var(--accent-dim); }
   input[type="text"]::placeholder { color: var(--text-muted); }
- 
+
   select {
     background: var(--surface2);
     border: 1px solid var(--border);
@@ -246,7 +246,7 @@
     letter-spacing: 0.04em;
   }
   select:focus { border-color: var(--accent-dim); }
- 
+
   .ctrl-label {
     font-family: 'DM Mono', monospace;
     font-size: 10px;
@@ -255,7 +255,7 @@
     text-transform: uppercase;
     white-space: nowrap;
   }
- 
+
   .results-count {
     font-family: 'DM Mono', monospace;
     font-size: 11px;
@@ -263,14 +263,14 @@
     margin-left: auto;
     white-space: nowrap;
   }
- 
+
   /* ── MAIN LAYOUT ── */
   .main {
     display: grid;
     grid-template-columns: 320px 1fr;
     height: calc(100vh - 252px);
   }
- 
+
   /* ── CUSTOMER LIST ── */
   .customer-list {
     border-right: 1px solid var(--border);
@@ -279,7 +279,7 @@
   }
   .customer-list::-webkit-scrollbar { width: 3px; }
   .customer-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
- 
+
   .customer-item {
     padding: 14px 20px;
     border-bottom: 1px solid var(--border);
@@ -292,14 +292,14 @@
     border-left: 2px solid var(--accent);
     padding-left: 18px;
   }
- 
+
   .ci-rank {
     font-family: 'DM Mono', monospace;
     font-size: 9px;
     color: var(--text-muted);
     margin-bottom: 3px;
   }
- 
+
   .ci-name {
     font-size: 13px;
     font-weight: 500;
@@ -310,37 +310,37 @@
     text-overflow: ellipsis;
     max-width: 260px;
   }
- 
+
   .ci-meta {
     display: flex;
     justify-content: space-between;
     align-items: center;
   }
- 
+
   .ci-revenue {
     font-family: 'DM Mono', monospace;
     font-size: 13px;
     color: var(--accent);
     font-weight: 500;
   }
- 
+
   .ci-orders {
     font-family: 'DM Mono', monospace;
     font-size: 10px;
     color: var(--text-muted);
   }
- 
+
   .source-dots { display: flex; gap: 3px; margin-top: 5px; }
   .source-dot { width: 5px; height: 5px; border-radius: 50%; }
   .dot-retail { background: var(--accent); }
   .dot-pallet { background: var(--purple); }
   .dot-hist   { background: var(--blue); }
- 
+
   /* ── DETAIL PANEL ── */
   .detail-panel { overflow-y: auto; background: var(--bg); }
   .detail-panel::-webkit-scrollbar { width: 3px; }
   .detail-panel::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
- 
+
   .detail-empty {
     display: flex;
     flex-direction: column;
@@ -356,7 +356,7 @@
     font-style: italic;
     font-size: 16px;
   }
- 
+
   .detail-header {
     padding: 28px 40px 22px;
     border-bottom: 1px solid var(--border);
@@ -365,7 +365,7 @@
     top: 0;
     z-index: 10;
   }
- 
+
   .detail-name {
     font-family: 'Playfair Display', serif;
     font-size: 24px;
@@ -373,16 +373,16 @@
     margin-bottom: 4px;
     line-height: 1.2;
   }
- 
+
   .detail-aliases {
     font-size: 11px;
     color: var(--text-muted);
     font-family: 'DM Mono', monospace;
     margin-bottom: 14px;
   }
- 
+
   .detail-kpis { display: flex; gap: 28px; flex-wrap: wrap; }
- 
+
   .kpi { display: flex; flex-direction: column; gap: 3px; }
   .kpi-label {
     font-family: 'DM Mono', monospace;
@@ -398,9 +398,9 @@
     line-height: 1;
   }
   .kpi-value.sm { font-size: 14px; color: var(--text); font-family: 'DM Sans', sans-serif; padding-top: 3px; }
- 
+
   .detail-body { padding: 28px 40px; }
- 
+
   .section-title {
     font-family: 'DM Mono', monospace;
     font-size: 10px;
@@ -413,7 +413,7 @@
     gap: 8px;
   }
   .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
- 
+
   /* ── ORDERS TABLE ── */
   .table-wrap {
     border: 1px solid var(--border);
@@ -423,9 +423,9 @@
   }
   .table-wrap::-webkit-scrollbar { width: 3px; height: 3px; }
   .table-wrap::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
- 
+
   .orders-table { width: 100%; border-collapse: collapse; font-size: 12px; }
- 
+
   .orders-table th {
     font-family: 'DM Mono', monospace;
     font-size: 9px;
@@ -440,7 +440,7 @@
     position: sticky;
     top: 0;
   }
- 
+
   .orders-table td {
     padding: 10px 14px;
     border-bottom: 1px solid var(--border);
@@ -448,17 +448,17 @@
     vertical-align: top;
     line-height: 1.4;
   }
- 
+
   .orders-table tr:last-child td { border-bottom: none; }
   .orders-table tr:hover td { background: var(--surface2); }
- 
+
   .date-cell {
     font-family: 'DM Mono', monospace;
     font-size: 11px;
     color: var(--text-dim);
     white-space: nowrap;
   }
- 
+
   .source-badge {
     display: inline-block;
     padding: 2px 7px;
@@ -470,7 +470,7 @@
   .badge-retail { background: var(--accent-glow); color: var(--accent); }
   .badge-pallet { background: var(--purple-bg); color: var(--purple); }
   .badge-hist { background: var(--blue-bg); color: var(--blue); }
- 
+
   .rev-cell {
     font-family: 'DM Mono', monospace;
     color: var(--accent);
@@ -478,9 +478,9 @@
     text-align: right;
   }
   .rev-empty { color: var(--text-muted); font-style: italic; text-align: right; }
- 
+
   .product-cell { max-width: 300px; font-size: 11px; color: var(--text-dim); }
- 
+
   .no-results {
     padding: 48px;
     text-align: center;
@@ -488,7 +488,7 @@
     font-family: 'Playfair Display', serif;
     font-style: italic;
   }
- 
+
   /* ── DATE RANGE FILTER ── */
   .date-filter-bar {
     padding: 10px 40px;
@@ -501,7 +501,7 @@
     min-height: 48px;
     flex-shrink: 0;
   }
- 
+
   .range-label {
     font-family: 'DM Mono', monospace;
     font-size: 10px;
@@ -511,7 +511,7 @@
     white-space: nowrap;
     margin-right: 4px;
   }
- 
+
   .range-btn {
     font-family: 'DM Mono', monospace;
     font-size: 10px;
@@ -531,20 +531,20 @@
     border-color: var(--accent-dim);
     color: var(--accent);
   }
- 
+
   .range-divider {
     width: 1px;
     height: 16px;
     background: var(--border);
     margin: 0 4px;
   }
- 
+
   .range-custom {
     display: flex;
     align-items: center;
     gap: 6px;
   }
- 
+
   input[type="date"] {
     background: var(--surface2);
     border: 1px solid var(--border);
@@ -558,14 +558,14 @@
     color-scheme: dark;
   }
   input[type="date"]:focus { border-color: var(--accent-dim); }
- 
+
   .range-custom-label {
     font-family: 'DM Mono', monospace;
     font-size: 10px;
     color: var(--text-muted);
     letter-spacing: 0.06em;
   }
- 
+
   .filter-mode-note {
     font-family: 'DM Mono', monospace;
     font-size: 10px;
@@ -573,19 +573,19 @@
     margin-left: auto;
     font-style: italic;
   }
- 
+
   .filter-mode-note span {
     color: var(--accent-dim);
     font-style: normal;
   }
- 
+
   @keyframes fadeIn { from { opacity:0; transform:translateY(5px); } to { opacity:1; transform:translateY(0); } }
   .customer-item { animation: fadeIn 0.18s ease both; }
   .detail-header, .detail-body { animation: fadeIn 0.22s ease both; }
 </style>
 </head>
 <body>
- 
+
 <!-- Loading screen -->
 <div id="loading-screen">
   <div class="loading-logo">Macarooz</div>
@@ -593,9 +593,9 @@
   <div class="spinner"></div>
   <div class="loading-status" id="loading-status">Connecting to sheet…</div>
 </div>
- 
+
 <div id="error-banner"></div>
- 
+
 <header>
   <div class="logo">
     Macarooz
@@ -615,7 +615,7 @@
     </div>
   </div>
 </header>
- 
+
 <div class="stats-bar">
   <div class="stat-cell">
     <div class="stat-label">Total Customers</div>
@@ -638,7 +638,7 @@
     <div class="stat-sub">order history</div>
   </div>
 </div>
- 
+
 <div class="controls">
   <div class="search-wrap">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -663,7 +663,28 @@
   </select>
   <div class="results-count" id="results-count">— customers</div>
 </div>
- 
+
+
+<div class="date-filter-bar">
+  <span class="range-label">Orders in</span>
+  <button class="range-btn active" onclick="setRange('all',this)">All Time</button>
+  <button class="range-btn"        onclick="setRange('today',this)">Today</button>
+  <button class="range-btn"        onclick="setRange('7',this)">Last 7 Days</button>
+  <button class="range-btn"        onclick="setRange('30',this)">Last 30 Days</button>
+  <button class="range-btn"        onclick="setRange('90',this)">Last 90 Days</button>
+  <button class="range-btn"        onclick="setRange('ytd',this)">Year to Date</button>
+  <div class="range-divider"></div>
+  <div class="range-custom">
+    <span class="range-custom-label">From</span>
+    <input type="date" id="date-from" onchange="setRange('custom',null)">
+    <span class="range-custom-label">to</span>
+    <input type="date" id="date-to"   onchange="setRange('custom',null)">
+  </div>
+  <div class="filter-mode-note">
+    Showing: <span id="filter-mode-desc">all orders, all time</span>
+  </div>
+</div>
+
 <div class="main">
   <div class="customer-list" id="customer-list">
     <div class="no-results" style="padding:60px 20px">Loading…</div>
@@ -680,13 +701,13 @@
     </div>
   </div>
 </div>
- 
+
 <script>
 // ─────────────────────────────────────────────
 // CONFIG — paste your Apps Script web app URL here after deploying
 // ─────────────────────────────────────────────
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz-0FguCQlfU5vwc9sk8o0CSzfb4I-eOkAJjLdOfXgBy01iK8Oe2NMpNPfJi2oS3G_c/exec';
- 
+
 // ─────────────────────────────────────────────
 // State
 // ─────────────────────────────────────────────
@@ -694,7 +715,7 @@ let ALL_CUSTOMERS = [];
 let filteredData  = [];
 let activeIndex   = null;
 let currentRange  = 'all';  // 'all' | 'today' | '7' | '30' | '90' | 'ytd' | 'custom'
- 
+
 // ─────────────────────────────────────────────
 // Data loading
 // ─────────────────────────────────────────────
@@ -702,7 +723,7 @@ function loadData() {
   const btn = document.getElementById('refresh-btn');
   btn.classList.add('spinning');
   setLoadingStatus('Fetching from Google Sheets…');
- 
+
   // JSONP approach — works cross-origin without CORS issues
   const callbackName = 'dashCallback_' + Date.now();
   const script = document.createElement('script');
@@ -710,14 +731,14 @@ function loadData() {
     cleanup();
     showError('Request timed out. Check your Apps Script URL and deployment settings.');
   }, 15000);
- 
+
   function cleanup() {
     clearTimeout(timeout);
     delete window[callbackName];
     if (script.parentNode) script.parentNode.removeChild(script);
     btn.classList.remove('spinning');
   }
- 
+
   window[callbackName] = function(data) {
     cleanup();
     if (data && data.error) {
@@ -730,7 +751,7 @@ function loadData() {
     }
     onDataLoaded(data);
   };
- 
+
   script.src = APPS_SCRIPT_URL + '?callback=' + callbackName + '&t=' + Date.now();
   script.onerror = () => {
     cleanup();
@@ -738,26 +759,26 @@ function loadData() {
   };
   document.head.appendChild(script);
 }
- 
+
 function onDataLoaded(data) {
   ALL_CUSTOMERS = data.customers || [];
- 
+
   // Update last-updated
   const ts = data.generated ? new Date(data.generated) : new Date();
   document.getElementById('last-updated').textContent =
     ts.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
- 
+
   updateStats(data);
   applyFilters();
   hideLoading();
   document.getElementById('error-banner').style.display = 'none';
 }
- 
+
 function setLoadingStatus(msg) {
   const el = document.getElementById('loading-status');
   if (el) el.textContent = msg;
 }
- 
+
 function hideLoading() {
   const el = document.getElementById('loading-screen');
   if (el) {
@@ -765,14 +786,14 @@ function hideLoading() {
     setTimeout(() => el.style.display = 'none', 400);
   }
 }
- 
+
 function showError(msg) {
   hideLoading();
   const el = document.getElementById('error-banner');
   el.style.display = 'block';
   el.textContent = '⚠ ' + msg;
 }
- 
+
 // ─────────────────────────────────────────────
 // Stats
 // ─────────────────────────────────────────────
@@ -782,11 +803,11 @@ function updateStats(data) {
     .flatMap(c => [c.firstOrder, c.lastOrder])
     .filter(d => d && d.length > 4)
     .sort();
- 
+
   document.getElementById('stat-customers').textContent = ALL_CUSTOMERS.length.toLocaleString();
   document.getElementById('stat-orders').textContent = (data.totalOrders || 0).toLocaleString();
   document.getElementById('stat-revenue').textContent = fmtMoneyShort(totalRev);
- 
+
   if (allDates.length >= 2) {
     const first = parseDate(allDates[0]);
     const last  = parseDate(allDates[allDates.length - 1]);
@@ -796,13 +817,13 @@ function updateStats(data) {
     }
   }
 }
- 
+
 // ─────────────────────────────────────────────
 // Date range logic
 // ─────────────────────────────────────────────
 function setRange(range, btn) {
   currentRange = range;
- 
+
   // Update button active states (skip for custom — handled by date inputs)
   if (btn) {
     document.querySelectorAll('.range-btn').forEach(b => b.classList.remove('active'));
@@ -813,45 +834,45 @@ function setRange(range, btn) {
       document.getElementById('date-to').value   = '';
     }
   }
- 
+
   applyFilters();
 }
- 
+
 // Returns [fromDate, toDate] as Date objects (or null for no bound)
 function getRangeBounds() {
   const now  = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
- 
+
   switch (currentRange) {
     case 'all':
       return [null, null];
- 
+
     case 'today':
       return [today, null];
- 
+
     case '7': {
       const from = new Date(today);
       from.setDate(from.getDate() - 6);
       return [from, null];
     }
- 
+
     case '30': {
       const from = new Date(today);
       from.setDate(from.getDate() - 29);
       return [from, null];
     }
- 
+
     case '90': {
       const from = new Date(today);
       from.setDate(from.getDate() - 89);
       return [from, null];
     }
- 
+
     case 'ytd': {
       const from = new Date(now.getFullYear(), 0, 1);
       return [from, null];
     }
- 
+
     case 'custom': {
       const fromVal = document.getElementById('date-from').value;
       const toVal   = document.getElementById('date-to').value;
@@ -861,12 +882,12 @@ function getRangeBounds() {
       document.querySelectorAll('.range-btn').forEach(b => b.classList.remove('active'));
       return [from, to];
     }
- 
+
     default:
       return [null, null];
   }
 }
- 
+
 // Checks if a customer has any order within the active range
 // Also returns a filtered order list for the detail panel
 function filterOrdersByRange(orders, fromDate, toDate) {
@@ -879,7 +900,7 @@ function filterOrdersByRange(orders, fromDate, toDate) {
     return true;
   });
 }
- 
+
 function updateFilterNote(fromDate, toDate, range) {
   const el = document.getElementById('filter-mode-desc');
   if (!el) return;
@@ -897,7 +918,7 @@ function updateFilterNote(fromDate, toDate, range) {
     return;
   }
 }
- 
+
 // ─────────────────────────────────────────────
 // Filters & sort
 // ─────────────────────────────────────────────
@@ -905,17 +926,17 @@ function applyFilters() {
   const q   = document.getElementById('search').value.toLowerCase();
   const srt = document.getElementById('sort').value;
   const src = document.getElementById('source-filter').value;
- 
+
   const [fromDate, toDate] = getRangeBounds();
   updateFilterNote(fromDate, toDate, currentRange);
- 
+
   filteredData = ALL_CUSTOMERS.filter(c => {
     const nameMatch = !q ||
       c.name.toLowerCase().includes(q) ||
       (c.allNames || []).some(n => n.toLowerCase().includes(q));
     const srcMatch = src === 'all' || (c.sources || []).includes(src);
     if (!nameMatch || !srcMatch) return false;
- 
+
     // Date filter: keep customer if they have at least one order in range
     if (fromDate || toDate) {
       const ordersInRange = filterOrdersByRange(c.orders || [], fromDate, toDate);
@@ -923,7 +944,7 @@ function applyFilters() {
     }
     return true;
   });
- 
+
   filteredData.sort((a, b) => {
     switch (srt) {
       case 'revenue': return (b.totalRevenue || 0) - (a.totalRevenue || 0);
@@ -940,11 +961,11 @@ function applyFilters() {
     }
     return 0;
   });
- 
+
   renderList();
   document.getElementById('results-count').textContent = filteredData.length + ' customers';
 }
- 
+
 // ─────────────────────────────────────────────
 // Render customer list
 // ─────────────────────────────────────────────
@@ -954,7 +975,7 @@ function renderList() {
     el.innerHTML = '<div class="no-results">No customers found</div>';
     return;
   }
- 
+
   el.innerHTML = filteredData.map((c, i) => {
     const rev  = c.totalRevenue ? fmtMoneyShort(c.totalRevenue) : '<span style="color:var(--text-muted)">—</span>';
     const dots = (c.sources || []).map(s => {
@@ -973,7 +994,7 @@ function renderList() {
     </div>`;
   }).join('');
 }
- 
+
 // ─────────────────────────────────────────────
 // Select customer
 // ─────────────────────────────────────────────
@@ -984,7 +1005,7 @@ function selectCustomer(i) {
   );
   renderDetail(filteredData[i]);
 }
- 
+
 // ─────────────────────────────────────────────
 // Render detail panel
 // ─────────────────────────────────────────────
@@ -994,23 +1015,23 @@ function renderDetail(c) {
   const aliasStr = aliases.length
     ? `<div class="detail-aliases">Also seen as: ${aliases.slice(0,5).map(esc).join(', ')}</div>`
     : '';
- 
+
   const sources = (c.sources || []);
   const hasRetail  = sources.includes('Retail');
   const hasPallet  = sources.includes('Palletized');
   const hasHist    = sources.includes('Historical');
- 
+
   const legend = [
     hasRetail  ? `<span style="display:inline-flex;align-items:center;gap:6px;font-family:'DM Mono',monospace;font-size:10px;color:var(--text-dim)"><span style="width:8px;height:8px;background:var(--accent);border-radius:50%;display:inline-block"></span>Retail Orders</span>` : '',
     hasPallet  ? `<span style="display:inline-flex;align-items:center;gap:6px;font-family:'DM Mono',monospace;font-size:10px;color:var(--text-dim)"><span style="width:8px;height:8px;background:var(--purple);border-radius:50%;display:inline-block"></span>Palletized Orders</span>` : '',
     hasHist    ? `<span style="display:inline-flex;align-items:center;gap:6px;font-family:'DM Mono',monospace;font-size:10px;color:var(--text-dim)"><span style="width:8px;height:8px;background:var(--blue);border-radius:50%;display:inline-block"></span>Historical</span>` : '',
   ].filter(Boolean).join('&nbsp;&nbsp;&nbsp;');
- 
+
   // In detail view, show all orders but highlight those outside range
   const [fromDate, toDate] = getRangeBounds();
   const inRangeOrders = filterOrdersByRange(c.orders || [], fromDate, toDate);
   const inRangeSet = new Set(inRangeOrders.map((o,i) => i));
- 
+
   const orderRows = (c.orders || []).map((o, oi) => {
     const inRange = (!fromDate && !toDate) || filterOrdersByRange([o], fromDate, toDate).length > 0;
     const dimStyle = inRange ? '' : 'opacity:0.35;';
@@ -1032,7 +1053,7 @@ function renderDetail(c) {
       <td>${rev}</td>
     </tr>`;
   }).join('');
- 
+
   panel.innerHTML = `
     <div class="detail-header">
       <div class="detail-name">${esc(c.name)}</div>
@@ -1063,7 +1084,7 @@ function renderDetail(c) {
     <div class="detail-body">
       <div class="section-title">Sources</div>
       <div style="display:flex;gap:16px;margin-bottom:24px;flex-wrap:wrap">${legend}</div>
- 
+
       <div class="section-title">Order History (${c.orderCount})</div>
       <div class="table-wrap">
         <table class="orders-table">
@@ -1075,7 +1096,7 @@ function renderDetail(c) {
       </div>
     </div>`;
 }
- 
+
 // ─────────────────────────────────────────────
 // Formatters
 // ─────────────────────────────────────────────
@@ -1085,12 +1106,12 @@ function fmtMoneyShort(v) {
   if (v >= 1000)    return '$' + (v/1000).toFixed(1) + 'k';
   return '$' + v.toFixed(0);
 }
- 
+
 function fmtMoneyFull(v) {
   if (v == null) return '—';
   return '$' + Number(v).toLocaleString('en-US', { minimumFractionDigits:2, maximumFractionDigits:2 });
 }
- 
+
 function parseDate(d) {
   if (!d || String(d).length < 8) return null;
   // Handle both yyyy-MM-dd and Excel serial numbers
@@ -1101,23 +1122,23 @@ function parseDate(d) {
   }
   return null;
 }
- 
+
 function fmtDate(d) {
   const dt = parseDate(d);
   if (!dt) return '—';
   return dt.toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
 }
- 
+
 function fmtMo(dt) {
   if (!dt || isNaN(dt.getTime())) return '—';
   return dt.toLocaleDateString('en-US', { month:'short', year:'2-digit' });
 }
- 
+
 function esc(s) {
   return String(s || '')
     .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
- 
+
 // ─────────────────────────────────────────────
 // Boot
 // ─────────────────────────────────────────────
