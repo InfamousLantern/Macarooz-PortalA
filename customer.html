@@ -786,10 +786,12 @@ function updateStats(data) {
   document.getElementById('stat-revenue').textContent = fmtMoneyShort(totalRev);
 
   if (allDates.length >= 2) {
-    const first = new Date(allDates[0]);
-    const last  = new Date(allDates[allDates.length - 1]);
-    document.getElementById('stat-range').textContent =
-      fmtMo(first) + ' – ' + fmtMo(last);
+    const first = parseDate(allDates[0]);
+    const last  = parseDate(allDates[allDates.length - 1]);
+    if (first && last) {
+      document.getElementById('stat-range').textContent =
+        fmtMo(first) + ' – ' + fmtMo(last);
+    }
   }
 }
 
@@ -889,7 +891,7 @@ function updateFilterNote(fromDate, toDate, range) {
     const parts = [];
     if (fromDate) parts.push('from ' + fmtDate(fromDate.toISOString().substring(0,10)));
     if (toDate)   parts.push('to '   + fmtDate(toDate.toISOString().substring(0,10)));
-    el.textContent = parts.length ? parts.join(' ') : 'custom range';
+    el.textContent = parts.length ? parts.join(' ') : 'custom range (select dates above)';
     return;
   }
 }
@@ -1087,15 +1089,25 @@ function fmtMoneyFull(v) {
   return '$' + Number(v).toLocaleString('en-US', { minimumFractionDigits:2, maximumFractionDigits:2 });
 }
 
+function parseDate(d) {
+  if (!d || String(d).length < 8) return null;
+  // Handle both yyyy-MM-dd and Excel serial numbers
+  const s = String(d).trim();
+  if (/^\d{4}-\d{2}-\d{2}/.test(s)) {
+    const dt = new Date(s.substring(0,10) + 'T12:00:00');
+    return isNaN(dt.getTime()) ? null : dt;
+  }
+  return null;
+}
+
 function fmtDate(d) {
-  if (!d || d.length < 4) return '—';
-  try {
-    const dt = new Date(d + 'T12:00:00');
-    return dt.toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
-  } catch { return d; }
+  const dt = parseDate(d);
+  if (!dt) return '—';
+  return dt.toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
 }
 
 function fmtMo(dt) {
+  if (!dt || isNaN(dt.getTime())) return '—';
   return dt.toLocaleDateString('en-US', { month:'short', year:'2-digit' });
 }
 
