@@ -23,7 +23,7 @@ const PRODUCTS = {
         { id: "SB-rose-n",        name: "Strawberry Rose", sku: "Strawberry Rose",  available: true, seasonal: true },
         { id: "pecan-praline-n",  name: "Pecan Praline", sku: "Pecan Praline",  available: true, seasonal: true },
         //{ id: "RV-rose-n",        name: "Red Velvet Rose", sku: "Red Velvet Rose",  available: false, seasonal: true },
-        { id: "lemon-cake-n", name: "Lemon Cake", sku: "Lemon Cake", available: true, seasonal: true },
+        //{ id: "lemon-cake-n", name: "Lemon Cake", sku: "Lemon Cake", available: true, seasonal: true },
         //{ id: "lemon-lavendar-rose-n", name: "Lemon Lavendar Rose", sku: "Lemon Lavendar Rose", available: false, seasonal: true },
         //{ id: "yellow-cake-rose-n", name: "Yellow Cake Rose", sku: "Yellow Cake Rose", available: false, seasonal: true },
         { id: "birthday-cake-fourth-n", name: "4th of July Birthday Cake", sku: "4th of July Birthday Cake", available: true, seasonal: true },
