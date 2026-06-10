@@ -716,11 +716,28 @@ function buildCustomers() {
     groups[key].orders.push(o);
   });
 
-  // directory lookup for locations (by canonical or any alias)
+  // directory lookup for locations + contact (by canonical or any alias)
   const dirByNorm = {};
   DIRECTORY.forEach(d => {
     const n = normName(d.name);
-    if (!dirByNorm[n] || (!dirByNorm[n].zip && d.zip)) dirByNorm[n] = d;
+    if (!dirByNorm[n]) dirByNorm[n] = d;
+    else {
+      ['contact','email','phone','address','city','state','zip'].forEach(f => {
+        if (!dirByNorm[n][f] && d[f]) dirByNorm[n][f] = d[f];
+      });
+    }
+  });
+
+  // Ensure every company in the directory (e.g. the Pending Orders contact list)
+  // becomes a customer even if it has no orders yet, so it is searchable.
+  DIRECTORY.forEach(d => {
+    if (!d.name) return;
+    const canonical = canonicalFor(d.name, lookup);
+    const key = canonical ? 'canon::' + normName(canonical) : 'auto::' + normName(d.name);
+    if (!groups[key]) {
+      groups[key] = { key, name: canonical || d.name, allNames: new Set(), orders: [] };
+    }
+    groups[key].allNames.add(d.name);
   });
 
   CUSTOMERS = Object.values(groups).map(g => {
@@ -976,6 +993,9 @@ function applyFilters() {
     }
     const srcMatch = src === 'all' || (c.sources || []).includes(src);
     if (!nameMatch || !srcMatch) return false;
+    // When actively searching, surface any match regardless of the date window
+    // (lets you find contact-only / pending accounts that have no orders yet).
+    if (q) return true;
     if (fromDate || toDate) return ordersInRange(c.orders, fromDate, toDate).length > 0;
     return true;
   });
