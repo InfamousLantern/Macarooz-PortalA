@@ -410,7 +410,7 @@
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
       </svg>
-      <input type="text" id="search" placeholder="Search customers…" oninput="applyFilters()">
+      <input type="text" id="search" placeholder="Search name, contact, email, phone, address…" oninput="applyFilters()">
     </div>
     <span class="ctrl-label">Sort</span>
     <select id="sort" onchange="applyFilters()">
@@ -581,7 +581,7 @@
 // ═════════════════════════════════════════════════════════
 // CONFIG — paste your Apps Script web app URL here after deploying
 // ═════════════════════════════════════════════════════════
-const ENDPOINT = 'https://script.google.com/macros/s/AKfycbxKVIP68Y9RrgKjP3mekC2toa_tCqSip3Mgundh2jm31wgNhbqPyL4BWoNm8Mf0rpyi/exec';
+const ENDPOINT = 'PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE';
 const ANALYTICS_PASSWORD = 'LetItRide';
 
 // ═════════════════════════════════════════════════════════
@@ -733,15 +733,20 @@ function buildCustomers() {
     for (const o of [...g.orders].reverse()) {
       if (o.zip || (o.city && o.state)) { loc = { city: o.city, state: o.state, zip: o.zip }; break; }
     }
-    if (!loc) {
-      for (const nm of g.allNames) {
-        const d = dirByNorm[normName(nm)];
-        if (d) { loc = { city: d.city, state: d.state, zip: d.zip, address: d.address }; break; }
-      }
-      if (!loc) {
-        const d = dirByNorm[normName(g.name)];
-        if (d) loc = { city: d.city, state: d.state, zip: d.zip, address: d.address };
-      }
+
+    // contact record: take the best non-empty value for each field across every
+    // directory row that matches this customer's canonical name or any alias
+    const contact = { contact: '', email: '', phone: '', address: '', city: '', state: '', zip: '' };
+    const names = [g.name, ...g.allNames];
+    names.forEach(nm => {
+      const d = dirByNorm[normName(nm)];
+      if (!d) return;
+      ['contact', 'email', 'phone', 'address', 'city', 'state', 'zip'].forEach(f => {
+        if (!contact[f] && d[f]) contact[f] = d[f];
+      });
+    });
+    if (!loc && (contact.zip || (contact.city && contact.state))) {
+      loc = { city: contact.city, state: contact.state, zip: contact.zip, address: contact.address };
     }
 
     return {
@@ -755,7 +760,10 @@ function buildCustomers() {
       lastOrder: dated.length ? dated[dated.length - 1].date : null,
       sources: [...new Set(g.orders.map(o => o.source))],
       location: loc,
+      contact: contact,
       pricing: derivePricing(g.orders),
+      searchBlob: [g.name, ...g.allNames, contact.contact, contact.email, contact.phone, contact.address, contact.city, contact.state, contact.zip]
+        .filter(Boolean).join(' ').toLowerCase(),
     };
   });
 }
@@ -956,9 +964,16 @@ function applyFilters() {
   const [fromDate, toDate] = getRangeBounds();
 
   filteredData = CUSTOMERS.filter(c => {
-    const nameMatch = !q ||
-      c.name.toLowerCase().includes(q) ||
-      (c.allNames || []).some(n => n.toLowerCase().includes(q));
+    let nameMatch = !q;
+    if (q) {
+      nameMatch = (c.searchBlob || '').includes(q);
+      if (!nameMatch) {
+        const qDigits = q.replace(/\D/g, '');
+        if (qDigits.length >= 4 && c.contact && c.contact.phone) {
+          if (c.contact.phone.replace(/\D/g, '').includes(qDigits)) nameMatch = true;
+        }
+      }
+    }
     const srcMatch = src === 'all' || (c.sources || []).includes(src);
     if (!nameMatch || !srcMatch) return false;
     if (fromDate || toDate) return ordersInRange(c.orders, fromDate, toDate).length > 0;
@@ -1039,6 +1054,18 @@ function renderDetail(c) {
     pricingHtml = `<div class="pricing-cards">${cards.join('')}</div>`;
   }
 
+  // contact block
+  const ct = c.contact || {};
+  const fullAddr = [ct.address, [ct.city, ct.state].filter(Boolean).join(', '), ct.zip].filter(Boolean).join(' · ');
+  const contactRows = [];
+  if (ct.contact) contactRows.push(['Contact', esc(ct.contact)]);
+  if (ct.phone)   contactRows.push(['Phone', `<a href="tel:${escAttr(ct.phone.replace(/[^0-9+]/g,''))}" style="color:var(--accent);text-decoration:none">${esc(ct.phone)}</a>`]);
+  if (ct.email)   contactRows.push(['Email', `<a href="mailto:${escAttr(ct.email)}" style="color:var(--accent);text-decoration:none">${esc(ct.email)}</a>`]);
+  if (fullAddr)   contactRows.push(['Address', esc(fullAddr)]);
+  const contactHtml = contactRows.length
+    ? `<div class="kpi" style="display:block">${contactRows.map(r => `<div style="display:flex;gap:12px;padding:5px 0"><span class="kpi-label" style="min-width:70px;margin:0">${r[0]}</span><span style="font-size:13px;color:var(--text)">${r[1]}</span></div>`).join('')}</div>`
+    : '<div style="font-family:\'DM Mono\',monospace;font-size:11px;color:var(--text-muted)">No contact details on file in the portal or New Customer tabs.</div>';
+
   const [fromDate, toDate] = getRangeBounds();
   const orderRows = [...c.orders].reverse().map(o => {
     const inR = orderInRange(o, fromDate, toDate);
@@ -1070,6 +1097,8 @@ function renderDetail(c) {
       </div>
     </div>
     <div class="detail-body">
+      <div class="section-title">Contact</div>
+      ${contactHtml}
       <div class="section-title">Current Pricing</div>
       ${pricingHtml}
       <div class="section-title">Order History (${c.orderCount}) <span style="text-transform:none;letter-spacing:0;color:var(--text-muted)">· dimmed rows fall outside the date window</span></div>
