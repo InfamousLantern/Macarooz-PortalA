@@ -42,7 +42,7 @@ const PRODUCTS = {
     flavors: {
       natural: [
         { id: "vanilla-mac-n",    name: "Vanilla",     available: true  },
-        { id: "chocolate-mac-n",  name: "Chocolate",   available: false  },
+        { id: "chocolate-mac-n",  name: "Chocolate",   available: true  },
         { id: "strawberry-mac-n", name: "Strawberry",  available: true  },
         { id: "pistachio-mac-n",  name: "Pistachio",   available: true },
       ]
