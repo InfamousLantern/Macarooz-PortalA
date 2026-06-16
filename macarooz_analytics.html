@@ -171,6 +171,7 @@
   .ci-meta { display: flex; gap: 12px; grid-column: 2; }
   .ci-revenue { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--green); }
   .ci-orders { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text-dim); }
+  .ci-owed { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--red); background: rgba(217,107,90,0.12); padding: 1px 6px; border-radius: 3px; }
   .source-dots { display: flex; gap: 4px; grid-column: 3; grid-row: 1; justify-self: end; }
   .source-dot { width: 8px; height: 8px; border-radius: 50%; }
   .dot-retail { background: var(--accent); }
@@ -357,7 +358,7 @@
     </button>
     <div class="header-meta">
       <strong id="last-updated">—</strong><br>
-      Live from Google Sheets · build 2026-06-10c
+      Live from Google Sheets · build 2026-06-10d
     </div>
   </div>
 </header>
@@ -415,6 +416,7 @@
     <span class="ctrl-label">Sort</span>
     <select id="sort" onchange="applyFilters()">
       <option value="revenue">Revenue ↓</option>
+      <option value="owed">Outstanding ↓</option>
       <option value="orders">Orders ↓</option>
       <option value="first">First Order (oldest)</option>
       <option value="last">Last Order (newest)</option>
@@ -753,18 +755,30 @@ function buildCustomers() {
 
     // contact record: take the best non-empty value for each field across every
     // directory row that matches this customer's canonical name or any alias
-    const contact = { contact: '', email: '', phone: '', address: '', city: '', state: '', zip: '' };
+    const contact = { contact: '', email: '', phone: '', address: '', city: '', state: '', zip: '', paymentTerms: '' };
     const names = [g.name, ...g.allNames];
     names.forEach(nm => {
       const d = dirByNorm[normName(nm)];
       if (!d) return;
-      ['contact', 'email', 'phone', 'address', 'city', 'state', 'zip'].forEach(f => {
+      ['contact', 'email', 'phone', 'address', 'city', 'state', 'zip', 'paymentTerms'].forEach(f => {
         if (!contact[f] && d[f]) contact[f] = d[f];
       });
     });
     if (!loc && (contact.zip || (contact.city && contact.state))) {
       loc = { city: contact.city, state: contact.state, zip: contact.zip, address: contact.address };
     }
+
+    // outstanding balance: sum Total Invoice for orders not marked paid.
+    // "paid" = invoicePaid starts with y / paid / true. Blank or no = treat as owed
+    // (only when there is a positive invoice amount and the order tab tracks payment).
+    const unpaidOrders = g.orders.filter(o => {
+      if (!(o.revenue > 0)) return false;
+      if (o.invoicePaid == null) return false;           // tab has no paid column (e.g. palletized)
+      const p = String(o.invoicePaid).trim().toLowerCase();
+      if (p === '') return false;                         // blank = unknown, don't flag as owed
+      return !(p[0] === 'y' || p.indexOf('paid') === 0 || p === 'true' || p === 'x' || p === 'comp');
+    });
+    const outstanding = unpaidOrders.reduce((s, o) => s + o.revenue, 0);
 
     return {
       key: g.key,
@@ -778,6 +792,9 @@ function buildCustomers() {
       sources: [...new Set(g.orders.map(o => o.source))],
       location: loc,
       contact: contact,
+      paymentTerms: contact.paymentTerms || '',
+      outstanding: outstanding,
+      unpaidCount: unpaidOrders.length,
       pricing: derivePricing(g.orders),
       searchBlob: [g.name, ...g.allNames, contact.contact, contact.email, contact.phone, contact.address, contact.city, contact.state, contact.zip]
         .filter(Boolean).join(' ').toLowerCase(),
@@ -1003,6 +1020,7 @@ function applyFilters() {
   filteredData.sort((a, b) => {
     switch (srt) {
       case 'revenue': return (b.totalRevenue || 0) - (a.totalRevenue || 0);
+      case 'owed': return (b.outstanding || 0) - (a.outstanding || 0);
       case 'orders':  return b.orderCount - a.orderCount;
       case 'first': { const da = a.firstOrder || '9999', db = b.firstOrder || '9999'; return da < db ? -1 : da > db ? 1 : 0; }
       case 'last':  { const da = a.lastOrder || '0000', db = b.lastOrder || '0000'; return da < db ? 1 : da > db ? -1 : 0; }
@@ -1034,6 +1052,7 @@ function renderList() {
       <div class="ci-meta">
         <span class="ci-revenue">${rev}</span>
         <span class="ci-orders">${c.orderCount} order${c.orderCount !== 1 ? 's' : ''}</span>
+        ${c.outstanding > 0 ? `<span class="ci-owed" title="${c.unpaidCount} unpaid invoice${c.unpaidCount !== 1 ? 's' : ''}">owes ${fmtMoneyShort(c.outstanding)}</span>` : ''}
       </div>
       <div class="source-dots">${dots}</div>
     </div>`;
@@ -1082,6 +1101,7 @@ function renderDetail(c) {
   if (ct.phone)   contactRows.push(['Phone', `<a href="tel:${escAttr(ct.phone.replace(/[^0-9+]/g,''))}" style="color:var(--accent);text-decoration:none">${esc(ct.phone)}</a>`]);
   if (ct.email)   contactRows.push(['Email', `<a href="mailto:${escAttr(ct.email)}" style="color:var(--accent);text-decoration:none">${esc(ct.email)}</a>`]);
   if (fullAddr)   contactRows.push(['Address', esc(fullAddr)]);
+  if (c.paymentTerms) contactRows.push(['Terms', esc(c.paymentTerms)]);
   const contactHtml = contactRows.length
     ? `<div class="kpi" style="display:block">${contactRows.map(r => `<div style="display:flex;gap:12px;padding:5px 0"><span class="kpi-label" style="min-width:70px;margin:0">${r[0]}</span><span style="font-size:13px;color:var(--text)">${r[1]}</span></div>`).join('')}</div>`
     : '<div style="font-family:\'DM Mono\',monospace;font-size:11px;color:var(--text-muted)">No contact details on file in the portal or New Customer tabs.</div>';
@@ -1094,6 +1114,16 @@ function renderDetail(c) {
       : `<span class="source-badge badge-hist">Historical</span>`;
     const rev = o.revenue != null && o.revenue > 0 ? `<span class="rev-cell">${fmtMoneyFull(o.revenue)}</span>` : `<span class="rev-empty">—</span>`;
     const prod = o.product ? esc(o.product).substring(0, 220) + (o.product.length > 220 ? '…' : '') : '—';
+    let payCell = '<span style="color:var(--text-muted)">—</span>';
+    if (o.invoicePaid) {
+      const p = String(o.invoicePaid).trim().toLowerCase();
+      const isPaid = (p[0] === 'y' || p.indexOf('paid') === 0 || p === 'true' || p === 'x' || p === 'comp');
+      payCell = isPaid
+        ? '<span style="color:var(--green);font-family:\'DM Mono\',monospace;font-size:11px">✓ paid</span>'
+        : (o.revenue > 0
+            ? '<span style="color:var(--red);font-family:\'DM Mono\',monospace;font-size:11px">● unpaid</span>'
+            : '<span style="color:var(--text-muted);font-family:\'DM Mono\',monospace;font-size:11px">' + esc(o.invoicePaid) + '</span>');
+    }
     return `<tr style="${inR ? '' : 'opacity:0.35;'}">
       <td class="date-cell">${fmtDate(o.date)}</td>
       <td>${badge}</td>
@@ -1101,6 +1131,7 @@ function renderDetail(c) {
       <td style="font-size:11px;color:var(--text-dim);white-space:nowrap">${o.pricing ? esc(o.pricing).substring(0,40) : '—'}</td>
       <td class="num-cell">${o.qty != null ? o.qty : ''}</td>
       <td style="text-align:right">${rev}</td>
+      <td style="text-align:center;white-space:nowrap">${payCell}</td>
     </tr>`;
   }).join('');
 
@@ -1110,6 +1141,8 @@ function renderDetail(c) {
       ${aliasStr}${locStr}
       <div class="detail-kpis">
         <div class="kpi"><div class="kpi-label">Total Revenue</div><div class="kpi-value gold">${c.totalRevenue ? fmtMoneyFull(c.totalRevenue) : '—'}</div></div>
+        <div class="kpi"${c.outstanding > 0 ? ' style="border-color:var(--red)"' : ''}><div class="kpi-label">Outstanding</div><div class="kpi-value${c.outstanding > 0 ? '' : ' sm'}" style="${c.outstanding > 0 ? 'color:var(--red)' : 'color:var(--green)'}">${c.outstanding > 0 ? fmtMoneyFull(c.outstanding) : 'Clear'}</div>${c.outstanding > 0 ? `<div class="kpi-sub">${c.unpaidCount} unpaid invoice${c.unpaidCount !== 1 ? 's' : ''}</div>` : ''}</div>
+        <div class="kpi"><div class="kpi-label">Payment Terms</div><div class="kpi-value sm">${c.paymentTerms ? esc(c.paymentTerms) : '—'}</div></div>
         <div class="kpi"><div class="kpi-label">Total Orders</div><div class="kpi-value">${c.orderCount}</div></div>
         <div class="kpi"><div class="kpi-label">First Order</div><div class="kpi-value sm">${fmtDate(c.firstOrder)}</div></div>
         <div class="kpi"><div class="kpi-label">Latest Order</div><div class="kpi-value sm">${fmtDate(c.lastOrder)}</div></div>
@@ -1124,7 +1157,7 @@ function renderDetail(c) {
       <div class="section-title">Order History (${c.orderCount}) <span style="text-transform:none;letter-spacing:0;color:var(--text-muted)">· dimmed rows fall outside the date window</span></div>
       <div class="table-wrap">
         <table class="data-table">
-          <thead><tr><th>Date</th><th>Type</th><th>Product / SKU</th><th>Pricing</th><th style="text-align:right">Qty</th><th style="text-align:right">Revenue</th></tr></thead>
+          <thead><tr><th>Date</th><th>Type</th><th>Product / SKU</th><th>Pricing</th><th style="text-align:right">Qty</th><th style="text-align:right">Revenue</th><th style="text-align:center">Invoice</th></tr></thead>
           <tbody>${orderRows}</tbody>
         </table>
       </div>
