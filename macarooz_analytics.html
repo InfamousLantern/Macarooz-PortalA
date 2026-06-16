@@ -358,7 +358,7 @@
     </button>
     <div class="header-meta">
       <strong id="last-updated">—</strong><br>
-      Live from Google Sheets · build 2026-06-10d
+      Live from Google Sheets · build 2026-06-10e
     </div>
   </div>
 </header>
@@ -773,10 +773,8 @@ function buildCustomers() {
     // (only when there is a positive invoice amount and the order tab tracks payment).
     const unpaidOrders = g.orders.filter(o => {
       if (!(o.revenue > 0)) return false;
-      if (o.invoicePaid == null) return false;           // tab has no paid column (e.g. palletized)
-      const p = String(o.invoicePaid).trim().toLowerCase();
-      if (p === '') return false;                         // blank = unknown, don't flag as owed
-      return !(p[0] === 'y' || p.indexOf('paid') === 0 || p === 'true' || p === 'x' || p === 'comp');
+      if (o.invoicePaid == null) return false;   // tab has no paid checkbox (e.g. palletized)
+      return o.invoicePaid === 'unpaid';
     });
     const outstanding = unpaidOrders.reduce((s, o) => s + o.revenue, 0);
 
@@ -1115,14 +1113,12 @@ function renderDetail(c) {
     const rev = o.revenue != null && o.revenue > 0 ? `<span class="rev-cell">${fmtMoneyFull(o.revenue)}</span>` : `<span class="rev-empty">—</span>`;
     const prod = o.product ? esc(o.product).substring(0, 220) + (o.product.length > 220 ? '…' : '') : '—';
     let payCell = '<span style="color:var(--text-muted)">—</span>';
-    if (o.invoicePaid) {
-      const p = String(o.invoicePaid).trim().toLowerCase();
-      const isPaid = (p[0] === 'y' || p.indexOf('paid') === 0 || p === 'true' || p === 'x' || p === 'comp');
-      payCell = isPaid
-        ? '<span style="color:var(--green);font-family:\'DM Mono\',monospace;font-size:11px">✓ paid</span>'
-        : (o.revenue > 0
-            ? '<span style="color:var(--red);font-family:\'DM Mono\',monospace;font-size:11px">● unpaid</span>'
-            : '<span style="color:var(--text-muted);font-family:\'DM Mono\',monospace;font-size:11px">' + esc(o.invoicePaid) + '</span>');
+    if (o.invoicePaid === 'paid') {
+      payCell = '<span style="color:var(--green);font-family:\'DM Mono\',monospace;font-size:11px">✓ paid</span>';
+    } else if (o.invoicePaid === 'unpaid') {
+      payCell = o.revenue > 0
+        ? '<span style="color:var(--red);font-family:\'DM Mono\',monospace;font-size:11px">● unpaid</span>'
+        : '<span style="color:var(--text-muted);font-family:\'DM Mono\',monospace;font-size:11px">unpaid</span>';
     }
     return `<tr style="${inR ? '' : 'opacity:0.35;'}">
       <td class="date-cell">${fmtDate(o.date)}</td>
