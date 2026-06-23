@@ -26,7 +26,7 @@ const PRODUCTS = {
         //{ id: "lemon-cake-n", name: "Lemon Cake", sku: "Lemon Cake", available: true, seasonal: true },
         //{ id: "lemon-lavendar-rose-n", name: "Lemon Lavendar Rose", sku: "Lemon Lavendar Rose", available: false, seasonal: true },
         //{ id: "yellow-cake-rose-n", name: "Yellow Cake Rose", sku: "Yellow Cake Rose", available: false, seasonal: true },
-        { id: "birthday-cake-fourth-n", name: "4th of July Birthday Cake", sku: "4th of July Birthday Cake", available: true, seasonal: true },
+        //{ id: "birthday-cake-fourth-n", name: "4th of July Birthday Cake", sku: "4th of July Birthday Cake", available: true, seasonal: true },
         { id: "red-velvet-fourth-n", name: "4th of July Red Velvet", sku: "4th of July Red Velvet", available: true, seasonal: true },
         { id: "rainbow-sherbet-n", name: "Rainbow Sherbet", sku: "Rainbow Sherbet", available: true, seasonal: true },
         { id: "orange-creamsicle-n", name: "Orange Creamsicle", sku: "Orange Creamsicle", available: true, seasonal: true },
