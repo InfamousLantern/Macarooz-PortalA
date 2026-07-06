@@ -13,23 +13,26 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
   :root {
-    --bg: #0e0c0b;
-    --surface: #161311;
-    --surface2: #1e1a17;
-    --border: #2e2520;
-    --accent: #e8b86d;
-    --accent-dim: #9a7840;
-    --accent-glow: rgba(232,184,109,0.12);
-    --text: #f0e8df;
-    --text-dim: #8a7a6e;
-    --text-muted: #4a3f37;
-    --green: #5fb87a;
-    --green-bg: rgba(95,184,122,0.1);
-    --red: #d96b5a;
-    --blue: #6badd9;
-    --blue-bg: rgba(107,173,217,0.1);
-    --purple: #c07ad6;
-    --purple-bg: rgba(192,122,214,0.1);
+    --bg: #eceef0;
+    --surface: #ffffff;
+    --surface2: #f3f5f7;
+    --border: #d5dade;
+    --accent: #128c7e;
+    --accent-dim: #0f7268;
+    --accent-glow: rgba(18,140,126,0.10);
+    --text: #1f2a2e;
+    --text-dim: #5a6b70;
+    --text-muted: #93a1a6;
+    --green: #1f9d57;
+    --green-bg: rgba(31,157,87,0.10);
+    --red: #d0553f;
+    --red-bg: rgba(208,85,63,0.10);
+    --blue: #2f7fb5;
+    --blue-bg: rgba(47,127,181,0.10);
+    --purple: #7a5bc0;
+    --purple-bg: rgba(122,91,192,0.10);
+    --teal: #14a89a;
+    --amber: #d98a2b;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -48,7 +51,7 @@
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
     pointer-events: none;
     z-index: 9999;
-    opacity: 0.6;
+    opacity: 0.25;
   }
 
   /* LOADING */
@@ -83,7 +86,7 @@
     padding: 8px 18px; font-family: 'DM Mono', monospace; font-size: 12px; letter-spacing: 0.06em;
     color: var(--text-dim); border-radius: 4px; cursor: pointer; border: none; background: transparent; transition: all 0.2s;
   }
-  .view-tab.active { background: var(--accent); color: #1a1208; font-weight: 500; }
+  .view-tab.active { background: var(--accent); color: #ffffff; font-weight: 500; }
   .view-tab:not(.active):hover { color: var(--accent); }
 
   .header-right { display: flex; align-items: center; gap: 16px; }
@@ -108,7 +111,7 @@
   /* DATE RANGE BAR */
   .date-filter-bar {
     padding: 12px 32px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
-    border-bottom: 1px solid var(--border); background: rgba(232,184,109,0.02);
+    border-bottom: 1px solid var(--border); background: var(--accent-glow);
   }
   .range-label { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-muted); letter-spacing: 0.12em; text-transform: uppercase; margin-right: 4px; }
   .range-btn {
@@ -187,6 +190,9 @@
   .detail-name { font-family: 'Playfair Display', serif; font-size: 30px; color: var(--accent); }
   .detail-aliases { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text-dim); margin-top: 6px; }
   .detail-loc { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+  .vertical-row { display: flex; align-items: center; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
+  .vertical-badge { font-family: 'DM Mono', monospace; font-size: 11px; padding: 3px 12px; border-radius: 20px; border: 1px solid; letter-spacing: 0.03em; }
+  .vertical-select { font-family: 'DM Mono', monospace; font-size: 11px; padding: 6px 10px; }
   .detail-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; margin-top: 20px; }
   .kpi { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 12px 14px; }
   .kpi-label { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--text-muted); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 6px; }
@@ -216,7 +222,7 @@
   }
   .data-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
   .data-table tr:last-child td { border-bottom: none; }
-  .data-table tr:hover td { background: rgba(232,184,109,0.03); }
+  .data-table tr:hover td { background: rgba(18,140,126,0.04); }
   .date-cell { font-family: 'DM Mono', monospace; white-space: nowrap; color: var(--text-dim); }
   .rev-cell { font-family: 'DM Mono', monospace; color: var(--green); white-space: nowrap; }
   .rev-empty { color: var(--text-muted); }
@@ -254,7 +260,7 @@
   .merge-selected-bar { margin-top: 12px; font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text-dim); }
   .canon-row { display: flex; gap: 8px; margin-top: 10px; align-items: center; }
   .btn-gold {
-    background: var(--accent); color: #1a1208; border: none; padding: 10px 18px;
+    background: var(--accent); color: #ffffff; border: none; padding: 10px 18px;
     font-family: 'DM Mono', monospace; font-size: 12px; font-weight: 500; border-radius: 4px; cursor: pointer; letter-spacing: 0.04em;
   }
   .btn-gold:hover { filter: brightness(1.08); }
@@ -301,16 +307,16 @@
   .chart-box { position: relative; height: 300px; }
   .chart-box.tall { height: 380px; }
   #leaflet-map { width: 100%; height: 520px; border-radius: 8px; z-index: 1; }
-  .leaflet-container { background: #14110f !important; font-family: 'DM Sans', sans-serif; }
+  .leaflet-container { background: #dfe4e8 !important; font-family: 'DM Sans', sans-serif; }
   .leaflet-popup-content-wrapper, .leaflet-popup-tip { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
   .map-layout { display: grid; grid-template-columns: 1fr 320px; gap: 20px; }
   .cluster-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px; max-height: 520px; overflow-y: auto; }
   .cluster-item { padding: 9px 10px; border-bottom: 1px solid var(--border); font-size: 13px; cursor: pointer; }
   .cluster-item:hover { background: var(--surface2); }
   .cluster-item .cl-meta { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-dim); margin-top: 2px; }
-  .marker-cluster-small, .marker-cluster-medium, .marker-cluster-large { background: rgba(232,184,109,0.35) !important; }
+  .marker-cluster-small, .marker-cluster-medium, .marker-cluster-large { background: rgba(18,140,126,0.30) !important; }
   .marker-cluster-small div, .marker-cluster-medium div, .marker-cluster-large div {
-    background: var(--accent) !important; color: #1a1208 !important; font-family: 'DM Mono', monospace !important; font-weight: 500;
+    background: var(--accent) !important; color: #ffffff !important; font-family: 'DM Mono', monospace !important; font-weight: 500;
   }
   .toggle-row { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
   .chk { display: flex; align-items: center; gap: 6px; font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text-dim); cursor: pointer; }
@@ -358,7 +364,7 @@
     </button>
     <div class="header-meta">
       <strong id="last-updated">—</strong><br>
-      Live from Google Sheets · build 2026-06-16f
+      Live from Google Sheets · build 2026-07-06g
     </div>
   </div>
 </header>
@@ -466,6 +472,7 @@
   <div id="analytics-inner" style="display:none">
     <div class="ana-tabs">
       <button class="ana-tab active" onclick="anaNav('geo',this)">Geographic Map</button>
+      <button class="ana-tab" onclick="anaNav('verticals',this)">Verticals</button>
       <button class="ana-tab" onclick="anaNav('sku',this)">SKU Analysis</button>
       <button class="ana-tab" onclick="anaNav('reps',this)">Sales Reps</button>
       <button class="ana-tab" onclick="anaNav('forecast',this)">Forecast</button>
@@ -475,9 +482,13 @@
       <div class="panel">
         <div class="panel-title">Customer Locations
           <div class="pt-right">
+            <select id="geo-vertical-filter" onchange="renderGeo()" style="font-family:'DM Mono',monospace;font-size:11px">
+              <option value="all">All verticals</option>
+            </select>
             <span id="geo-status" style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-muted)"></span>
           </div>
         </div>
+        <div id="geo-legend" style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px"></div>
         <div class="map-layout">
           <div id="leaflet-map"></div>
           <div class="cluster-panel" id="cluster-panel">
@@ -485,8 +496,31 @@
             <div id="cluster-list" style="font-size:12px;color:var(--text-dim)">Click a cluster or pan the map to list the accounts here.</div>
           </div>
         </div>
-        <div class="geo-note" id="geo-note">Pins are placed by ZIP code (geocoded once, then cached in this browser). Customers without any location info in the sheets are listed below the map instead of pinned.</div>
+        <div class="geo-note" id="geo-note">Pins are placed by ZIP code (geocoded once, then cached in this browser) and colored by vertical. Accounts with no location in the sheets are listed below the map. State-level estimates (no ZIP) show as faded pins.</div>
         <div id="geo-missing" style="margin-top:8px;font-size:11px;color:var(--text-dim)"></div>
+      </div>
+    </div>
+
+    <div class="ana-section" id="ana-verticals">
+      <div class="panel">
+        <div class="panel-title">Coverage
+          <div class="pt-right"><span id="vert-coverage" style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-dim)"></span></div>
+        </div>
+        <div id="vert-unclassified" style="font-size:12px;color:var(--text-dim);line-height:1.7"></div>
+      </div>
+      <div class="ana-grid-2">
+        <div class="panel">
+          <div class="panel-title">Revenue By Vertical (in range)</div>
+          <div class="chart-box"><canvas id="vertRevChart"></canvas></div>
+        </div>
+        <div class="panel">
+          <div class="panel-title">Accounts By Vertical</div>
+          <div class="chart-box"><canvas id="vertCountChart"></canvas></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">Vertical Breakdown (in range)</div>
+        <div class="table-wrap"><table class="data-table" id="vert-table"></table></div>
       </div>
     </div>
 
@@ -592,6 +626,7 @@ const ANALYTICS_PASSWORD = 'LetItRide';
 let RAW_ORDERS   = [];   // every order row from every source
 let DIRECTORY    = [];   // customer info rows (locations)
 let ALIASES      = [];   // [{canonical, alias}] persisted in the sheet
+let VERTICALS    = {};   // { normalizedCanonicalName: "Coffee Shop" } persisted in the sheet
 let CUSTOMERS    = [];   // built canonical customer profiles
 let filteredData = [];
 let activeKey    = null;
@@ -601,6 +636,29 @@ let currentAna   = 'geo';
 let charts       = {};
 let geoState     = { map: null, clusterGroup: null, pending: 0 };
 let mergeSelection = new Set();
+
+// ═════════════════════════════════════════════════════════
+// VERTICALS — account classification, saved to the sheet
+// ═════════════════════════════════════════════════════════
+const VERTICAL_OPTIONS = [
+  'Coffee Shop', 'Cafe / Bakery', 'Restaurant', 'Resort / Hotel', 'Country Club',
+  'Grocery / Market', 'Distributor', 'Big Box (Costco)', 'Stadium / Venue',
+  'Corporate / Office', 'Gift Shop', 'Water Park / Attraction', 'Other',
+];
+// A stable color per vertical for the map and charts
+const VERTICAL_COLORS = {
+  'Coffee Shop': '#128c7e', 'Cafe / Bakery': '#14a89a', 'Restaurant': '#d98a2b',
+  'Resort / Hotel': '#7a5bc0', 'Country Club': '#2f7fb5', 'Grocery / Market': '#1f9d57',
+  'Distributor': '#c2477f', 'Big Box (Costco)': '#d0553f', 'Stadium / Venue': '#8a6d3b',
+  'Corporate / Office': '#5a6b70', 'Gift Shop': '#b5478f', 'Water Park / Attraction': '#2fa3b5',
+  'Other': '#93a1a6', 'Unclassified': '#c2c9cd',
+};
+function verticalFor(canonicalName) {
+  return VERTICALS[normName(canonicalName)] || '';
+}
+function verticalColor(v) {
+  return VERTICAL_COLORS[v] || VERTICAL_COLORS['Unclassified'];
+}
 
 // ═════════════════════════════════════════════════════════
 // DATA LOADING (JSONP — same pattern as before, no CORS issues)
@@ -646,7 +704,9 @@ function onDataLoaded(data) {
   RAW_ORDERS = data.orders || [];
   DIRECTORY  = data.directory || [];
   ALIASES    = data.aliases || [];
+  VERTICALS  = (data.store && data.store.verticals) || {};
   try { localStorage.setItem('mrz-alias-cache', JSON.stringify(ALIASES)); } catch(e) {}
+  try { localStorage.setItem('mrz-vertical-cache', JSON.stringify(VERTICALS)); } catch(e) {}
 
   buildCustomers();
 
@@ -767,6 +827,17 @@ function buildCustomers() {
     if (!loc && (contact.zip || (contact.city && contact.state))) {
       loc = { city: contact.city, state: contact.state, zip: contact.zip, address: contact.address };
     }
+    // last resort: dig a ZIP and state out of the free-text address
+    // (the New Customer tab stores everything in one Address cell)
+    if ((!loc || !loc.zip) && contact.address) {
+      const zipM = contact.address.match(/\b(\d{5})(?:-\d{4})?\b/);
+      const stM = contact.address.match(/\b([A-Z]{2})\b(?=\s*\d{5}|\s*$|,)/);
+      if (zipM || stM) {
+        loc = loc || { city: contact.city, state: contact.state, zip: contact.zip, address: contact.address };
+        if (!loc.zip && zipM) loc.zip = zipM[1];
+        if (!loc.state && stM) loc.state = stM[1];
+      }
+    }
 
     // outstanding balance: sum Total Invoice for orders not marked paid.
     // "paid" = invoicePaid starts with y / paid / true. Blank or no = treat as owed
@@ -790,6 +861,7 @@ function buildCustomers() {
       sources: [...new Set(g.orders.map(o => o.source))],
       location: loc,
       contact: contact,
+      vertical: verticalFor(g.name),
       paymentTerms: contact.paymentTerms || '',
       outstanding: outstanding,
       unpaidCount: unpaidOrders.length,
@@ -1135,8 +1207,16 @@ function renderDetail(c) {
     <div class="detail-header">
       <div class="detail-name">${esc(c.name)}</div>
       ${aliasStr}${locStr}
+      <div class="vertical-row">
+        <span class="vertical-badge" style="background:${verticalColor(c.vertical || 'Unclassified')}20;color:${verticalColor(c.vertical || 'Unclassified')};border-color:${verticalColor(c.vertical || 'Unclassified')}">${c.vertical ? esc(c.vertical) : 'Unclassified'}</span>
+        <select class="vertical-select" onchange="setVertical('${escAttr(c.key)}', this.value)">
+          <option value="">— set vertical —</option>
+          ${VERTICAL_OPTIONS.map(v => `<option value="${escAttr(v)}"${c.vertical === v ? ' selected' : ''}>${esc(v)}</option>`).join('')}
+        </select>
+        <span class="save-status" id="vertical-status"></span>
+      </div>
       <div class="detail-kpis">
-        <div class="kpi"><div class="kpi-label">Total Revenue</div><div class="kpi-value gold">${c.totalRevenue ? fmtMoneyFull(c.totalRevenue) : '—'}</div></div>
+        <div class="kpi"><div class="kpi-label">Total Revenue</div><div class="kpi-value" style="color:var(--accent)">${c.totalRevenue ? fmtMoneyFull(c.totalRevenue) : '—'}</div></div>
         <div class="kpi"${c.outstanding > 0 ? ' style="border-color:var(--red)"' : ''}><div class="kpi-label">Outstanding</div><div class="kpi-value${c.outstanding > 0 ? '' : ' sm'}" style="${c.outstanding > 0 ? 'color:var(--red)' : 'color:var(--green)'}">${c.outstanding > 0 ? fmtMoneyFull(c.outstanding) : 'Clear'}</div>${c.outstanding > 0 ? `<div class="kpi-sub">${c.unpaidCount} unpaid invoice${c.unpaidCount !== 1 ? 's' : ''}</div>` : ''}</div>
         <div class="kpi"><div class="kpi-label">Payment Terms</div><div class="kpi-value sm">${c.paymentTerms ? esc(c.paymentTerms) : '—'}</div></div>
         <div class="kpi"><div class="kpi-label">Total Orders</div><div class="kpi-value">${c.orderCount}</div></div>
@@ -1285,6 +1365,38 @@ async function persistAliases(okMsg) {
   }
 }
 
+// Assign a vertical to a customer and persist the whole map to the sheet.
+async function setVertical(key, vertical) {
+  const c = CUSTOMERS.find(x => x.key === key);
+  if (!c) return;
+  const nk = normName(c.name);
+  if (vertical) VERTICALS[nk] = vertical;
+  else delete VERTICALS[nk];
+  c.vertical = vertical;
+  try { localStorage.setItem('mrz-vertical-cache', JSON.stringify(VERTICALS)); } catch(e) {}
+
+  const st = document.getElementById('vertical-status');
+  if (st) { st.className = 'save-status'; st.textContent = 'Saving…'; }
+  // update the badge immediately
+  renderDetail(c);
+  try {
+    const res = await fetch(ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action: 'saveStore', key: 'verticals', value: VERTICALS }),
+    });
+    const data = await res.json();
+    const st2 = document.getElementById('vertical-status');
+    if (data && data.ok) { if (st2) { st2.className = 'save-status ok'; st2.textContent = '✓ saved'; } }
+    else throw new Error(data && data.error ? data.error : 'Save failed');
+  } catch (err) {
+    const st2 = document.getElementById('vertical-status');
+    if (st2) { st2.className = 'save-status err'; st2.textContent = '⚠ saved locally only (' + err.message + ')'; }
+  }
+  // refresh any open analytics that group by vertical
+  if (currentView === 'analytics') renderAnalytics();
+}
+
 function renderMergeGroups() {
   const byCanon = {};
   ALIASES.forEach(a => {
@@ -1344,9 +1456,62 @@ async function quickMerge(names) {
 function renderAnalytics() {
   if (sessionStorage.getItem('mrz-auth') !== '1') return;
   if (currentAna === 'geo') renderGeo();
+  else if (currentAna === 'verticals') renderVerticals();
   else if (currentAna === 'sku') renderSku();
   else if (currentAna === 'reps') renderReps();
   else if (currentAna === 'forecast') renderForecast();
+}
+
+// ═════════════════════════════════════════════════════════
+// VERTICALS — revenue and account breakdown by classification
+// ═════════════════════════════════════════════════════════
+function renderVerticals() {
+  const [fromDate, toDate] = getRangeBounds();
+  const custs = CUSTOMERS.filter(c => (!fromDate && !toDate) || ordersInRange(c.orders, fromDate, toDate).length > 0);
+
+  const groups = {};
+  custs.forEach(c => {
+    const v = c.vertical || 'Unclassified';
+    if (!groups[v]) groups[v] = { vertical: v, accounts: 0, orders: 0, rev: 0, outstanding: 0 };
+    const inRange = (fromDate || toDate) ? ordersInRange(c.orders, fromDate, toDate) : c.orders;
+    groups[v].accounts++;
+    groups[v].orders += inRange.length;
+    groups[v].rev += inRange.reduce((s, o) => s + (o.revenue > 0 ? o.revenue : 0), 0);
+    groups[v].outstanding += c.outstanding || 0;
+  });
+  const list = Object.values(groups).sort((a, b) => b.rev - a.rev);
+
+  const classified = custs.filter(c => c.vertical).length;
+  document.getElementById('vert-coverage').textContent =
+    classified + ' of ' + custs.length + ' accounts classified (' + Math.round(classified / Math.max(custs.length,1) * 100) + '%)';
+  const unclassified = custs.filter(c => !c.vertical).sort((a,b) => (b.totalRevenue||0)-(a.totalRevenue||0));
+  document.getElementById('vert-unclassified').innerHTML = unclassified.length
+    ? '<strong style="color:var(--text)">Top unclassified accounts</strong> (open a customer to tag them): ' +
+      unclassified.slice(0, 20).map(c => `<span style="cursor:pointer;color:var(--accent)" onclick="jumpToCustomer('${escAttr(c.key)}')">${esc(c.name)}</span>`).join(', ')
+    : '<span style="color:var(--green)">Every account in this window is classified. Nice.</span>';
+
+  makeChart('vertRevChart', {
+    type: 'doughnut',
+    data: { labels: list.map(g => g.vertical), datasets: [{ data: list.map(g => Math.round(g.rev)), backgroundColor: list.map(g => verticalColor(g.vertical)), borderWidth: 1, borderColor: '#fff' }] },
+    options: { maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { boxWidth: 10, padding: 8, font: { size: 10 } } } } },
+  });
+  makeChart('vertCountChart', {
+    type: 'bar',
+    data: { labels: list.map(g => g.vertical), datasets: [{ label: 'Accounts', data: list.map(g => g.accounts), backgroundColor: list.map(g => verticalColor(g.vertical)), borderRadius: 5 }] },
+    options: { maintainAspectRatio: false, indexAxis: 'y', plugins: { legend: { display: false } } },
+  });
+
+  const totalRev = list.reduce((s, g) => s + g.rev, 0) || 1;
+  document.getElementById('vert-table').innerHTML =
+    '<thead><tr><th>Vertical</th><th style="text-align:right">Accounts</th><th style="text-align:right">Orders</th><th style="text-align:right">Revenue</th><th style="text-align:right">Share</th><th style="text-align:right">Outstanding</th></tr></thead><tbody>' +
+    list.map(g => `<tr>
+      <td><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:${verticalColor(g.vertical)};margin-right:7px"></span>${esc(g.vertical)}</td>
+      <td class="num-cell">${g.accounts}</td>
+      <td class="num-cell">${g.orders}</td>
+      <td class="num-cell" style="color:var(--green)">${fmtMoneyFull(g.rev)}</td>
+      <td class="num-cell">${(g.rev/totalRev*100).toFixed(1)}%</td>
+      <td class="num-cell" style="color:${g.outstanding>0?'var(--red)':'var(--text-muted)'}">${g.outstanding>0?fmtMoneyFull(g.outstanding):'—'}</td>
+    </tr>`).join('') + '</tbody>';
 }
 
 // ═════════════════════════════════════════════════════════
@@ -1376,11 +1541,26 @@ async function geocodeZip(zip, cache) {
 
 async function renderGeo() {
   const [fromDate, toDate] = getRangeBounds();
-  const custs = CUSTOMERS.filter(c => (!fromDate && !toDate) || ordersInRange(c.orders, fromDate, toDate).length > 0);
+  let custs = CUSTOMERS.filter(c => (!fromDate && !toDate) || ordersInRange(c.orders, fromDate, toDate).length > 0);
+
+  const vfilter = document.getElementById('geo-vertical-filter');
+  const presentVerticals = [...new Set(custs.map(c => c.vertical).filter(Boolean))].sort();
+  const curVal = vfilter.value || 'all';
+  vfilter.innerHTML = '<option value="all">All verticals</option>' +
+    presentVerticals.map(v => `<option value="${v.replace(/"/g,'&quot;')}"${v===curVal?' selected':''}>${v}</option>`).join('') +
+    `<option value="__none"${curVal==='__none'?' selected':''}>Unclassified</option>`;
+  const vf = vfilter.value;
+  if (vf === '__none') custs = custs.filter(c => !c.vertical);
+  else if (vf !== 'all') custs = custs.filter(c => c.vertical === vf);
+
+  const legend = document.getElementById('geo-legend');
+  legend.innerHTML = presentVerticals.map(v =>
+    `<span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-dim)"><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:${verticalColor(v)};margin-right:5px"></span>${esc(v)}</span>`
+  ).join('') || '<span style="font-family:\'DM Mono\',monospace;font-size:10px;color:var(--text-muted)">No verticals tagged yet — tag accounts to color the map.</span>';
 
   if (!geoState.map) {
     geoState.map = L.map('leaflet-map', { center: [37.5, -96], zoom: 4 });
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
       attribution: '&copy; OpenStreetMap, CARTO', maxZoom: 18,
     }).addTo(geoState.map);
     geoState.clusterGroup = L.markerClusterGroup({ maxClusterRadius: 50 });
@@ -1400,39 +1580,52 @@ async function renderGeo() {
   const statusEl = document.getElementById('geo-status');
   statusEl.textContent = 'Placing pins…';
   const cache = zipCache();
-  const markers = [];
   const missing = [];
   let geocoded = 0, fallback = 0;
 
+  // 1) geocode all needed ZIPs in parallel (batches), so the map fills fast
+  const needZips = [];
+  custs.forEach(c => {
+    const zip = c.location && c.location.zip;
+    if (zip && /^\d{5}$/.test(zip) && cache[zip] === undefined) needZips.push(zip);
+  });
+  const uniqueZips = [...new Set(needZips)];
+  statusEl.textContent = 'Locating ' + uniqueZips.length + ' new ZIP codes…';
+  const BATCH = 12;
+  for (let i = 0; i < uniqueZips.length; i += BATCH) {
+    const slice = uniqueZips.slice(i, i + BATCH);
+    await Promise.all(slice.map(z => geocodeZip(z, cache)));
+    statusEl.textContent = 'Locating ZIP codes… ' + Math.min(i + BATCH, uniqueZips.length) + '/' + uniqueZips.length;
+  }
+  zipCacheSave(cache);
+
+  // 2) build markers
+  const markers = [];
   for (const c of custs) {
     let coord = null, precise = false;
     const zip = c.location && c.location.zip;
     const state = c.location && c.location.state;
-    if (zip && /^\d{5}$/.test(zip)) {
-      const g = await geocodeZip(zip, cache);
-      if (g) { coord = g; precise = true; geocoded++; }
-    }
+    if (zip && /^\d{5}$/.test(zip) && cache[zip]) { coord = cache[zip]; precise = true; geocoded++; }
     if (!coord && state && STATE_COORDS[state]) {
-      // deterministic small jitter so same-state pins do not stack exactly
       const h = squashName(c.name).split('').reduce((a, ch) => (a * 31 + ch.charCodeAt(0)) % 997, 7);
       coord = [STATE_COORDS[state][0] + ((h % 100) - 50) / 120, STATE_COORDS[state][1] + ((Math.floor(h / 10) % 100) - 50) / 100];
       fallback++;
     }
     if (!coord) { missing.push(c.name); continue; }
 
+    const col = c.vertical ? verticalColor(c.vertical) : (precise ? '#128c7e' : '#2f7fb5');
     const m = L.circleMarker(coord, {
-      radius: Math.min(16, 6 + Math.sqrt((c.totalRevenue || 0) / 800)),
-      color: precise ? '#e8b86d' : '#6badd9',
-      fillColor: precise ? '#e8b86d' : '#6badd9',
-      fillOpacity: 0.7, weight: 1,
-      custData: { name: c.name, key: c.key, rev: c.totalRevenue, orders: c.orderCount, loc: c.location, precise },
+      radius: Math.min(18, 6 + Math.sqrt((c.totalRevenue || 0) / 700)),
+      color: col, fillColor: col,
+      fillOpacity: precise ? 0.75 : 0.45, weight: precise ? 1.5 : 1,
+      custData: { name: c.name, key: c.key, rev: c.totalRevenue, orders: c.orderCount, loc: c.location, vertical: c.vertical, precise },
     });
     m.bindPopup(`<strong>${esc(c.name)}</strong><br>
       <span style="font-family:'DM Mono',monospace;font-size:11px">${c.orderCount} orders · ${c.totalRevenue ? fmtMoneyShort(c.totalRevenue) : 'no $ tracked'}</span><br>
-      <span style="font-size:10px;color:#8a7a6e">${esc([c.location.city, c.location.state, c.location.zip].filter(Boolean).join(', '))}${precise ? '' : ' (state-level estimate)'}</span>`);
+      ${c.vertical ? `<span style="font-size:10px;color:${verticalColor(c.vertical)}">● ${esc(c.vertical)}</span><br>` : ''}
+      <span style="font-size:10px;color:#5a6b70">${esc([c.location.city, c.location.state, c.location.zip].filter(Boolean).join(', '))}${precise ? '' : ' (state-level estimate)'}</span>`);
     markers.push(m);
   }
-  zipCacheSave(cache);
 
   geoState.clusterGroup.clearLayers();
   markers.forEach(m => geoState.clusterGroup.addLayer(m));
@@ -1536,15 +1729,15 @@ function autoBucket(fromDate, toDate) {
   return 'month';
 }
 
-const CHART_COLORS = ['#e8b86d','#c07ad6','#6badd9','#5fb87a','#d96b5a','#f0e8df','#9a7840','#e879a0','#7adec7','#a3b8e8'];
+const CHART_COLORS = ['#128c7e','#2f7fb5','#d98a2b','#7a5bc0','#1f9d57','#d0553f','#14a89a','#c2477f','#5a6b70','#8a6d3b'];
 
 function destroyChart(id) { if (charts[id]) { charts[id].destroy(); delete charts[id]; } }
 function makeChart(id, cfg) {
   destroyChart(id);
   const ctx = document.getElementById(id);
   if (!ctx) return;
-  Chart.defaults.color = '#8a7a6e';
-  Chart.defaults.borderColor = '#2e2520';
+  Chart.defaults.color = '#5a6b70';
+  Chart.defaults.borderColor = '#d5dade';
   Chart.defaults.font.family = "'DM Mono', monospace";
   charts[id] = new Chart(ctx, cfg);
 }
@@ -1591,7 +1784,7 @@ function renderSku() {
 
   makeChart('caseChart', {
     type: 'bar',
-    data: { labels: bucketKeys, datasets: [{ label: 'Cases / boxes', data: bucketKeys.map(bk => caseSeries[bk] || 0), backgroundColor: '#e8b86d', borderRadius: 4 }] },
+    data: { labels: bucketKeys, datasets: [{ label: 'Cases / boxes', data: bucketKeys.map(bk => caseSeries[bk] || 0), backgroundColor: '#128c7e', borderRadius: 4 }] },
     options: { maintainAspectRatio: false, plugins: { legend: { display: false } } },
   });
 
@@ -1642,8 +1835,8 @@ function renderReps() {
   makeChart('repCntChart', {
     type: 'bar',
     data: { labels: list.map(r => r.rep), datasets: [
-      { label: 'Orders', data: list.map(r => r.orders), backgroundColor: '#e8b86d', borderRadius: 4 },
-      { label: 'Customers', data: list.map(r => r.custs.size), backgroundColor: '#6badd9', borderRadius: 4 },
+      { label: 'Orders', data: list.map(r => r.orders), backgroundColor: '#128c7e', borderRadius: 4 },
+      { label: 'Customers', data: list.map(r => r.custs.size), backgroundColor: '#2f7fb5', borderRadius: 4 },
     ] },
     options: { maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 10 } } } },
   });
@@ -1692,7 +1885,7 @@ function renderForecast() {
     data: {
       labels: [...histLabels, ...fcLabels],
       datasets: [
-        { label: 'Actual', data: [...histData, ...fcLabels.map(() => null)], borderColor: '#e8b86d', backgroundColor: 'rgba(232,184,109,0.08)', fill: true, tension: 0.3, pointRadius: 3 },
+        { label: 'Actual', data: [...histData, ...fcLabels.map(() => null)], borderColor: '#128c7e', backgroundColor: 'rgba(18,140,126,0.10)', fill: true, tension: 0.3, pointRadius: 3 },
         { label: 'Forecast', data: [...histLabels.map((k, i) => i === histLabels.length - 1 ? histData[i] : null), ...fcData], borderColor: '#5fb87a', borderDash: [6, 5], backgroundColor: 'transparent', tension: 0.3, pointRadius: 3 },
       ],
     },
