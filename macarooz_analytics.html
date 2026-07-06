@@ -364,7 +364,7 @@
     </button>
     <div class="header-meta">
       <strong id="last-updated">—</strong><br>
-      Live from Google Sheets · build 2026-07-06g
+      Live from Google Sheets · build 2026-07-06h
     </div>
   </div>
 </header>
@@ -473,6 +473,7 @@
     <div class="ana-tabs">
       <button class="ana-tab active" onclick="anaNav('geo',this)">Geographic Map</button>
       <button class="ana-tab" onclick="anaNav('verticals',this)">Verticals</button>
+      <button class="ana-tab" onclick="anaNav('reorders',this)">Reorder Health</button>
       <button class="ana-tab" onclick="anaNav('sku',this)">SKU Analysis</button>
       <button class="ana-tab" onclick="anaNav('reps',this)">Sales Reps</button>
       <button class="ana-tab" onclick="anaNav('forecast',this)">Forecast</button>
@@ -521,6 +522,26 @@
       <div class="panel">
         <div class="panel-title">Vertical Breakdown (in range)</div>
         <div class="table-wrap"><table class="data-table" id="vert-table"></table></div>
+      </div>
+    </div>
+
+    <div class="ana-section" id="ana-reorders">
+      <div class="panel">
+        <div class="panel-title">Overdue Sensitivity
+          <div class="pt-right slider-row">
+            Flag when past <input type="range" id="overdue-mult" min="1" max="3" step="0.1" value="1.5" oninput="onOverdueSlider()">
+            <span id="overdue-mult-lbl">1.5x</span> expected gap
+          </div>
+        </div>
+        <div id="reorder-summary" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">Overdue Accounts <span style="text-transform:none;letter-spacing:0;color:var(--text-muted)">· sorted by most overdue, click to open</span></div>
+        <div class="table-wrap"><table class="data-table" id="overdue-table"></table></div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">Expected Cadence By Vertical</div>
+        <div class="table-wrap"><table class="data-table" id="cadence-table"></table></div>
       </div>
     </div>
 
@@ -627,6 +648,7 @@ let RAW_ORDERS   = [];   // every order row from every source
 let DIRECTORY    = [];   // customer info rows (locations)
 let ALIASES      = [];   // [{canonical, alias}] persisted in the sheet
 let VERTICALS    = {};   // { normalizedCanonicalName: "Coffee Shop" } persisted in the sheet
+let CONTACT_OVERRIDES = {}; // { normName: {email, phone, contact, ...} } manual fills, persisted
 let CUSTOMERS    = [];   // built canonical customer profiles
 let filteredData = [];
 let activeKey    = null;
@@ -658,6 +680,40 @@ function verticalFor(canonicalName) {
 }
 function verticalColor(v) {
   return VERTICAL_COLORS[v] || VERTICAL_COLORS['Unclassified'];
+}
+
+// Overdue sensitivity: an account is overdue when days-since-last-order
+// exceeds (threshold x its expected gap). Tunable via the slider.
+let OVERDUE_MULT = 1.5;
+
+// Average reorder gap per vertical, from all classified accounts with 2+ orders.
+function verticalCadence() {
+  const acc = {};
+  CUSTOMERS.forEach(c => {
+    if (!c.vertical || c.avgGap == null) return;
+    (acc[c.vertical] = acc[c.vertical] || []).push(c.avgGap);
+  });
+  const out = {};
+  Object.keys(acc).forEach(v => {
+    const arr = acc[v].sort((a, b) => a - b);
+    out[v] = arr[Math.floor(arr.length / 2)]; // median is more robust than mean
+  });
+  return out;
+}
+
+// Expected gap for a customer: its own average if it has history,
+// otherwise its vertical's median cadence.
+function expectedGap(c, vcad) {
+  if (c.avgGap != null) return c.avgGap;
+  if (c.vertical && vcad[c.vertical] != null) return vcad[c.vertical];
+  return null;
+}
+
+function overdueInfo(c, vcad) {
+  const exp = expectedGap(c, vcad);
+  if (exp == null || c.daysSinceLast == null) return { overdue: false, exp: exp, ratio: null };
+  const ratio = c.daysSinceLast / exp;
+  return { overdue: c.daysSinceLast > exp * OVERDUE_MULT, exp: exp, ratio: ratio };
 }
 
 // ═════════════════════════════════════════════════════════
@@ -705,6 +761,7 @@ function onDataLoaded(data) {
   DIRECTORY  = data.directory || [];
   ALIASES    = data.aliases || [];
   VERTICALS  = (data.store && data.store.verticals) || {};
+  CONTACT_OVERRIDES = (data.store && data.store.contactOverrides) || {};
   try { localStorage.setItem('mrz-alias-cache', JSON.stringify(ALIASES)); } catch(e) {}
   try { localStorage.setItem('mrz-vertical-cache', JSON.stringify(VERTICALS)); } catch(e) {}
 
@@ -827,6 +884,16 @@ function buildCustomers() {
     if (!loc && (contact.zip || (contact.city && contact.state))) {
       loc = { city: contact.city, state: contact.state, zip: contact.zip, address: contact.address };
     }
+    // manual overrides (typed into the website) fill any remaining gaps and win over blanks
+    const ov = CONTACT_OVERRIDES[normName(g.name)];
+    if (ov) {
+      ['contact', 'email', 'phone', 'address', 'city', 'state', 'zip', 'paymentTerms'].forEach(f => {
+        if (ov[f]) contact[f] = ov[f];
+      });
+      if (ov.zip && (!loc || !loc.zip)) loc = loc || {}, loc.zip = ov.zip;
+      if (ov.state && (!loc || !loc.state)) loc = loc || {}, loc.state = ov.state;
+      if (ov.city && loc && !loc.city) loc.city = ov.city;
+    }
     // last resort: dig a ZIP and state out of the free-text address
     // (the New Customer tab stores everything in one Address cell)
     if ((!loc || !loc.zip) && contact.address) {
@@ -849,6 +916,21 @@ function buildCustomers() {
     });
     const outstanding = unpaidOrders.reduce((s, o) => s + o.revenue, 0);
 
+    // reorder cadence: average gap (days) between distinct order dates
+    const orderDates = [...new Set(dated.map(o => o.date))].sort();
+    let avgGap = null, lastGap = null, daysSinceLast = null;
+    if (orderDates.length >= 2) {
+      let total = 0;
+      for (let i = 1; i < orderDates.length; i++) {
+        total += daysBetween(orderDates[i - 1], orderDates[i]);
+      }
+      avgGap = total / (orderDates.length - 1);
+      lastGap = daysBetween(orderDates[orderDates.length - 2], orderDates[orderDates.length - 1]);
+    }
+    if (orderDates.length >= 1) {
+      daysSinceLast = daysBetween(orderDates[orderDates.length - 1], todayIso());
+    }
+
     return {
       key: g.key,
       name: g.name,
@@ -865,6 +947,10 @@ function buildCustomers() {
       paymentTerms: contact.paymentTerms || '',
       outstanding: outstanding,
       unpaidCount: unpaidOrders.length,
+      avgGap: avgGap,
+      lastGap: lastGap,
+      daysSinceLast: daysSinceLast,
+      orderDateCount: orderDates.length,
       pricing: derivePricing(g.orders),
       searchBlob: [g.name, ...g.allNames, contact.contact, contact.email, contact.phone, contact.address, contact.city, contact.state, contact.zip]
         .filter(Boolean).join(' ').toLowerCase(),
@@ -1140,6 +1226,105 @@ function selectCustomer(key) {
   }
 }
 
+function cadenceKpi(c) {
+  const vcad = verticalCadence();
+  const info = overdueInfo(c, vcad);
+  if (info.exp == null) {
+    return '<div class="kpi"><div class="kpi-label">Reorder Cadence</div><div class="kpi-value sm" style="color:var(--text-muted)">not enough history</div></div>';
+  }
+  const own = c.avgGap != null;
+  const expTxt = Math.round(info.exp) + ' days';
+  const sinceTxt = c.daysSinceLast != null ? c.daysSinceLast + ' days ago' : '—';
+  const border = info.overdue ? ' style="border-color:var(--red)"' : '';
+  const valColor = info.overdue ? 'color:var(--red)' : 'color:var(--green)';
+  const label = info.overdue ? 'OVERDUE' : 'on track';
+  return `<div class="kpi"${border}>
+    <div class="kpi-label">Reorder Cadence</div>
+    <div class="kpi-value sm" style="${valColor}">${label}</div>
+    <div class="kpi-sub">every ~${expTxt}${own ? '' : ' (vertical avg)'} · last ${sinceTxt}</div>
+  </div>`;
+}
+
+function completenessHtml(c) {
+  const ct = c.contact || {};
+  // fields we can edit safely from the site (stored as overrides)
+  const editable = [
+    { key: 'contact', label: 'Contact Name', val: ct.contact },
+    { key: 'email', label: 'Email', val: ct.email },
+    { key: 'phone', label: 'Phone', val: ct.phone },
+    { key: 'address', label: 'Address', val: ct.address },
+    { key: 'city', label: 'City', val: ct.city },
+    { key: 'state', label: 'State', val: ct.state },
+    { key: 'zip', label: 'ZIP', val: ct.zip },
+    { key: 'paymentTerms', label: 'Payment Terms', val: c.paymentTerms },
+  ];
+  // flag non-editable gaps too
+  const otherGaps = [];
+  if (!c.vertical) otherGaps.push('Vertical not set');
+  if (!c.location || (!c.location.zip && !c.location.state)) otherGaps.push('No mappable location');
+
+  const missing = editable.filter(f => !f.val);
+  const badge = (missing.length || otherGaps.length)
+    ? `<span style="color:var(--amber);font-family:'DM Mono',monospace;font-size:11px">${missing.length + otherGaps.length} gap${(missing.length + otherGaps.length) !== 1 ? 's' : ''}</span>`
+    : `<span style="color:var(--green);font-family:'DM Mono',monospace;font-size:11px">complete</span>`;
+
+  const rows = editable.map(f => {
+    const has = !!f.val;
+    return `<div style="display:flex;gap:10px;align-items:center;padding:5px 0;border-bottom:1px solid var(--border)">
+      <span class="kpi-label" style="min-width:100px;margin:0">${f.label}</span>
+      <input type="text" id="cf-${f.key}" value="${escAttr(f.val || '')}" placeholder="${has ? '' : 'missing — add it'}"
+        style="flex:1;padding:5px 8px;font-size:12px;${has ? '' : 'border-color:var(--amber)'}">
+      <button class="btn-ghost" style="padding:5px 10px" onclick="saveContactField('${escAttr(c.key)}','${f.key}')">Save</button>
+    </div>`;
+  }).join('');
+
+  const otherGapsHtml = otherGaps.length
+    ? `<div style="margin-top:8px;font-family:'DM Mono',monospace;font-size:11px;color:var(--amber)">⚠ ${otherGaps.join(' · ')}</div>` : '';
+
+  return `<div class="section-title" style="display:flex;justify-content:space-between;align-items:center">
+      <span>Data Completeness</span>${badge}
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:12px 14px">
+      ${rows}
+      ${otherGapsHtml}
+      <div style="margin-top:8px;font-size:10px;color:var(--text-muted);font-family:'DM Mono',monospace">Edits save to the sheet as overrides and fill gaps without touching your source rows.</div>
+      <span class="save-status" id="cf-status"></span>
+    </div>`;
+}
+
+async function saveContactField(key, field) {
+  const c = CUSTOMERS.find(x => x.key === key);
+  if (!c) return;
+  const input = document.getElementById('cf-' + field);
+  if (!input) return;
+  const val = input.value.trim();
+  const nk = normName(c.name);
+  if (!CONTACT_OVERRIDES[nk]) CONTACT_OVERRIDES[nk] = {};
+  if (val) CONTACT_OVERRIDES[nk][field] = val;
+  else delete CONTACT_OVERRIDES[nk][field];
+  try { localStorage.setItem('mrz-contact-cache', JSON.stringify(CONTACT_OVERRIDES)); } catch(e) {}
+
+  const st = document.getElementById('cf-status');
+  if (st) { st.className = 'save-status'; st.textContent = 'Saving…'; }
+  try {
+    const res = await fetch(ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action: 'saveStore', key: 'contactOverrides', value: CONTACT_OVERRIDES }),
+    });
+    const data = await res.json();
+    if (!data || !data.ok) throw new Error(data && data.error ? data.error : 'Save failed');
+    buildCustomers();
+    const fresh = CUSTOMERS.find(x => x.key === key);
+    renderDetail(fresh || c);
+    const st2 = document.getElementById('cf-status');
+    if (st2) { st2.className = 'save-status ok'; st2.textContent = '✓ saved to sheet'; }
+  } catch (err) {
+    const st2 = document.getElementById('cf-status');
+    if (st2) { st2.className = 'save-status err'; st2.textContent = '⚠ saved locally only (' + err.message + ')'; }
+  }
+}
+
 function renderDetail(c) {
   const panel = document.getElementById('detail-panel');
   const aliases = (c.allNames || []).filter(n => n !== c.name);
@@ -1222,12 +1407,14 @@ function renderDetail(c) {
         <div class="kpi"><div class="kpi-label">Total Orders</div><div class="kpi-value">${c.orderCount}</div></div>
         <div class="kpi"><div class="kpi-label">First Order</div><div class="kpi-value sm">${fmtDate(c.firstOrder)}</div></div>
         <div class="kpi"><div class="kpi-label">Latest Order</div><div class="kpi-value sm">${fmtDate(c.lastOrder)}</div></div>
+        ${cadenceKpi(c)}
         <div class="kpi"><div class="kpi-label">Sources</div><div class="kpi-value sm">${(c.sources||[]).join(' + ') || '—'}</div></div>
       </div>
     </div>
     <div class="detail-body">
       <div class="section-title">Contact</div>
       ${contactHtml}
+      ${completenessHtml(c)}
       <div class="section-title">Current Pricing</div>
       ${pricingHtml}
       <div class="section-title">Order History (${c.orderCount}) <span style="text-transform:none;letter-spacing:0;color:var(--text-muted)">· dimmed rows fall outside the date window</span></div>
@@ -1457,6 +1644,7 @@ function renderAnalytics() {
   if (sessionStorage.getItem('mrz-auth') !== '1') return;
   if (currentAna === 'geo') renderGeo();
   else if (currentAna === 'verticals') renderVerticals();
+  else if (currentAna === 'reorders') renderReorders();
   else if (currentAna === 'sku') renderSku();
   else if (currentAna === 'reps') renderReps();
   else if (currentAna === 'forecast') renderForecast();
@@ -1465,6 +1653,63 @@ function renderAnalytics() {
 // ═════════════════════════════════════════════════════════
 // VERTICALS — revenue and account breakdown by classification
 // ═════════════════════════════════════════════════════════
+// ═════════════════════════════════════════════════════════
+// REORDER HEALTH — overdue detection with tunable sensitivity
+// ═════════════════════════════════════════════════════════
+function onOverdueSlider() {
+  OVERDUE_MULT = parseFloat(document.getElementById('overdue-mult').value);
+  document.getElementById('overdue-mult-lbl').textContent = OVERDUE_MULT.toFixed(1) + 'x';
+  renderReorders();
+}
+
+function renderReorders() {
+  const vcad = verticalCadence();
+  // consider accounts with at least one order and an expected gap (own or vertical)
+  const scored = CUSTOMERS.map(c => {
+    const info = overdueInfo(c, vcad);
+    return { c, info };
+  }).filter(x => x.info.exp != null && x.c.daysSinceLast != null);
+
+  const overdue = scored.filter(x => x.info.overdue).sort((a, b) => b.info.ratio - a.info.ratio);
+  const onTrack = scored.filter(x => !x.info.overdue);
+  const overdueRev = overdue.reduce((s, x) => s + (x.c.totalRevenue || 0), 0);
+
+  document.getElementById('reorder-summary').innerHTML = `
+    <div class="kpi"><div class="kpi-label">Overdue Accounts</div><div class="kpi-value" style="color:var(--red)">${overdue.length}</div></div>
+    <div class="kpi"><div class="kpi-label">On Track</div><div class="kpi-value" style="color:var(--green)">${onTrack.length}</div></div>
+    <div class="kpi"><div class="kpi-label">Revenue At Risk</div><div class="kpi-value sm" style="color:var(--amber)">${fmtMoneyFull(overdueRev)}</div><div class="kpi-sub">lifetime value of overdue accounts</div></div>
+    <div class="kpi"><div class="kpi-label">Tracked</div><div class="kpi-value">${scored.length}</div><div class="kpi-sub">accounts with a cadence</div></div>`;
+
+  document.getElementById('overdue-table').innerHTML =
+    '<thead><tr><th>Account</th><th>Vertical</th><th style="text-align:right">Expected Gap</th><th style="text-align:right">Days Since</th><th style="text-align:right">Overdue By</th><th style="text-align:right">Revenue</th></tr></thead><tbody>' +
+    (overdue.length ? overdue.slice(0, 100).map(x => {
+      const over = Math.round(x.c.daysSinceLast - x.info.exp);
+      return `<tr style="cursor:pointer" onclick="jumpToCustomer('${escAttr(x.c.key)}')">
+        <td style="font-weight:500">${esc(x.c.name)}</td>
+        <td>${x.c.vertical ? `<span style="color:${verticalColor(x.c.vertical)}">${esc(x.c.vertical)}</span>` : '<span style="color:var(--text-muted)">—</span>'}</td>
+        <td class="num-cell">${Math.round(x.info.exp)}d${x.c.avgGap == null ? ' <span style="color:var(--text-muted)">(vert)</span>' : ''}</td>
+        <td class="num-cell">${x.c.daysSinceLast}d</td>
+        <td class="num-cell" style="color:var(--red)">+${over}d</td>
+        <td class="num-cell" style="color:var(--green)">${x.c.totalRevenue ? fmtMoneyShort(x.c.totalRevenue) : '—'}</td>
+      </tr>`;
+    }).join('') : '<tr><td colspan="6" style="color:var(--green)">No accounts are overdue at this sensitivity. Nice.</td></tr>') +
+    '</tbody>';
+
+  const cad = verticalCadence();
+  const cadRows = Object.keys(cad).sort((a, b) => cad[a] - cad[b]).map(v => {
+    const count = CUSTOMERS.filter(c => c.vertical === v && c.avgGap != null).length;
+    return `<tr>
+      <td><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:${verticalColor(v)};margin-right:7px"></span>${esc(v)}</td>
+      <td class="num-cell">${Math.round(cad[v])} days</td>
+      <td class="num-cell">${count}</td>
+    </tr>`;
+  }).join('');
+  document.getElementById('cadence-table').innerHTML =
+    '<thead><tr><th>Vertical</th><th style="text-align:right">Median Reorder Gap</th><th style="text-align:right">Accounts Sampled</th></tr></thead><tbody>' +
+    (cadRows || '<tr><td colspan="3" style="color:var(--text-muted)">Tag accounts with verticals and enough order history to establish cadence baselines.</td></tr>') +
+    '</tbody>';
+}
+
 function renderVerticals() {
   const [fromDate, toDate] = getRangeBounds();
   const custs = CUSTOMERS.filter(c => (!fromDate && !toDate) || ordersInRange(c.orders, fromDate, toDate).length > 0);
@@ -1663,51 +1908,106 @@ function jumpToCustomer(key) {
 // free-text product detail, plus order-level case counts
 // ═════════════════════════════════════════════════════════
 const FLAVOR_KEYS = [
-  'birthday','bday','strawberry','straw','cookies and cream','cookies n cream','cookies','red velvet','red v','cinnamon','cotton candy','fruity cereal','fruity','cookie dough','rose','vanilla','chocolate hazelnut','chocolate chip','choc chip','chocolate','pistachio','lemon','dubai','sugar cookie','gingerbread','peppermint','carrot cake','rainbow sherbet','pina colada','chai','mango','salted caramel','matcha','watermelon','blueberry','oatmeal','pumpkin','mini'
+  'birthday','bday','strawberry cheesecake','strawberry','straw','cookies and cream','cookies n cream','cookies & cream','cookies','red velvet','red v','cinnamon roll','cinnamon','cotton candy','fruity cereal','fruity','cookie dough','pink strawberry rose','strawberry rose','rose','vanilla','chocolate hazelnut','chocolate chip','choc chip','chocolate','pistachio','lemon cake','lemon','dubai','sugar cookie','gingerbread','peppermint','carrot cake','rainbow sherbet','pina colada','chai','mango habanero','mango','salted caramel','matcha','watermelon lime','watermelon','blueberry','oatmeal','pumpkin spice','pumpkin','mini'
 ];
 const FLAVOR_CANON = {
-  'bday':'Birthday','birthday':'Birthday','straw':'Strawberry','strawberry':'Strawberry',
-  'cookies and cream':'Cookies & Cream','cookies n cream':'Cookies & Cream','cookies':'Cookies & Cream',
-  'red velvet':'Red Velvet','red v':'Red Velvet','cinnamon':'Cinnamon Roll','cotton candy':'Cotton Candy',
-  'fruity cereal':'Fruity Cereal','fruity':'Fruity Cereal','cookie dough':'Cookie Dough','rose':'Rose Pops',
+  'bday':'Birthday','birthday':'Birthday','straw':'Strawberry','strawberry':'Strawberry','strawberry cheesecake':'Strawberry Cheesecake',
+  'cookies and cream':'Cookies & Cream','cookies n cream':'Cookies & Cream','cookies & cream':'Cookies & Cream','cookies':'Cookies & Cream',
+  'red velvet':'Red Velvet','red v':'Red Velvet','cinnamon roll':'Cinnamon Roll','cinnamon':'Cinnamon Roll','cotton candy':'Cotton Candy',
+  'fruity cereal':'Fruity Cereal','fruity':'Fruity Cereal','cookie dough':'Cookie Dough',
+  'pink strawberry rose':'Strawberry Rose','strawberry rose':'Strawberry Rose','rose':'Rose',
   'vanilla':'Vanilla','chocolate hazelnut':'Chocolate Hazelnut','chocolate chip':'Chocolate Chip','choc chip':'Chocolate Chip',
-  'chocolate':'Chocolate','pistachio':'Pistachio','lemon':'Lemon Cake','dubai':'Dubai Chocolate',
+  'chocolate':'Chocolate','pistachio':'Pistachio','lemon cake':'Lemon Cake','lemon':'Lemon Cake','dubai':'Dubai Chocolate',
   'sugar cookie':'Sugar Cookie','gingerbread':'Gingerbread','peppermint':'Peppermint','carrot cake':'Carrot Cake',
-  'rainbow sherbet':'Rainbow Sherbet','pina colada':'Pina Colada','chai':'Chai','mango':'Mango Habanero',
-  'salted caramel':'Salted Caramel','matcha':'Matcha','watermelon':'Watermelon Lime','blueberry':'Blueberry',
-  'oatmeal':'Oatmeal Cookie','pumpkin':'Pumpkin Spice','mini':'Mini Macs',
+  'rainbow sherbet':'Rainbow Sherbet','pina colada':'Pina Colada','chai':'Chai','mango habanero':'Mango Habanero','mango':'Mango Habanero',
+  'salted caramel':'Salted Caramel','matcha':'Matcha','watermelon lime':'Watermelon Lime','watermelon':'Watermelon Lime','blueberry':'Blueberry',
+  'oatmeal':'Oatmeal Cookie','pumpkin spice':'Pumpkin Spice','pumpkin':'Pumpkin Spice','mini':'Mini Macs',
 };
+// Longest keys first so multi-word flavors win over their substrings
+// (e.g. "cookies and cream" before "cookies", "choc chip" before "chocolate").
+const FLAVOR_KEYS_SORTED = [...FLAVOR_KEYS].sort((a, b) => b.length - a.length);
 
 function parseSkus(order) {
-  const text = (order.product || '').toLowerCase();
-  if (!text) return [];
+  const raw = (order.product || '');
+  if (!raw) return [];
+  let text = raw.toLowerCase().replace(/\bstawberry\b/g, 'strawberry'); // common typo
   const wholeIsPop = /pop/.test(text) && !/mac(?!\s*pop)/.test(text.replace(/mac\s*pops?/g, ''));
-  // Insert a split marker before "macs:" / "pops:" labels so each block keeps its own unit type,
-  // then split on those markers plus normal delimiters.
+
+  // Split into unit-typed blocks on "macs:" / "pops:" labels.
   const marked = text.replace(/\b(macs?|pops?|macarons?)\s*[:\-]/g, '\u0001$1:');
-  const segments = marked.split(/[\u0001,;\n|]+|(?:\s\/\s)/);
+  const blocks = marked.split(/\u0001/);
   const found = [];
   let lastUnit = wholeIsPop ? 'Pops' : null;
-  segments.forEach(seg => {
-    if (/^pops?\s*:/.test(seg)) lastUnit = 'Pops';
-    else if (/^macs?\s*:/.test(seg) || /^macarons?\s*:/.test(seg)) lastUnit = 'Macs';
-    let unit = /pop/.test(seg) ? 'Pops' : (/\bmac/.test(seg) ? 'Macs' : lastUnit);
-    for (const k of FLAVOR_KEYS) {
-      if (seg.includes(k)) {
-        // quantity: "2/48" style means cases/count, take cases*count; else nearest number
-        let qty = null;
-        const caseM = seg.match(/(\d+)\s*\/\s*(\d+)/);
-        const numM = seg.match(/(\d[\d,]*)/);
-        if (caseM) qty = parseInt(caseM[1]) * parseInt(caseM[2]);
-        else if (numM) qty = parseInt(numM[1].replace(/,/g, ''));
-        if (qty != null && qty > 0 && qty < 200000) {
-          found.push({ sku: FLAVOR_CANON[k] + (unit ? ' · ' + unit : ''), units: qty, unit });
-        }
-        break; // longest-priority keyword wins per segment
+
+  blocks.forEach(block => {
+    let unit = lastUnit;
+    if (/^pops?\s*:/.test(block)) unit = 'Pops';
+    else if (/^macs?\s*:/.test(block) || /^macarons?\s*:/.test(block)) unit = 'Macs';
+    lastUnit = unit;
+    // decide unit if the block itself names it
+    if (/\bpop/.test(block)) unit = 'Pops';
+    else if (/\bmac/.test(block) && !/\bpop/.test(block)) unit = 'Macs';
+
+    // First try comma / pipe / slash segmentation.
+    let segments = block.split(/[,;\n|]+|(?:\s\/\s)/).map(s => s.trim()).filter(Boolean);
+
+    segments.forEach(seg => {
+      // A segment may still contain MULTIPLE "qty flavor" pairs separated only by spaces,
+      // e.g. "2/48 birthday cake 1/48 chocolate hazelnut 1/48 strawberry".
+      // Find every quantity token and the text that follows it up to the next quantity.
+      const pairs = extractQtyFlavorPairs(seg);
+      if (pairs.length) {
+        pairs.forEach(p => {
+          const fl = matchFlavor(p.text);
+          if (fl && p.qty > 0 && p.qty < 500000) {
+            found.push({ sku: fl + (unit ? ' · ' + unit : ''), units: p.qty, unit });
+          }
+        });
+      } else {
+        // no explicit qty: still record the flavor with qty 0 so it shows in variety counts
+        const fl = matchFlavor(seg);
+        if (fl) found.push({ sku: fl + (unit ? ' · ' + unit : ''), units: 0, unit });
       }
-    }
+    });
   });
-  return found;
+
+  // merge duplicates (same sku) by summing
+  const merged = {};
+  found.forEach(f => {
+    if (!merged[f.sku]) merged[f.sku] = { sku: f.sku, units: 0, unit: f.unit };
+    merged[f.sku].units += f.units;
+  });
+  return Object.values(merged);
+}
+
+// Pull out [{qty, text}] where text is the words between this quantity and the next.
+function extractQtyFlavorPairs(seg) {
+  const pairs = [];
+  // token = either "2/48" (cases/count) or a plain number, followed by flavor words
+  const re = /(\d+)\s*\/\s*(\d+)|(\d[\d,]*)/g;
+  let m, marks = [];
+  while ((m = re.exec(seg)) !== null) {
+    let qty;
+    if (m[1] && m[2]) qty = parseInt(m[1]) * parseInt(m[2]);
+    else qty = parseInt((m[3] || '').replace(/,/g, ''));
+    marks.push({ index: m.index, end: re.lastIndex, qty });
+  }
+  if (!marks.length) return [];
+  for (let i = 0; i < marks.length; i++) {
+    const start = marks[i].end;
+    const stop = i + 1 < marks.length ? marks[i + 1].index : seg.length;
+    pairs.push({ qty: marks[i].qty, text: seg.slice(start, stop) });
+  }
+  return pairs;
+}
+
+// Match the best flavor in a piece of text using the priority list (longest keys first).
+function matchFlavor(text) {
+  if (!text) return null;
+  for (const k of FLAVOR_KEYS_SORTED) {
+    if (text.indexOf(k) !== -1) return FLAVOR_CANON[k];
+  }
+  return null;
 }
 
 function bucketKey(dateStr, bucket) {
@@ -1925,6 +2225,14 @@ function fmtMoneyShort(v) {
 function fmtMoneyFull(v) {
   if (v == null) return '—';
   return '$' + Number(v).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+function todayIso() {
+  const n = new Date();
+  return n.getFullYear() + '-' + String(n.getMonth() + 1).padStart(2, '0') + '-' + String(n.getDate()).padStart(2, '0');
+}
+function daysBetween(isoA, isoB) {
+  const a = new Date(isoA + 'T12:00:00'), b = new Date(isoB + 'T12:00:00');
+  return Math.round((b - a) / 86400000);
 }
 function parseDate(d) {
   if (!d || String(d).length < 8) return null;
