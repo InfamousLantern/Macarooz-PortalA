@@ -364,7 +364,7 @@
     </button>
     <div class="header-meta">
       <strong id="last-updated">—</strong><br>
-      Live from Google Sheets · build 2026-07-06h
+      Live from Google Sheets · build 2026-07-06i
     </div>
   </div>
 </header>
@@ -477,6 +477,7 @@
       <button class="ana-tab" onclick="anaNav('sku',this)">SKU Analysis</button>
       <button class="ana-tab" onclick="anaNav('reps',this)">Sales Reps</button>
       <button class="ana-tab" onclick="anaNav('forecast',this)">Forecast</button>
+      <button class="ana-tab" onclick="anaNav('quality',this)">Data Quality</button>
     </div>
 
     <div class="ana-section active" id="ana-geo">
@@ -603,6 +604,30 @@
       <div class="panel">
         <div class="panel-title">SKU Forecast (projected units over horizon)</div>
         <div class="table-wrap"><table class="data-table" id="fc-sku-table"></table></div>
+      </div>
+    </div>
+
+    <div class="ana-section" id="ana-quality">
+      <div class="panel">
+        <div class="panel-title">Data Quality
+          <div class="pt-right"><span id="quality-summary" style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-dim)"></span></div>
+        </div>
+        <div style="font-size:12px;color:var(--text-dim);line-height:1.6;margin-bottom:6px">A live checklist of order rows that need attention in your Google Sheets. Fix the cell in the listed tab and row, then hit Refresh up top and the item drops off this list.</div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Undated Orders <span style="text-transform:none;letter-spacing:0;color:var(--text-muted)">· date cell is blank or unreadable, so these only show under All Time</span></div>
+        <div class="table-wrap"><table class="data-table" id="undated-table"></table></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Future-Dated Orders <span style="text-transform:none;letter-spacing:0;color:var(--text-muted)">· dated after today — normal for scheduled palletized shipments, worth checking for retail</span></div>
+        <div class="table-wrap"><table class="data-table" id="future-table"></table></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Missing Contact Info <span style="text-transform:none;letter-spacing:0;color:var(--text-muted)">· accounts with no phone and no email on file</span></div>
+        <div class="table-wrap"><table class="data-table" id="nocontact-table"></table></div>
       </div>
     </div>
   </div>
@@ -1648,11 +1673,77 @@ function renderAnalytics() {
   else if (currentAna === 'sku') renderSku();
   else if (currentAna === 'reps') renderReps();
   else if (currentAna === 'forecast') renderForecast();
+  else if (currentAna === 'quality') renderQuality();
 }
 
 // ═════════════════════════════════════════════════════════
 // VERTICALS — revenue and account breakdown by classification
 // ═════════════════════════════════════════════════════════
+// ═════════════════════════════════════════════════════════
+// DATA QUALITY — live cleanup checklist tied to sheet rows
+// ═════════════════════════════════════════════════════════
+function renderQuality() {
+  const today = todayIso();
+
+  // Undated: orders with no parseable date. Group nothing, list each with tab+row.
+  const undated = RAW_ORDERS.filter(o => !o.date);
+  // Future-dated: date after today. Split palletized (expected) vs retail/historical (suspicious).
+  const future = RAW_ORDERS.filter(o => o.date && o.date > today);
+
+  document.getElementById('quality-summary').textContent =
+    undated.length + ' undated · ' + future.length + ' future-dated';
+
+  // Undated table
+  document.getElementById('undated-table').innerHTML =
+    '<thead><tr><th>Company</th><th>Source</th><th>Tab</th><th style="text-align:right">Row</th><th style="text-align:right">Revenue</th></tr></thead><tbody>' +
+    (undated.length ? undated
+      .sort((a, b) => (a.sheet || '').localeCompare(b.sheet || '') || (a.row || 0) - (b.row || 0))
+      .map(o => `<tr>
+        <td style="font-weight:500">${esc(o.company)}</td>
+        <td><span class="source-badge ${o.source === 'Retail' ? 'badge-retail' : o.source === 'Palletized' ? 'badge-pallet' : 'badge-hist'}">${esc(o.source)}</span></td>
+        <td style="font-family:'DM Mono',monospace;font-size:11px">${esc(o.sheet || '')}</td>
+        <td class="num-cell" style="font-weight:600;color:var(--accent)">${o.row || '—'}</td>
+        <td class="num-cell">${o.revenue > 0 ? fmtMoneyShort(o.revenue) : '—'}</td>
+      </tr>`).join('')
+      : '<tr><td colspan="5" style="color:var(--green)">Every order has a valid date. Nothing to fix.</td></tr>') +
+    '</tbody>';
+
+  // Future-dated table (flag retail/historical as worth checking)
+  document.getElementById('future-table').innerHTML =
+    '<thead><tr><th>Company</th><th>Source</th><th>Tab</th><th style="text-align:right">Row</th><th style="text-align:right">Date</th><th>Note</th></tr></thead><tbody>' +
+    (future.length ? future
+      .sort((a, b) => (b.date || '').localeCompare(a.date || ''))
+      .map(o => {
+        const suspicious = o.source !== 'Palletized';
+        return `<tr>
+          <td style="font-weight:500">${esc(o.company)}</td>
+          <td><span class="source-badge ${o.source === 'Retail' ? 'badge-retail' : o.source === 'Palletized' ? 'badge-pallet' : 'badge-hist'}">${esc(o.source)}</span></td>
+          <td style="font-family:'DM Mono',monospace;font-size:11px">${esc(o.sheet || '')}</td>
+          <td class="num-cell" style="font-weight:600;color:var(--accent)">${o.row || '—'}</td>
+          <td class="num-cell">${fmtDate(o.date)}</td>
+          <td style="font-size:11px;color:${suspicious ? 'var(--red)' : 'var(--text-muted)'}">${suspicious ? '⚠ check this date' : 'scheduled shipment (ok)'}</td>
+        </tr>`;
+      }).join('')
+      : '<tr><td colspan="6" style="color:var(--text-muted)">No future-dated orders.</td></tr>') +
+    '</tbody>';
+
+  // Missing contact info
+  const noContact = CUSTOMERS.filter(c => {
+    const ct = c.contact || {};
+    return !ct.phone && !ct.email && c.orderCount > 0;
+  }).sort((a, b) => (b.totalRevenue || 0) - (a.totalRevenue || 0));
+  document.getElementById('nocontact-table').innerHTML =
+    '<thead><tr><th>Account</th><th style="text-align:right">Orders</th><th style="text-align:right">Revenue</th><th>Fix</th></tr></thead><tbody>' +
+    (noContact.length ? noContact.slice(0, 60).map(c => `<tr style="cursor:pointer" onclick="jumpToCustomer('${escAttr(c.key)}')">
+      <td style="font-weight:500">${esc(c.name)}</td>
+      <td class="num-cell">${c.orderCount}</td>
+      <td class="num-cell">${c.totalRevenue ? fmtMoneyShort(c.totalRevenue) : '—'}</td>
+      <td style="font-size:11px;color:var(--accent)">click to open &amp; add contact</td>
+    </tr>`).join('')
+      : '<tr><td colspan="4" style="color:var(--green)">Every account with orders has contact info.</td></tr>') +
+    '</tbody>';
+}
+
 // ═════════════════════════════════════════════════════════
 // REORDER HEALTH — overdue detection with tunable sensitivity
 // ═════════════════════════════════════════════════════════
