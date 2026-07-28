@@ -936,7 +936,7 @@ function buildCustomers() {
     // (only when there is a positive invoice amount and the order tab tracks payment).
     const unpaidOrders = g.orders.filter(o => {
       if (!(o.revenue > 0)) return false;
-      if (o.invoicePaid == null) return false;   // tab has no paid checkbox (e.g. palletized)
+      if (o.source !== 'Retail') return false;   // only the live Retail Orders tab tracks payment reliably; historical + palletized are excluded from what is owed
       return o.invoicePaid === 'unpaid';
     });
     const outstanding = unpaidOrders.reduce((s, o) => s + o.revenue, 0);
