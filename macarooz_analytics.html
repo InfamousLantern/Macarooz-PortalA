@@ -1488,20 +1488,26 @@ function rawNameStats() {
   return Object.values(stats).sort((a, b) => a.name.localeCompare(b.name));
 }
 
+let mergePickList = [];   // the raw-name rows currently shown in the picker
 function renderMergePicker() {
   const q = document.getElementById('merge-search').value.toLowerCase();
-  const list = rawNameStats().filter(s => !q || s.name.toLowerCase().includes(q));
-  document.getElementById('merge-pick-list').innerHTML = list.slice(0, 400).map(s => `
+  mergePickList = rawNameStats().filter(s => !q || s.name.toLowerCase().includes(q)).slice(0, 400);
+  document.getElementById('merge-pick-list').innerHTML = mergePickList.map((s, i) => `
     <label class="merge-pick">
-      <input type="checkbox" ${mergeSelection.has(s.name) ? 'checked' : ''} onchange="toggleMergePick('${escAttr(s.name)}', this.checked)">
+      <input type="checkbox" ${mergeSelection.has(s.name) ? 'checked' : ''} onchange="toggleMergePick(${i}, this.checked)">
       <span>${esc(s.name)}</span>
       <span class="mp-meta">${s.count} orders${s.rev ? ' · ' + fmtMoneyShort(s.rev) : ''}</span>
     </label>`).join('') || '<div class="no-results">No names match.</div>';
   updateMergeBar();
 }
 
-function toggleMergePick(name, checked) {
-  if (checked) mergeSelection.add(name); else mergeSelection.delete(name);
+// Look the name up by row index instead of passing it through the HTML handler.
+// Names with an apostrophe (e.g. "Pookie's Patiesserie") used to break the inline
+// handler and silently fail to get selected, which is why some merges did nothing.
+function toggleMergePick(i, checked) {
+  const s = mergePickList[i];
+  if (!s) return;
+  if (checked) mergeSelection.add(s.name); else mergeSelection.delete(s.name);
   updateMergeBar();
 }
 
@@ -1540,7 +1546,9 @@ async function saveMerge() {
   rebuildAfterAliasChange();
 }
 
-async function unmergeGroup(canonical) {
+async function unmergeGroup(i) {
+  const canonical = mergeGroupCanons[i];
+  if (canonical == null) return;
   ALIASES = ALIASES.filter(a => a.canonical !== canonical);
   await persistAliases('Removed merge for "' + canonical + '"');
   rebuildAfterAliasChange();
@@ -1633,27 +1641,23 @@ function renderMergeGroups() {
 }
 
 // suggested merges: names that become identical when spaces and punctuation are removed
-function renderMergeSuggestions() {
-  const lookup = buildAliasLookup();
-  const bySquash = {};
-  rawNameStats().forEach(s => {
-    if (canonicalFor(s.name, lookup)) return; // already in a saved group
-    const k = squashName(s.name);
-    if (!k) return;
-    (bySquash[k] = bySquash[k] || []).push(s.name);
+let mergeGroupCanons = [];   // canonical names currently shown, referenced by index
+function renderMergeGroups() {
+  const byCanon = {};
+  ALIASES.forEach(a => {
+    if (!byCanon[a.canonical]) byCanon[a.canonical] = new Set();
+    if (normName(a.alias) !== normName(a.canonical)) byCanon[a.canonical].add(a.alias);
   });
-  const suggestions = Object.values(bySquash).filter(arr => {
-    const distinct = new Set(arr.map(n => n)); // raw distinct
-    const distinctNorm = new Set(arr.map(normName));
-    return distinct.size > 1 && distinctNorm.size > 1; // truly different spellings
-  });
-  document.getElementById('merge-suggestions').innerHTML = suggestions.length
-    ? suggestions.slice(0, 12).map(arr => `
-      <div class="suggest-card">
-        <div class="suggest-names">${arr.map(esc).join('<br>')}</div>
-        <button class="btn-gold" style="margin-top:8px;padding:7px 12px;font-size:11px" onclick='quickMerge(${JSON.stringify(arr).replace(/'/g, "&#39;")})'>Merge these</button>
+  const entries = Object.entries(byCanon);
+  mergeGroupCanons = entries.map(([canon]) => canon);
+  document.getElementById('merge-groups').innerHTML = entries.length
+    ? entries.map(([canon, set], i) => `
+      <div class="group-card">
+        <div class="group-canon">${esc(canon)}</div>
+        <div class="group-aliases">${[...set].map(esc).join('<br>') || '<em>no separate aliases</em>'}</div>
+        <button class="btn-ghost" onclick="unmergeGroup(${i})">Unmerge</button>
       </div>`).join('')
-    : '<div style="font-family:\'DM Mono\',monospace;font-size:11px;color:var(--text-muted)">Nothing suspicious found. Names that only differ by capitalization or punctuation are already auto-grouped.</div>';
+    : '<div style="font-family:\'DM Mono\',monospace;font-size:11px;color:var(--text-muted)">No saved merges yet.</div>';
 }
 
 async function quickMerge(names) {
