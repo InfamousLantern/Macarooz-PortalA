@@ -364,7 +364,7 @@
     </button>
     <div class="header-meta">
       <strong id="last-updated">—</strong><br>
-      Live from Google Sheets · build 2026-07-06i
+      Live from Google Sheets · build 2026-07-28a
     </div>
   </div>
 </header>
@@ -1051,13 +1051,16 @@ function setRange(range, btn) {
 function getRangeBounds() {
   const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  // cap rolling windows at the end of today so future-dated orders
+  // (scheduled palletized shipments) do not leak into recent windows
+  const endToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59);
   switch (currentRange) {
     case 'all':   return [null, null];
-    case 'today': return [today, null];
-    case '7':  { const f = new Date(today); f.setDate(f.getDate() - 6);  return [f, null]; }
-    case '30': { const f = new Date(today); f.setDate(f.getDate() - 29); return [f, null]; }
-    case '90': { const f = new Date(today); f.setDate(f.getDate() - 89); return [f, null]; }
-    case 'ytd': return [new Date(now.getFullYear(), 0, 1), null];
+    case 'today': return [today, endToday];
+    case '7':  { const f = new Date(today); f.setDate(f.getDate() - 6);  return [f, endToday]; }
+    case '30': { const f = new Date(today); f.setDate(f.getDate() - 29); return [f, endToday]; }
+    case '90': { const f = new Date(today); f.setDate(f.getDate() - 89); return [f, endToday]; }
+    case 'ytd': return [new Date(now.getFullYear(), 0, 1), endToday];
     case 'custom': {
       const fromVal = document.getElementById('date-from').value;
       const toVal   = document.getElementById('date-to').value;
@@ -1194,6 +1197,9 @@ function applyFilters() {
     // When actively searching, surface any match regardless of the date window
     // (lets you find contact-only / pending accounts that have no orders yet).
     if (q) return true;
+    // When ranking by outstanding balance, always surface accounts that owe money,
+    // even if their unpaid invoice is older than the window (receivables are all-time).
+    if (srt === 'owed' && c.outstanding > 0) return true;
     if (fromDate || toDate) return ordersInRange(c.orders, fromDate, toDate).length > 0;
     return true;
   });
