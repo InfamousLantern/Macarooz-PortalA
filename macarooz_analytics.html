@@ -364,7 +364,7 @@
     </button>
     <div class="header-meta">
       <strong id="last-updated">—</strong><br>
-      Live from Google Sheets · build 2026-07-28a
+      Live from Google Sheets · build 2026-07-28b
     </div>
   </div>
 </header>
@@ -1623,24 +1623,6 @@ async function setVertical(key, vertical) {
   if (currentView === 'analytics') renderAnalytics();
 }
 
-function renderMergeGroups() {
-  const byCanon = {};
-  ALIASES.forEach(a => {
-    if (!byCanon[a.canonical]) byCanon[a.canonical] = new Set();
-    if (normName(a.alias) !== normName(a.canonical)) byCanon[a.canonical].add(a.alias);
-  });
-  const entries = Object.entries(byCanon);
-  document.getElementById('merge-groups').innerHTML = entries.length
-    ? entries.map(([canon, set]) => `
-      <div class="group-card">
-        <div class="group-canon">${esc(canon)}</div>
-        <div class="group-aliases">${[...set].map(esc).join('<br>') || '<em>no separate aliases</em>'}</div>
-        <button class="btn-ghost" onclick="unmergeGroup('${escAttr(canon)}')">Unmerge</button>
-      </div>`).join('')
-    : '<div style="font-family:\'DM Mono\',monospace;font-size:11px;color:var(--text-muted)">No saved merges yet.</div>';
-}
-
-// suggested merges: names that become identical when spaces and punctuation are removed
 let mergeGroupCanons = [];   // canonical names currently shown, referenced by index
 function renderMergeGroups() {
   const byCanon = {};
@@ -1658,6 +1640,30 @@ function renderMergeGroups() {
         <button class="btn-ghost" onclick="unmergeGroup(${i})">Unmerge</button>
       </div>`).join('')
     : '<div style="font-family:\'DM Mono\',monospace;font-size:11px;color:var(--text-muted)">No saved merges yet.</div>';
+}
+
+// suggested merges: names that become identical when spaces and punctuation are removed
+function renderMergeSuggestions() {
+  const lookup = buildAliasLookup();
+  const bySquash = {};
+  rawNameStats().forEach(s => {
+    if (canonicalFor(s.name, lookup)) return; // already in a saved group
+    const k = squashName(s.name);
+    if (!k) return;
+    (bySquash[k] = bySquash[k] || []).push(s.name);
+  });
+  const suggestions = Object.values(bySquash).filter(arr => {
+    const distinct = new Set(arr.map(n => n)); // raw distinct
+    const distinctNorm = new Set(arr.map(normName));
+    return distinct.size > 1 && distinctNorm.size > 1; // truly different spellings
+  });
+  document.getElementById('merge-suggestions').innerHTML = suggestions.length
+    ? suggestions.slice(0, 12).map(arr => `
+      <div class="suggest-card">
+        <div class="suggest-names">${arr.map(esc).join('<br>')}</div>
+        <button class="btn-gold" style="margin-top:8px;padding:7px 12px;font-size:11px" onclick='quickMerge(${JSON.stringify(arr).replace(/'/g, "&#39;")})'>Merge these</button>
+      </div>`).join('')
+    : '<div style="font-family:\'DM Mono\',monospace;font-size:11px;color:var(--text-muted)">Nothing suspicious found. Names that only differ by capitalization or punctuation are already auto-grouped.</div>';
 }
 
 async function quickMerge(names) {
@@ -1686,9 +1692,6 @@ function renderAnalytics() {
   else if (currentAna === 'quality') renderQuality();
 }
 
-// ═════════════════════════════════════════════════════════
-// VERTICALS — revenue and account breakdown by classification
-// ═════════════════════════════════════════════════════════
 // ═════════════════════════════════════════════════════════
 // DATA QUALITY — live cleanup checklist tied to sheet rows
 // ═════════════════════════════════════════════════════════
