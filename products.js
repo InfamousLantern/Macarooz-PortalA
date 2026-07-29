@@ -30,6 +30,7 @@ const PRODUCTS = {
         //{ id: "red-velvet-fourth-n", name: "4th of July Red Velvet", sku: "4th of July Red Velvet", available: false, seasonal: true },
         //{ id: "rainbow-sherbet-n", name: "Rainbow Sherbet", sku: "Rainbow Sherbet", available: false, seasonal: true },
         //{ id: "orange-creamsicle-n", name: "Orange Creamsicle", sku: "Orange Creamsicle", available: false, seasonal: true },
+        { id: "back-to-school-n",        name: "Back to School Chocolate Chip", sku: "Back to School",  available: true, seasonal: true },
 
 
       ]
