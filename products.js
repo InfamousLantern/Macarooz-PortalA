@@ -15,7 +15,7 @@ const PRODUCTS = {
         { id: "birthday-cake-n",  name: "Birthday Cake",   sku: "BA Birthday",      available: true },
         { id: "strawberry-n",     name: "Strawberry",      sku: "Strawberry",       available: true },
         { id: "cookies-cream-n",  name: "Cookies & Cream", sku: "Cookies and Cream",available: true },
-        //{ id: "red-velvet-n",     name: "Red Velvet",      sku: "Red Velvet",       available: false },
+        { id: "red-velvet-n",     name: "Red Velvet",      sku: "Red Velvet",       available: true },
         { id: "cinnamon-roll-n",  name: "Cinnamon Roll",   sku: "Cinnamon Roll",    available: true },
         { id: "cookie-dough-n",   name: "Cookie Dough",    sku: "Cookie Dough",     available: true },
         { id: "cotton-candy-n",   name: "Cotton Candy",    sku: "Cotton Candy",     available: true },
