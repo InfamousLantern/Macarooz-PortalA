@@ -32,6 +32,8 @@ const PRODUCTS = {
         //{ id: "rainbow-sherbet-n", name: "Rainbow Sherbet", sku: "Rainbow Sherbet", available: false, seasonal: true },
         //{ id: "orange-creamsicle-n", name: "Orange Creamsicle", sku: "Orange Creamsicle", available: false, seasonal: true },
         { id: "back-to-school-n",        name: "Back to School Chocolate Chip", sku: "Back to School",  available: true, seasonal: true },
+        { id: "pumpkin-spice-n",  name: "Pumpkin Spice", sku: "Pumpkin Spice",  available: true, seasonal: true },
+        { id: "oatmeal-cookie-n",  name: "Oatmeal Cookie", sku: "Oatmeal Cookie",  available: true, seasonal: true },
 
 
       ]
