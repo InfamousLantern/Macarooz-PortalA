@@ -21,7 +21,7 @@ const PRODUCTS = {
         { id: "cotton-candy-n",   name: "Cotton Candy",    sku: "Cotton Candy",     available: true },
         { id: "chocolate-n",  name: "Chocolate", sku: "Chocolate",  available: true, seasonal: false },
         //{ id: "fruity-cereal-n",  name: "Fruity Cereal",   sku: "Fruity Cereal",    available: true },
-        { id: "SB-rose-n",        name: "Strawberry Rose", sku: "Strawberry Rose",  available: false, seasonal: true },
+        //{ id: "SB-rose-n",        name: "Strawberry Rose", sku: "Strawberry Rose",  available: false, seasonal: true },
         { id: "pecan-praline-n",  name: "Pecan Praline", sku: "Pecan Praline",  available: true, seasonal: true },
         //{ id: "RV-rose-n",        name: "Red Velvet Rose", sku: "Red Velvet Rose",  available: false, seasonal: true },
         //{ id: "lemon-cake-n", name: "Lemon Cake", sku: "Lemon Cake", available: false, seasonal: true },
@@ -31,7 +31,7 @@ const PRODUCTS = {
         //{ id: "red-velvet-fourth-n", name: "4th of July Red Velvet", sku: "4th of July Red Velvet", available: false, seasonal: true },
         //{ id: "rainbow-sherbet-n", name: "Rainbow Sherbet", sku: "Rainbow Sherbet", available: false, seasonal: true },
         //{ id: "orange-creamsicle-n", name: "Orange Creamsicle", sku: "Orange Creamsicle", available: false, seasonal: true },
-        { id: "back-to-school-n",        name: "Back to School Chocolate Chip", sku: "Back to School",  available: false, seasonal: true },
+        //{ id: "back-to-school-n",        name: "Back to School Chocolate Chip", sku: "Back to School",  available: false, seasonal: true },
         { id: "pumpkin-spice-n",  name: "Pumpkin Spice", sku: "Pumpkin Spice",  available: true, seasonal: true },
         { id: "oatmeal-cookie-n",  name: "Oatmeal Cookie", sku: "Oatmeal Cookie",  available: true, seasonal: true },
 
