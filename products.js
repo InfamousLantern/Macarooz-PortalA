@@ -20,7 +20,7 @@ const PRODUCTS = {
         { id: "cookie-dough-n",   name: "Cookie Dough",    sku: "Cookie Dough",     available: true },
         { id: "cotton-candy-n",   name: "Cotton Candy",    sku: "Cotton Candy",     available: true },
         { id: "chocolate-n",  name: "Chocolate", sku: "Chocolate",  available: true, seasonal: false },
-        //{ id: "fruity-cereal-n",  name: "Fruity Cereal",   sku: "Fruity Cereal",    available: true },
+        { id: "fruity-cereal-n",  name: "Fruity Cereal",   sku: "Fruity Cereal",    available: true },
         //{ id: "SB-rose-n",        name: "Strawberry Rose", sku: "Strawberry Rose",  available: false, seasonal: true },
         { id: "pecan-praline-n",  name: "Pecan Praline", sku: "Pecan Praline",  available: true, seasonal: true },
         //{ id: "RV-rose-n",        name: "Red Velvet Rose", sku: "Red Velvet Rose",  available: false, seasonal: true },
