@@ -39,8 +39,7 @@ const PRODUCTS = {
         { id: "gingerbread-n",  name: "Gingerbread", sku: "Gingerbread",  available: true, seasonal: true },
         { id: "sugar-cookie-n",  name: "Sugar Cookie", sku: "Sugar Cookie",  available: true, seasonal: true },
 
-      ]
-
+   
       ]
     }
   },
