@@ -37,7 +37,7 @@ const PRODUCTS = {
         //{ id: "cauldron-n",  name: "Chocolate Cauldron", sku: "Chocolate Cauldron",  available: false, seasonal: true },
         //{ id: "spider-web-n",  name: "Cotton Candy Spider Web", sku: "Cotton Candy Spider Web",  available: false, seasonal: true },
         { id: "gingerbread-n",  name: "Gingerbread", sku: "Gingerbread",  available: true, seasonal: true },
-        { id: "sugar-cookie-n",  name: "Sugar Cookie", sku: "Sugar Cookie",  available: true, seasonal: true },
+        { id: "sugar-cookie--n",  name: "Sugar Cookie", sku: "Sugar Cookie",  available: true, seasonal: true },
 
       ]
 
